@@ -1,0 +1,70 @@
+@media screen and (max-width: $desktop) {
+
+
+}
+
+@media screen and (max-width: $tablet) {
+  .t-hidden {
+    display: none; 
+  }
+
+  .t-visible {
+    display: inline-block;
+  }
+
+  .d-flex {
+    &.t-column {
+      flex-flow: column;
+    }
+    &.t-column-reverse {
+      flex-flow: column-reverse;
+    }
+  }
+
+  .t-whole {
+    width: calc(100% - #{$spacing});
+    margin-left: #{$half-spacing};
+    margin-right: #{$half-spacing};
+  }
+
+
+  .t-half {
+    width: calc(50% - #{$spacing});
+    margin-left: #{$half-spacing};
+    margin-right: #{$half-spacing};
+  }
+}
+
+@media screen and (max-width: $mobile) {
+  .m-hidden {
+    display: none; 
+  }
+
+  .m-visible {
+    display: inline-block;
+  }
+
+  .d-flex {
+    &.m-column {
+      flex-flow: column;
+    }
+    &.m-column-reverse {
+      flex-flow: column-reverse;
+    }
+  }
+
+  .m-whole {
+    width: calc(100% - #{$spacing});
+    margin-left: #{$half-spacing};
+    margin-right: #{$half-spacing};
+    margin-bottom: $double-spacing;
+  }
+
+  .m-half {
+    width: calc(50% - #{$spacing});
+    margin-left: #{$half-spacing};
+    margin-right: #{$half-spacing};
+    margin-bottom: $double-spacing;
+  }
+}
+
