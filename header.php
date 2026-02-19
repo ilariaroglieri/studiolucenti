@@ -21,9 +21,6 @@
 		<link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>"/>
 		<link rel="shortcut icon" href="<?php echo home_url( '/favicon.ico' ); ?>">
 
-
-		<link rel="stylesheet" href="<?php echo home_url( '/assets/css/style.css' ); ?>" type="text/css">	
-
 		<!-- <?php wp_enqueue_script("jquery"); ?>	 -->
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
 
