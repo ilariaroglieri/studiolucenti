@@ -297,4 +297,21 @@ header {
   }
 }
 
+footer {
+  background-color: $primaryColor;
+  color: $secColor;
+  a {
+    color: $secColor;
+    opacity: 1;
+    transition: .5s;
+    &:hover {
+      color: $secColor;    
+      opacity: .6;
+    }
+  }
+  #contact-details {
+    height: 50vh;
+  }
+}
+
 @import 'media-queries';

@@ -47,6 +47,11 @@ $secColor: #fffff7;
 }
 
 .s-xsmall {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.s-xxsmall {
   font-size: 11px;
   font-weight: 500;
 }
@@ -56,29 +61,42 @@ $secColor: #fffff7;
 }
 
 
-// grid system
+// =============================
+// GRID SYSTEM
+// =============================
+
 $spacing: 48px;
-$half-spacing: $spacing/2;
-$double-spacing: $spacing*2;
-$triple-spacing: $spacing*3;
-$fourfold-spacing: $spacing*4;
+$half-spacing: $spacing / 2;
+$double-spacing: $spacing * 2;
+$triple-spacing: $spacing * 3;
+$fourfold-spacing: $spacing * 4;
 
-$col: 8.3333%;
+$col: 8.3333%; // 12 columns
 
-// col system
-.d-one-third {
-  width: calc(#{$col}*4 - #{$spacing});
-  margin: 0 #{$half-spacing};
+// =============================
+// COLUMN SYSTEM (12 grid)
+// =============================
+
+// genera .d-1-twelfth → .d-11-twelfth
+@for $i from 1 through 11 {
+  .d-#{$i}-twelfth {
+    width: calc(#{$col} * #{$i} - #{$spacing});
+    margin: 0 #{$half-spacing};
+  }
 }
 
-.d-half {
-  width: calc(#{$col}*6 - #{$spacing});
-  margin: 0 #{$half-spacing};
-}
+// alias semantici
+$d-aliases: (
+  one-third: 4,
+  half: 6,
+  two-thirds: 8
+);
 
-.d-two-thirds{
-  width: calc(#{$col}*8 - #{$spacing});
-  margin: 0 #{$half-spacing};
+@each $name, $val in $d-aliases {
+  .d-#{$name} {
+    width: calc(#{$col} * #{$val} - #{$spacing});
+    margin: 0 #{$half-spacing};
+  }
 }
 
 .d-whole {
@@ -86,419 +104,75 @@ $col: 8.3333%;
   margin: 0 #{$half-spacing};
 }
 
-.d-one-twelfth {
-  width: calc(#{$col} - #{$spacing});
-  margin: 0 #{$half-spacing};
-}
 
-.d-two-twelfth {
-  width: calc(#{$col}*2 - #{$spacing});
-  margin: 0 #{$half-spacing};
-}
+// =============================
+// SPACING SCALE MAP
+// =============================
 
-.d-three-twelfth {
-  width: calc(#{$col}*3 - #{$spacing});
-  margin: 0 #{$half-spacing};
-}
+$spacing-scale: (
+  0: 0,
+  half: $half-spacing / 2,
+  1: $half-spacing,
+  2: $spacing,
+  3: $half-spacing * 3,
+  4: $double-spacing,
+  5: $half-spacing * 5,
+  6: $triple-spacing
+);
 
-.d-four-twelfth {
-  width: calc(#{$col}*4 - #{$spacing});
-  margin: 0 #{$half-spacing};
-}
 
-.d-six-twelfth {
-  width: calc(#{$col}*6 - #{$spacing});
-  margin: 0 #{$half-spacing};
-}
-
-.d-seven-twelfth {
-  width: calc(#{$col}*7 - #{$spacing});
-  margin: 0 #{$half-spacing};
-}
-
-.d-eight-twelfth {
-  width: calc(#{$col}*8 - #{$spacing});
-  margin: 0 #{$half-spacing};
-}
-
-.d-nine-twelfth {
-  width: calc(#{$col}*9 - #{$spacing});
-  margin: 0 #{$half-spacing};
-}
-
-.d-ten-twelfth {
-  width: calc(#{$col}*10 - #{$spacing});
-  margin: 0 #{$half-spacing};
-}
-
-.d-eleven-twelfth {
-  width: calc(#{$col}*11 - #{$spacing});
-  margin: 0 #{$half-spacing};
+// =============================
+// MIXIN GENERATOR
+// =============================
+@mixin generate-spacing($prefix, $property) {
+  @each $key, $value in $spacing-scale {
+    .#{$prefix}-#{$key} {
+      #{$property}: $value;
+    }
+  }
 }
 
 
-// spacers
-.spacing-b-half {
-  margin-bottom: $half-spacing/2;
-}
+// =============================
+// DESKTOP SPACING
+// =============================
 
-.spacing-b-1 {
-  margin-bottom: $half-spacing;
-}
+// margin bottom
+@include generate-spacing("spacing-b", margin-bottom);
 
-.spacing-b-2 {
-  margin-bottom: $spacing;
-}
+// margin top
+@include generate-spacing("spacing-t", margin-top);
 
-.spacing-b-3 {
-  margin-bottom: $half-spacing*3;
-}
+// padding bottom
+@include generate-spacing("spacing-p-b", padding-bottom);
 
-.spacing-b-4 {
-  margin-bottom: $double-spacing;
-}
-
-.spacing-b-5 {
-  margin-bottom: $half-spacing*5;
-}
-
-.spacing-b-6 {
-  margin-bottom: $triple-spacing;
-}
+// padding top
+@include generate-spacing("spacing-p-t", padding-top);
 
 
-.spacing-t-1 {
-  margin-top: $half-spacing;
-}
-
-.spacing-t-2 {
-  margin-top: $spacing;
-}
-
-.spacing-t-3 {
-  margin-top: $half-spacing*3;
-}
-
-.spacing-t-4 {
-  margin-top: $double-spacing;
-}
-
-.spacing-t-5 {
-  margin-top: $half-spacing*5;
-}
-
-.spacing-t-6 {
-  margin-top: $triple-spacing;
-}
-
-// padding
-.spacing-p-b-half {
-  padding-bottom: $half-spacing/2;
-}
-
-.spacing-p-b-1 {
-  padding-bottom: $half-spacing;
-}
-
-.spacing-p-b-2 {
-  padding-bottom: $spacing;
-}
-
-.spacing-p-b-3 {
-  padding-bottom: $half-spacing*3;
-}
-
-.spacing-p-b-4 {
-  padding-bottom: $double-spacing;
-}
-
-.spacing-p-b-5 {
-  padding-bottom: $half-spacing*5;
-}
-
-.spacing-p-b-6 {
-  padding-bottom: $triple-spacing;
-}
-
-.spacing-p-t-half {
-  padding-top: $half-spacing/2;
-}
-
-.spacing-p-t-1 {
-  padding-top: $half-spacing;
-}
-
-.spacing-p-t-2 {
-  padding-top: $spacing;
-}
-
-.spacing-p-t-3 {
-  padding-top: $half-spacing*3;
-}
-
-.spacing-p-t-4 {
-  padding-top: $double-spacing;
-}
-
-.spacing-p-t-5 {
-  padding-top: $half-spacing*5;
-}
-
-.spacing-p-t-6 {
-  padding-top: $triple-spacing;
-}
+// =============================
+// TABLET
+// =============================
 
 @media screen and (max-width: $tablet) {
-    // spacers
-  .spacing-t-b-0 {
-    margin-bottom: 0;
-  }
 
-  .spacing-t-b-1 {
-    margin-bottom: $half-spacing;
-  }
+  @include generate-spacing("spacing-t-b", margin-bottom);
+  @include generate-spacing("spacing-t-t", margin-top);
+  @include generate-spacing("spacing-t-p-b", padding-bottom);
+  @include generate-spacing("spacing-t-p-t", padding-top);
 
-  .spacing-t-b-2 {
-    margin-bottom: $spacing;
-  }
-
-  .spacing-t-b-3 {
-    margin-bottom: $half-spacing*3;
-  }
-
-  .spacing-t-b-4 {
-    margin-bottom: $double-spacing;
-  }
-
-  .spacing-t-b-5 {
-    margin-bottom: $half-spacing*5;
-  }
-
-  .spacing-t-b-6 {
-    margin-bottom: $triple-spacing;
-  }
-
-  .spacing-t-t-0 {
-    margin-top: 0;
-  }
-
-  .spacing-t-t-1 {
-    margin-top: $half-spacing;
-  }
-
-  .spacing-t-t-2 {
-    margin-top: $spacing;
-  }
-
-  .spacing-t-t-3 {
-    margin-top: $half-spacing*3;
-  }
-
-  .spacing-t-t-4 {
-    margin-top: $double-spacing;
-  }
-
-  .spacing-t-t-5 {
-    margin-top: $half-spacing*5;
-  }
-
-  .spacing-t-t-6 {
-    margin-top: $triple-spacing;
-  }
-
-  // padding
-  .spacing-t-p-b-0 {
-    padding-bottom: 0;
-  }
-
-  .spacing-t-p-b-half {
-    padding-bottom: $half-spacing/2;
-  }
-
-  .spacing-t-p-b-1 {
-    padding-bottom: $half-spacing;
-  }
-
-  .spacing-t-p-b-2 {
-    padding-bottom: $spacing;
-  }
-
-  .spacing-t-p-b-3 {
-    padding-bottom: $half-spacing*3;
-  }
-
-  .spacing-t-p-b-4 {
-    padding-bottom: $double-spacing;
-  }
-
-  .spacing-t-p-b-5 {
-    padding-bottom: $half-spacing*5;
-  }
-
-  .spacing-t-p-b-6 {
-    padding-bottom: $triple-spacing;
-  }
-
-  .spacing-t-p-t-0 {
-    padding-top: 0;
-  }
-
-  .spacing-t-p-t-half {
-    padding-top: $half-spacing/2;
-  }
-
-  .spacing-t-p-t-1 {
-    padding-top: $half-spacing;
-  }
-
-  .spacing-t-p-t-2 {
-    padding-top: $spacing;
-  }
-
-  .spacing-t-p-t-3 {
-    padding-top: $half-spacing*3;
-  }
-
-  .spacing-t-p-t-4 {
-    padding-top: $double-spacing;
-  }
-
-  .spacing-t-p-t-5 {
-    padding-top: $half-spacing*5;
-  }
-
-  .spacing-t-p-t-6 {
-    padding-top: $triple-spacing;
-  }
 }
 
+
+// =============================
+// MOBILE
+// =============================
+
 @media screen and (max-width: $mobile) {
-  .spacing-m-b-0 {
-    margin-bottom: 0;
-  }
 
-  .spacing-m-b-half {
-    margin-bottom: $half-spacing/2;
-  }
+  @include generate-spacing("spacing-m-b", margin-bottom);
+  @include generate-spacing("spacing-m-t", margin-top);
+  @include generate-spacing("spacing-m-p-b", padding-bottom);
+  @include generate-spacing("spacing-m-p-t", padding-top);
 
-  .spacing-m-b-1 {
-    margin-bottom: $half-spacing;
-  }
-
-  .spacing-m-b-2 {
-    margin-bottom: $spacing;
-  }
-
-  .spacing-m-b-3 {
-    margin-bottom: $half-spacing*3;
-  }
-
-  .spacing-m-b-4 {
-    margin-bottom: $double-spacing;
-  }
-
-  .spacing-m-b-5 {
-    margin-bottom: $half-spacing*5;
-  }
-
-  .spacing-m-b-6 {
-    margin-bottom: $triple-spacing;
-  }
-
-  .spacing-m-t-0 {
-    margin-top: 0;
-  }
-
-  .spacing-m-t-half {
-    margin-top: $half-spacing/2;
-  }
-
-  .spacing-m-t-1 {
-    margin-top: $half-spacing;
-  }
-
-  .spacing-m-t-2 {
-    margin-top: $spacing;
-  }
-
-  .spacing-m-t-3 {
-    margin-top: $half-spacing*3;
-  }
-
-  .spacing-m-t-4 {
-    margin-top: $double-spacing;
-  }
-
-  .spacing-m-t-5 {
-    margin-top: $half-spacing*5;
-  }
-
-  .spacing-m-t-6 {
-    margin-top: $triple-spacing;
-  }
-
-  // padding
-  .spacing-m-p-b-0 {
-    padding-bottom: 0;
-  }
-
-  .spacing-m-p-b-half {
-    padding-bottom: $half-spacing/2;
-  }
-
-  .spacing-m-p-b-1 {
-    padding-bottom: $half-spacing;
-  }
-
-  .spacing-m-p-b-2 {
-    padding-bottom: $spacing;
-  }
-
-  .spacing-m-p-b-3 {
-    padding-bottom: $half-spacing*3;
-  }
-
-  .spacing-m-p-b-4 {
-    padding-bottom: $double-spacing;
-  }
-
-  .spacing-m-p-b-5 {
-    padding-bottom: $half-spacing*5;
-  }
-
-  .spacing-m-p-b-6 {
-    padding-bottom: $triple-spacing;
-  }
-
-  .spacing-m-p-t-0 {
-    padding-top: 0;
-  }
-
-  .spacing-m-p-t-half {
-    padding-top: $half-spacing/2;
-  }
-
-  .spacing-m-p-t-1 {
-    padding-top: $half-spacing;
-  }
-
-  .spacing-m-p-t-2 {
-    padding-top: $spacing;
-  }
-
-  .spacing-m-p-t-3 {
-    padding-top: $half-spacing*3;
-  }
-
-  .spacing-m-p-t-4 {
-    padding-top: $double-spacing;
-  }
-
-  .spacing-m-p-t-5 {
-    padding-top: $half-spacing*5;
-  }
-
-  .spacing-m-p-t-6 {
-    padding-top: $triple-spacing;
-  }
 }

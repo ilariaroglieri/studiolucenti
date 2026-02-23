@@ -24,13 +24,13 @@
 
       <section id="text-section" class="container">
         <div class="d-flex flex-row m-column">
-          <div class="d-seven-twelfth m-whole">
+          <div class="d-7-twelfth m-whole">
             <div class="wysiwyg s-regular">
               <?php the_content(); ?>
             </div>
           </div>
 
-          <div class="spacer d-one-twelfth m-hidden"></div>
+          <div class="spacer d-1-twelfth m-hidden"></div>
 
           <div class="d-one-third m-whole">
             <div class="wysiwyg s-regular">
@@ -41,14 +41,14 @@
               
               <?php if ($year): ?>
                 <div class="project-info">
-                  <p class="s-xsmall uppercase">Year</p>
+                  <p class="s-xxsmall uppercase">Year</p>
                   <h3 class="s-small"><?= $year; ?></h3>
                 </div>
               <?php endif; ?>
 
               <?php if ($client): ?>
                 <div class="project-info">
-                  <p class="s-xsmall uppercase">Client</p>
+                  <p class="s-xxsmall uppercase">Client</p>
                   <h3 class="s-small"><?= $client; ?></h3>
                 </div>
               <?php endif; ?>
@@ -56,7 +56,7 @@
               <?php if( have_rows('credits') ): while ( have_rows('credits') ) : the_row(); ?>
 
                 <div class="project-info">
-                  <p class="s-xsmall uppercase"><?php the_sub_field('role'); ?></p>
+                  <p class="s-xxsmall uppercase"><?php the_sub_field('role'); ?></p>
                   <h3 class="s-small"><?php the_sub_field('name'); ?></h3>
                 </div>
 
