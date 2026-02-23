@@ -6,60 +6,44 @@ $tablet: 768px;
 $mobile: 640px;
 
 //colors
-$primaryColor: #7d4d66;
-$secColor: #7d4d66;
+$primaryColor: #323232;
+$secColor: #fffff7;
 
 // Typography
 @font-face {
-  font-family: 'Basis Grotesque';
-  src:url('assets/fonts/BasisGrotesque-Regular.woff2') format('woff2'),
-      url('assets/fonts/BasisGrotesque-Regular.woff') format('woff'),
-      url('assets/fonts/BasisGrotesque-Regular.ttf') format('ttf'),
-      url('assets/fonts/BasisGrotesque-Regular.svg') format('svg'),
-      url('assets/fonts/BasisGrotesque-Regular.eot') format('eot');
+  font-family: 'PP Mori';
+  src:url('../fonts/PPMori-Regular.woff2') format('woff2'),
+      url('../fonts/PPMori-Regular.woff') format('woff'),
+      url('../fonts/PPMori-Regular.ttf') format('ttf');
   font-weight: 400;
 }
 
 @font-face {
-  font-family: 'Basis Grotesque';
-  src:url('assets/fonts/BasisGrotesque-Italic.woff2') format('woff2'),
-      url('assets/fonts/BasisGrotesque-Italic.woff') format('woff'),
-      url('assets/fonts/BasisGrotesque-Italic.ttf') format('ttf'),
-      url('assets/fonts/BasisGrotesque-Italic.svg') format('svg'),
-      url('assets/fonts/BasisGrotesque-Italic.eot') format('eot');
-  font-weight: 400;
-  font-style: italic;
-}
-
-@font-face {
-  font-family: 'Basis Grotesque Mono';
-  src:url('assets/fonts/BasisGrotesqueMono-Regular.woff2') format('woff2'),
-      url('assets/fonts/BasisGrotesqueMono-Regular.woff') format('woff'),
-      url('assets/fonts/BasisGrotesqueMono-Regular.ttf') format('ttf'),
-      url('assets/fonts/BasisGrotesqueMono-Regular.svg') format('svg'),
-      url('assets/fonts/BasisGrotesqueMono-Regular.eot') format('eot');
-  font-weight: 400;
-}
-
-
-.monospaced {
-  font-family: 'Basis Grotesque Mono';
+  font-family: 'PP Mori';
+  src:url('../fonts/PPMori-Semibold.woff2') format('woff2'),
+      url('../fonts/PPMori-Semibold.woff') format('woff'),
+      url('../fonts/PPMori-Semibold.ttf') format('ttf');
+  font-weight: 500;
 }
 
 .s-large { 
-  font-size: 35px;
+  font-size: 60px;
+}
+
+.s-big {
+  font-size: 40px;
 }
 
 .s-medium { 
-  font-size: 24px;
+  font-size: 30px;
 }
 
 .s-regular {
-	font-size: 18px;
+	font-size: 22px;
 }
 
 .s-small {
-  font-size: 14px;
+  font-size: 16px;
 }
 
 

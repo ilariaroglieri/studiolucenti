@@ -129,32 +129,46 @@ function grid_image($image_id, $cols, $context = 'default') {
 }
 
 
-// add acf column to projects admin page
-function add_acf_columns($columns) {
-  $columns['size'] = 'Size';
-  return $columns;
-}
+/**
+ * Rende il campo original_width readonly
+ */
+add_filter('acf/load_field/name=original_width', function($field) {
+    $field['readonly'] = 1;
+    return $field;
+});
 
-function featured_size_column($column, $post_id) {
-  if ( $column == 'size' ) {
-    $featured_size_field = get_field_object('featured_medium_size', $post_id);
+add_filter('acf/prepare_field/name=featured_projects', function($field) {
 
-    if ($featured_size_field) {
-      $featured_size_value = get_field('featured_medium_size', $post_id);
-      $featured_size_label = $featured_size_field['choices'][ $featured_size_value ];
-      echo $featured_size_label;
-    } else {
-      echo 'Default (6 col)';
+    $post_id = acf_get_form_data('post_id'); // ID della pagina corrente
+    if (!$post_id) return $field;
+
+
+    // Recupera tutte le righe del repeater
+    $rows = get_field('featured_projects', $post_id);
+    if (empty($rows) || !is_array($rows)) return $field;
+
+    // print "<pre>";
+    // print_r($rows);
+    // print "</pre>";
+
+
+    foreach ($rows as $index => $row) {
+
+      if (empty($row['featured_project'])) continue;
+
+      $related_post = $row['featured_project'][0];
+      $rp_ID = $related_post->ID;
+
+      $original_value = get_field('featured_medium_size', $rp_ID);
+      var_dump($original_value);  // restitusice i giusti valori
+
+
+      $row['original_width'] = $original_value;
+
     }
-  }
-}
 
-function my_column_init() {
-  echo get_current_screen();
-  add_filter( 'manage_post_posts_columns' , 'add_acf_columns' );
-  add_action('manage_post_posts_custom_column', 'featured_size_column', 10, 2);
-}
-add_action( 'admin_init' , 'my_column_init' );
+    return $field;
+});
 
 // --- TAX
 // Register Custom Taxonomy ANNO
