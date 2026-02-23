@@ -24,7 +24,14 @@ Version: 1.0
   font-size: 22px; }
 
 .s-small, .wysiwyg.s-small * {
-  font-size: 16px; }
+  font-size: 18px; }
+
+.s-xsmall {
+  font-size: 11px;
+  font-weight: 500; }
+
+.uppercase {
+  text-transform: uppercase; }
 
 .d-one-third {
   width: calc(8.3333%*4 - 48px);
@@ -62,6 +69,10 @@ Version: 1.0
   width: calc(8.3333%*6 - 48px);
   margin: 0 24px; }
 
+.d-seven-twelfth {
+  width: calc(8.3333%*7 - 48px);
+  margin: 0 24px; }
+
 .d-eight-twelfth {
   width: calc(8.3333%*8 - 48px);
   margin: 0 24px; }
@@ -77,6 +88,9 @@ Version: 1.0
 .d-eleven-twelfth {
   width: calc(8.3333%*11 - 48px);
   margin: 0 24px; }
+
+.spacing-b-half {
+  margin-bottom: 12px; }
 
 .spacing-b-1 {
   margin-bottom: 24px; }
@@ -545,6 +559,21 @@ header {
     background-color: #fffff7; }
   header.active div[class*="menu-1"] {
     left: 0; }
+
+.content {
+  margin-top: 100px; }
+
+.hero-container {
+  aspect-ratio: 16/7;
+  overflow: hidden; }
+  .hero-container video, .hero-container img {
+    height: 100%;
+    object-fit: cover;
+    object-position: center; }
+
+#text-section .project-info {
+  line-height: 1.5;
+  margin-bottom: 24px; }
 
 @media screen and (max-width: 768px) {
   .t-hidden {

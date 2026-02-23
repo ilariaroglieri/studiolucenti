@@ -43,7 +43,16 @@ $secColor: #fffff7;
 }
 
 .s-small {
-  font-size: 16px;
+  font-size: 18px;
+}
+
+.s-xsmall {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.uppercase {
+  text-transform: uppercase;
 }
 
 
@@ -102,6 +111,11 @@ $col: 8.3333%;
   margin: 0 #{$half-spacing};
 }
 
+.d-seven-twelfth {
+  width: calc(#{$col}*7 - #{$spacing});
+  margin: 0 #{$half-spacing};
+}
+
 .d-eight-twelfth {
   width: calc(#{$col}*8 - #{$spacing});
   margin: 0 #{$half-spacing};
@@ -124,6 +138,10 @@ $col: 8.3333%;
 
 
 // spacers
+.spacing-b-half {
+  margin-bottom: $half-spacing/2;
+}
+
 .spacing-b-1 {
   margin-bottom: $half-spacing;
 }

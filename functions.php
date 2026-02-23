@@ -103,15 +103,19 @@ function render_media($medium_id, $cols, $is_hero = false, $context = 'default')
   $sizes = "(max-width: 768px) 100vw, {$percentage}vw";
 
   $loading = $is_hero ? 'eager' : 'lazy';
+  $heroRatio = $is_hero ? 'hero-container' : '';
+  ?>
 
-  if (str_starts_with($mime, 'video/')): ?>
-    <video class="el bnd" muted loop autoplay playsinline>
-      <source src="<?= esc_url(wp_get_attachment_url($medium_id)); ?>">
-    </video>
-  <?php else: 
-    echo wp_get_attachment_image($medium_id, $size, false, ['class' => 'project_image', 'sizes' => $sizes, 'loading' => $loading]);
-  endif;
-}
+  <div class="media-container <?= $heroRatio; ?>">
+    <?php if (str_starts_with($mime, 'video/')): ?>
+      <video class="el bnd" muted loop autoplay playsinline>
+        <source src="<?= esc_url(wp_get_attachment_url($medium_id)); ?>">
+      </video>
+    <?php else: 
+      echo wp_get_attachment_image($medium_id, $size, false, ['class' => 'project_image', 'sizes' => $sizes, 'loading' => $loading]);
+    endif; ?>
+  </div>
+<?php }
 
 /**
  * Rende il campo original_width readonly
@@ -153,6 +157,20 @@ add_filter('acf/prepare_field/name=featured_projects', function($field) {
 
     return $field;
 });
+
+
+function get_post_terms( $post_id = null, $taxonomy = 'post_tag', $separator = ' ' ) {
+  $post_id = $post_id ?: get_the_ID();
+
+  $terms = get_the_terms( $post_id, $taxonomy );
+
+  if ( empty( $terms ) || is_wp_error( $terms ) ) {
+    return '';
+  }
+
+  $names = wp_list_pluck( $terms, 'name' );
+  return implode( $separator, $names );
+}
 
 // rename default post type
 function rename_default_post_label() {
