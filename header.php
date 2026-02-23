@@ -29,19 +29,20 @@
 	</head>
 
 	<body <?php body_class(); ?>>
-		<div id="container">
-			<div id="header">
+		<header class="p-fixed">
+			<div id="inner-header">
 				<div id="logo">
-					<h2 class="site-name">
+					<h2 id="site-name" class="s-big">
 						<a href="<?php echo home_url( '/' ); ?>" title="<?php echo esc_attr( get_bloginfo( 'name', 'display' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?>
 						</a>
 					</h2>
 				</div>
 
-				<button class="menu-toggle d-none">menu
+				<button class="menu-toggle d-none">
 					<span></span>
 					<span></span>
 					<span></span>
 				</button>
-				<?php wp_nav_menu( array( 'theme_location' => 'header-menu' ) ); ?>
 			</div>
+			<?php wp_nav_menu( array( 'theme_location' => 'header-menu' ) ); ?>
+		</header>

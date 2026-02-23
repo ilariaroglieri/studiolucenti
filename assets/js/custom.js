@@ -23,9 +23,9 @@ jQuery(document).ready(function($) {
 
     var currentScrollPos = $(window).scrollTop();
     if (prevScrollPos > currentScrollPos && prevScrollPos > 0) {
-	    $('#logo').addClass('visible')
+	    $('header').addClass('visible')
 	  } else {
-	    $('#logo').removeClass('visible')
+	    $('header').removeClass('visible')
 	  }
 
 	  prevScrollPos = currentScrollPos;
@@ -37,20 +37,8 @@ jQuery(document).ready(function($) {
 // --- Hamburger menu
   $('.menu-toggle').click(function() {
     $(this).toggleClass('open');
-    $('div[class*="menu-1"]').toggleClass('active');
-    // check if it's on slider
-  	if ( $('body').hasClass('home') && $(window).scrollTop() < window.innerHeight ) {
-  		console.log('ei!')
-  		$('#logo').addClass('visible').toggleClass('white');
-  		$('.icon, .menu-toggle').toggleClass('white');
-  	}
-
-    if ($(this).hasClass('open') == true) {
-    	// $('.icon, .menu-toggle').removeClass('white');
-    	$('#logo').addClass('visible');
-    } else {
-    	$('#logo').removeClass('visible');
-    }
+    $('header').toggleClass('active');
+    $('body').toggleClass('blocked');
   });
 
 // --- slider init
