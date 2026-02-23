@@ -160,13 +160,15 @@ ul {
 	list-style-type: none;
 }
 
-li {
+img {
+  width: 100%;
+  height: auto;
 }
 
 .container {
-  width: $desktop;
-  margin-left: auto;
-  margin-right: auto;
+  width: calc(100% - $double-spacing);
+  margin-left: $spacing;
+  margin-right: $spacing;
 }
 
 .container-fluid {

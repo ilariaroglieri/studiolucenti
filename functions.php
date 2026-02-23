@@ -31,52 +31,35 @@ add_action( 'wp_enqueue_scripts', 'register_theme_styles' );
 
 add_theme_support('post-thumbnails');
 
-add_image_size('thumbnail', 100, 0, false);
-
 add_image_size('full-width', 2560, 0, false);
 add_image_size('full-width-mobile', 768, 0, false);
-
-add_image_size('grid-10', 2100, 0, false);
-add_image_size('grid-6', 1300, 0, false);
+add_image_size('grid-6', 1536, 0, false);
 add_image_size('grid-4', 900, 0, false);
 
 
+// retrieve ID from ACF field (supports galleries or single images)
+function get_medium_id_from_acf($field)  {
+  // se è array (gallery o singolo image array)
+  if (is_array($field)) {
+    if (!empty($field['ID'])) {
+      return (int) $field['ID'];
+    } elseif (!empty($field[0]['ID'])) {
+        // gallery
+      return (int) $field[0]['ID'];
+    }
+  }
 
+  // se è già un ID numerico
+  if (is_numeric($field)) {
+    return (int) $field;
+  }
 
-// rename default post type
-function rename_default_post_label() {
-  global $menu;
-  global $submenu;
-  $menu[5][0] = 'Projects';
-  $submenu['edit.php'][5][0] = 'Projects';
-  $submenu['edit.php'][10][0] = 'Add Project';
-  $submenu['edit.php'][16][0] = 'Projects Tags';
+  return null;
 }
-function rename_default_post_object() {
-  global $wp_post_types;
-  $labels = &$wp_post_types['post']->labels;
-  $labels->name = 'Projects';
-  $labels->singular_name = 'Project';
-  $labels->add_new = 'Add Project';
-  $labels->add_new_item = 'Add Project';
-  $labels->edit_item = 'Edit Project';
-  $labels->new_item = 'Projects';
-  $labels->view_item = 'View Projects';
-  $labels->search_items = 'Search Projects';
-  $labels->not_found = 'No Projects found';
-  $labels->not_found_in_trash = 'No Projects found in Trash';
-  $labels->all_items = 'All Projects';
-  $labels->menu_name = 'Projects';
-  $labels->name_admin_bar = 'Projects';
-}
- 
-add_action( 'admin_menu', 'rename_default_post_label' );
-add_action( 'init', 'rename_default_post_object' );
-
 
 // img attachment defaults
-function grid_image($image_id, $cols, $context = 'default') {
-  $meta = wp_get_attachment_metadata($image_id);
+function render_media($medium_id, $cols, $is_hero = false, $context = 'default') {
+  $meta = wp_get_attachment_metadata($medium_id);
 
   if (!$meta) {
     return '';
@@ -87,6 +70,7 @@ function grid_image($image_id, $cols, $context = 'default') {
 
   $is_vertical = $height > $width;
 
+  $mime = get_post_mime_type($medium_id, $cols);
 
   // in homepage le verticali si rimpicciliscono
   if ($context === 'homepage' && $is_vertical) {
@@ -102,32 +86,32 @@ function grid_image($image_id, $cols, $context = 'default') {
 
   $size_map = [
     12 => 'full-width',
-    10 => 'd-ten-twelfth',
-    9  => 'd-ten-twelfth',
-    6  => 'd-half',
-    5  => 'd-half',   // usa stessa size, cambia solo sizes
-    4  => 'd-one-third',
-    3  => 'd-one-third',   // idem
+    10 => 'full-width',
+    9  => 'full-width',
+    6  => 'grid-6',
+    5  => 'grid-6',   // usa stessa size, cambia solo sizes
+    4  => 'grid-4',
+    3  => 'grid-4',   // idem
   ];
 
   $size = $size_map[$cols] ?? 'grid-6';
+
 
   //Calcolo percentuale viewport
   $percentage = ($cols / 12) * 100;
 
   $sizes = "(max-width: 768px) 100vw, {$percentage}vw";
 
-  return wp_get_attachment_image(
-    $image_id,
-    $size,
-    false,
-    [
-      'class' => 'project_image',
-      'sizes' => $sizes,
-    ]
-  );
-}
+  $loading = $is_hero ? 'eager' : 'lazy';
 
+  if (str_starts_with($mime, 'video/')): ?>
+    <video class="el bnd" muted loop autoplay playsinline>
+      <source src="<?= esc_url(wp_get_attachment_url($medium_id)); ?>">
+    </video>
+  <?php else: 
+    echo wp_get_attachment_image($medium_id, $size, false, ['class' => 'project_image', 'sizes' => $sizes, 'loading' => $loading]);
+  endif;
+}
 
 /**
  * Rende il campo original_width readonly
@@ -169,6 +153,36 @@ add_filter('acf/prepare_field/name=featured_projects', function($field) {
 
     return $field;
 });
+
+// rename default post type
+function rename_default_post_label() {
+  global $menu;
+  global $submenu;
+  $menu[5][0] = 'Projects';
+  $submenu['edit.php'][5][0] = 'Projects';
+  $submenu['edit.php'][10][0] = 'Add Project';
+  $submenu['edit.php'][16][0] = 'Projects Tags';
+}
+function rename_default_post_object() {
+  global $wp_post_types;
+  $labels = &$wp_post_types['post']->labels;
+  $labels->name = 'Projects';
+  $labels->singular_name = 'Project';
+  $labels->add_new = 'Add Project';
+  $labels->add_new_item = 'Add Project';
+  $labels->edit_item = 'Edit Project';
+  $labels->new_item = 'Projects';
+  $labels->view_item = 'View Projects';
+  $labels->search_items = 'Search Projects';
+  $labels->not_found = 'No Projects found';
+  $labels->not_found_in_trash = 'No Projects found in Trash';
+  $labels->all_items = 'All Projects';
+  $labels->menu_name = 'Projects';
+  $labels->name_admin_bar = 'Projects';
+}
+ 
+add_action( 'admin_menu', 'rename_default_post_label' );
+add_action( 'init', 'rename_default_post_object' );
 
 // --- TAX
 // Register Custom Taxonomy ANNO

@@ -452,10 +452,14 @@ ul {
   padding-left: 0;
   list-style-type: none; }
 
+img {
+  width: 100%;
+  height: auto; }
+
 .container {
-  width: 1440px;
-  margin-left: auto;
-  margin-right: auto; }
+  width: calc(100% - $double-spacing);
+  margin-left: 32px;
+  margin-right: 32px; }
 
 .container-fluid {
   margin-left: auto;
