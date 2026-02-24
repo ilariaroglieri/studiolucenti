@@ -28,31 +28,14 @@
   }
 
   // img attachment defaults
-  function render_media($medium_id, $cols, $is_hero = false, $context = 'default') {
+  function render_media($medium_id, $cols, $is_hero = false) {
     $meta = wp_get_attachment_metadata($medium_id);
 
     if (!$meta) {
       return '';
     }
 
-    $width  = $meta['width'];
-    $height = $meta['height'];
-
-    $is_vertical = $height > $width;
-
     $mime = get_post_mime_type($medium_id, $cols);
-
-    // in homepage le verticali si rimpicciliscono
-    if ($context === 'homepage' && $is_vertical) {
-
-      if ($cols == 6) {
-        $cols = 5;
-      }
-
-      if ($cols == 4) {
-        $cols = 3;
-      }
-    }
 
     $size_map = [
       12 => 'full-width',
@@ -65,7 +48,6 @@
     ];
 
     $size = $size_map[$cols] ?? 'grid-6';
-
 
     //Calcolo percentuale viewport
     $percentage = ($cols / 12) * 100;
@@ -85,4 +67,27 @@
         echo wp_get_attachment_image($medium_id, $size, false, ['class' => 'project_image', 'sizes' => $sizes, 'loading' => $loading]);
       endif; ?>
     </div>
+<?php }
+
+  function displayGridProject($home_size) {
+    $featured_medium = get_field('featured_medium');
+    $featured_medium_size = get_field('featured_medium_size');
+
+    $curr_size = ($home_size !== null) ? $home_size : $featured_medium_size;
+    $medium_id = get_medium_id_from_acf($featured_medium); 
+    $width = match ($featured_medium_size) {
+      'd-whole' => 12,
+      'd-10-twelfth' => 12,
+      'd-two-thirds' => 12,
+      'd-half' => 6,
+      'd-one-third' => 4,
+      default => 6,
+    };
+  ?>
+
+  <project id="post-<?php the_ID(); ?>" class="<?= $curr_size ?> p-relative spacing-b-3 spacing-t-3">
+    <a class="p-absolute overall" href="<?php the_permalink(); ?>"></a>
+    <h2 class="project-title s-regular spacing-b-half"><?php the_title(); ?></h2>
+    <?php render_media($medium_id, $width, false); ?>
+  </project>
 <?php }

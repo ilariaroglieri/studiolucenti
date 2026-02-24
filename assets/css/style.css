@@ -595,6 +595,26 @@ header {
   margin-top: 100px;
   margin-bottom: 100px; }
 
+.home project .overall:hover + .project-title, .blog project .overall:hover + .project-title {
+  opacity: 1;
+  bottom: 0; }
+.home project .overall:hover ~ .media-container *, .blog project .overall:hover ~ .media-container * {
+  transform: scale(1.05); }
+.home project .project-title, .blog project .project-title {
+  position: relative;
+  bottom: -100px;
+  opacity: 0;
+  transition: all 0.7s cubic-bezier(0.22, 1, 0.36, 1); }
+.home project .media-container, .blog project .media-container {
+  display: flex;
+  max-height: 70vh;
+  overflow: hidden; }
+  .home project .media-container *, .blog project .media-container * {
+    object-fit: cover;
+    object-position: center;
+    transform: scale(1);
+    transition: all .5s; }
+
 .hero-container {
   aspect-ratio: 16/7;
   overflow: hidden; }

@@ -284,6 +284,41 @@ header {
   margin-bottom: 100px;
 }
 
+.home, .blog {
+  project {
+    .overall:hover {
+      // & ~ .media-container {
+      //   transform: skew(0, 5deg);
+      // }
+      & + .project-title {
+        opacity: 1;
+        bottom: 0;
+      }
+      & ~ .media-container * {
+        transform: scale(1.05);
+      }
+    }
+    .project-title {
+      position: relative;
+      bottom: -100px;
+      opacity: 0;
+      transition: all .7s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .media-container {
+      display: flex;
+      max-height: 70vh;
+      overflow: hidden;
+      * {
+        object-fit: cover;
+        object-position: center;
+        transform: scale(1);
+        transition: all .5s;
+      }
+    }
+  }
+}
+
+// single page
 .hero-container {
   aspect-ratio: 16/7;
   overflow: hidden;

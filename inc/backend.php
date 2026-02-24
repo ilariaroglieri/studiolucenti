@@ -49,7 +49,7 @@ add_filter('acf/prepare_field/name=featured_projects', function($field) {
 
     if (empty($row['featured_project'])) continue;
 
-    $related_post = $row['featured_project'][0];
+    $related_post = $row['featured_project'];
     $rp_ID = $related_post->ID;
 
     $original_value = get_field('featured_medium_size', $rp_ID);
