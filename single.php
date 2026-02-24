@@ -7,15 +7,22 @@
 
       <?php 
         $featured_medium = get_field('hero_medium');
+        $featured_embed = get_field('hero_video_embed');
         $medium_id   = get_medium_id_from_acf($featured_medium); 
 
-        if ($medium_id):
+        if ($medium_id || $featured_embed):
       ?>
         <section id="hero-section" class="container spacing-b-2">
           <div class="d-flex flex-row">
             <div class="d-whole">
               <h1 class="s-medium spacing-b-half"><?php the_title(); ?></h1>
-              <?php render_media($medium_id, 12, true); ?>
+              <?php if ($featured_embed): ?>
+                <div class="hero-embed-container">
+                  <?= $featured_embed; ?>
+                </div>
+              <?php else: 
+                render_media($medium_id, 12, true); 
+              endif; ?>
             </div>
           </div>
         </section>
