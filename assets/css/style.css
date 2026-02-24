@@ -609,7 +609,7 @@ header {
 
 .single .content-module.dark {
   background-color: #323232;
-  color: #323232;
+  color: #fffff7;
   padding-bottom: 144px;
   margin-bottom: 72px; }
   .single .content-module.dark:not(.dark + .dark) {
