@@ -278,6 +278,7 @@ header {
 
 .content {
   margin-top: 100px;
+  margin-bottom: 100px;
 }
 
 .hero-container {
@@ -294,6 +295,15 @@ header {
   .project-info {
     line-height: 1.5;
     margin-bottom: $half-spacing;
+  }
+}
+
+.single {
+  .content-module {
+    &.dark {
+      background-color: $primaryColor;
+      color: $primaryColor;
+    }
   }
 }
 

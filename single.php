@@ -66,6 +66,42 @@
         </div>
       </section>
 
+      <!-- flexible acf -->
+      <?php
+
+      // Check value exists.
+      if( have_rows('project_modules') ): while ( have_rows('project_modules') ) : the_row();
+        $bndCol = get_sub_field('background_color'); 
+        $moduleType = match (get_row_layout()) {
+          'text_row' => 'text-module',
+          'media_text_row' => 'media-text-module',
+          default => 'media-module',
+        };
+        ?>
+
+        <div class="container-fluid content-module <?= $moduleType; ?> spacing-p-t-4 spacing-p-b-4 <?php if ($bndCol): ?>dark<?php endif; ?>">
+          <div class="container">
+            <?php if( get_row_layout() == 'text_row' ):
+              $text = get_sub_field('text');
+              $textAlignment = get_sub_field('text_alignment');
+            ?>
+            <div class="d-flex flex-row <?= $textAlignment; ?>">
+              <div class="d-two-thirds t-whole">
+                <div class="wysiwyg s-regular">
+                  <?= $text; ?>
+                </div>
+              </div>
+            </div>
+
+
+            <?php elseif( get_row_layout() == 'media_text_row' ): ?>
+              
+
+            <?php endif; ?>
+          </div>
+        </div>
+      <?php endwhile; endif; ?>
+
 
     </project>
 
