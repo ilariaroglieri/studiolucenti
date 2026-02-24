@@ -403,6 +403,8 @@ Version: 1.0
 
 .d-flex {
   display: flex; }
+  .d-flex.row-reverse {
+    flex-flow: row-reverse; }
   .d-flex.d-column {
     flex-flow: column; }
   .d-flex.center {
@@ -413,7 +415,7 @@ Version: 1.0
     align-items: flex-start; }
   .d-flex.baseline {
     align-items: baseline; }
-  .d-flex.end {
+  .d-flex.flex-end {
     justify-content: flex-end; }
   .d-flex.space-between {
     justify-content: space-between; }
@@ -494,7 +496,7 @@ ul {
   padding-left: 0;
   list-style-type: none; }
 
-img {
+img, video {
   width: 100%;
   height: auto; }
 

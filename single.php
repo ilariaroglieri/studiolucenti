@@ -68,8 +68,6 @@
 
       <!-- flexible acf -->
       <?php
-
-      // Check value exists.
       if( have_rows('project_modules') ): while ( have_rows('project_modules') ) : the_row();
         $bndCol = get_sub_field('background_color'); 
         $moduleType = match (get_row_layout()) {
@@ -79,7 +77,7 @@
         };
         ?>
 
-        <div class="container-fluid content-module <?= $moduleType; ?> spacing-p-t-4 spacing-p-b-4 <?php if ($bndCol): ?>dark<?php endif; ?>">
+        <div data-type="<?= $moduleType; ?>" class="container-fluid content-module spacing-p-t-3 spacing-p-b-3<?php if ($bndCol): ?> dark<?php endif; ?>">
           <div class="container">
             <?php if( get_row_layout() == 'text_row' ):
               $text = get_sub_field('text');
@@ -94,8 +92,22 @@
             </div>
 
 
-            <?php elseif( get_row_layout() == 'media_text_row' ): ?>
-              
+            <?php elseif( get_row_layout() == 'media_text_row' ): 
+              $text = get_sub_field('text');
+              $alignment = get_sub_field('media_alignment');
+              $medium = get_sub_field('all_row_media');
+              $medium_id   = get_medium_id_from_acf($medium); 
+            ?>
+              <div class="d-flex flex-row <?= $alignment; ?>">
+                <div class="d-half t-whole">
+                  <div class="wysiwyg s-regular">
+                    <?= $text; ?>
+                  </div>
+                </div>
+                <div class="d-half t-whole">
+                  <?php render_media($medium_id, 6); ?>
+                </div>
+              </div>
 
             <?php endif; ?>
           </div>

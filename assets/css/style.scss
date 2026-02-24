@@ -29,6 +29,9 @@ Version: 1.0
 
 .d-flex {
   display: flex;
+  &.row-reverse {
+    flex-flow: row-reverse;
+  }
   &.d-column {
     flex-flow: column;
   }
@@ -44,7 +47,7 @@ Version: 1.0
   &.baseline {
     align-items: baseline;
   }
-  &.end {
+  &.flex-end {
     justify-content: flex-end;
   }
   &.space-between {
@@ -160,7 +163,7 @@ ul {
 	list-style-type: none;
 }
 
-img {
+img, video {
   width: 100%;
   height: auto;
 }
