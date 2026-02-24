@@ -306,6 +306,16 @@ header {
     &.dark {
       background-color: $primaryColor;
       color: $primaryColor;
+      padding-bottom: $half-spacing*6;
+      margin-bottom: $half-spacing*3;
+      &:not(.dark + .dark) {
+        padding-top: $half-spacing*6;
+        margin-top: $half-spacing*3;
+      }
+      &:has(+ .dark) {
+        padding-bottom: $half-spacing*3;
+        margin-bottom: 0;
+      }
     }
   }
 }

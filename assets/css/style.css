@@ -609,7 +609,15 @@ header {
 
 .single .content-module.dark {
   background-color: #323232;
-  color: #323232; }
+  color: #323232;
+  padding-bottom: 144px;
+  margin-bottom: 72px; }
+  .single .content-module.dark:not(.dark + .dark) {
+    padding-top: 144px;
+    margin-top: 72px; }
+  .single .content-module.dark:has(+ .dark) {
+    padding-bottom: 72px;
+    margin-bottom: 0; }
 
 footer {
   background-color: #323232;
