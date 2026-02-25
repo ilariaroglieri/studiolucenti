@@ -14,7 +14,7 @@
         </div>
       </section>
 
-      <div id="infos" class="spacing-t-4 d-flex flex-row wrap">
+      <div id="infos" class="spacing-t-6 d-flex flex-row wrap">
         <?php $maintitle = get_field('info_main_title'); ?>
         <?php if ( have_rows( 'infos' ) ) : ?>
           
