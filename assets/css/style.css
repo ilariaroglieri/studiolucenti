@@ -100,6 +100,9 @@ Version: 1.0
 .spacing-b-0 {
   margin-bottom: 0; }
 
+.spacing-b-tiny {
+  margin-bottom: 6px; }
+
 .spacing-b-half {
   margin-bottom: 12px; }
 
@@ -121,8 +124,17 @@ Version: 1.0
 .spacing-b-6 {
   margin-bottom: 144px; }
 
+.spacing-b-7 {
+  margin-bottom: 168px; }
+
+.spacing-b-8 {
+  margin-bottom: 192px; }
+
 .spacing-t-0 {
   margin-top: 0; }
+
+.spacing-t-tiny {
+  margin-top: 6px; }
 
 .spacing-t-half {
   margin-top: 12px; }
@@ -145,8 +157,17 @@ Version: 1.0
 .spacing-t-6 {
   margin-top: 144px; }
 
+.spacing-t-7 {
+  margin-top: 168px; }
+
+.spacing-t-8 {
+  margin-top: 192px; }
+
 .spacing-p-b-0 {
   padding-bottom: 0; }
+
+.spacing-p-b-tiny {
+  padding-bottom: 6px; }
 
 .spacing-p-b-half {
   padding-bottom: 12px; }
@@ -169,8 +190,17 @@ Version: 1.0
 .spacing-p-b-6 {
   padding-bottom: 144px; }
 
+.spacing-p-b-7 {
+  padding-bottom: 168px; }
+
+.spacing-p-b-8 {
+  padding-bottom: 192px; }
+
 .spacing-p-t-0 {
   padding-top: 0; }
+
+.spacing-p-t-tiny {
+  padding-top: 6px; }
 
 .spacing-p-t-half {
   padding-top: 12px; }
@@ -193,9 +223,18 @@ Version: 1.0
 .spacing-p-t-6 {
   padding-top: 144px; }
 
+.spacing-p-t-7 {
+  padding-top: 168px; }
+
+.spacing-p-t-8 {
+  padding-top: 192px; }
+
 @media screen and (max-width: 768px) {
   .spacing-t-b-0 {
     margin-bottom: 0; }
+
+  .spacing-t-b-tiny {
+    margin-bottom: 6px; }
 
   .spacing-t-b-half {
     margin-bottom: 12px; }
@@ -218,8 +257,17 @@ Version: 1.0
   .spacing-t-b-6 {
     margin-bottom: 144px; }
 
+  .spacing-t-b-7 {
+    margin-bottom: 168px; }
+
+  .spacing-t-b-8 {
+    margin-bottom: 192px; }
+
   .spacing-t-t-0 {
     margin-top: 0; }
+
+  .spacing-t-t-tiny {
+    margin-top: 6px; }
 
   .spacing-t-t-half {
     margin-top: 12px; }
@@ -242,8 +290,17 @@ Version: 1.0
   .spacing-t-t-6 {
     margin-top: 144px; }
 
+  .spacing-t-t-7 {
+    margin-top: 168px; }
+
+  .spacing-t-t-8 {
+    margin-top: 192px; }
+
   .spacing-t-p-b-0 {
     padding-bottom: 0; }
+
+  .spacing-t-p-b-tiny {
+    padding-bottom: 6px; }
 
   .spacing-t-p-b-half {
     padding-bottom: 12px; }
@@ -266,8 +323,17 @@ Version: 1.0
   .spacing-t-p-b-6 {
     padding-bottom: 144px; }
 
+  .spacing-t-p-b-7 {
+    padding-bottom: 168px; }
+
+  .spacing-t-p-b-8 {
+    padding-bottom: 192px; }
+
   .spacing-t-p-t-0 {
     padding-top: 0; }
+
+  .spacing-t-p-t-tiny {
+    padding-top: 6px; }
 
   .spacing-t-p-t-half {
     padding-top: 12px; }
@@ -288,10 +354,19 @@ Version: 1.0
     padding-top: 120px; }
 
   .spacing-t-p-t-6 {
-    padding-top: 144px; } }
+    padding-top: 144px; }
+
+  .spacing-t-p-t-7 {
+    padding-top: 168px; }
+
+  .spacing-t-p-t-8 {
+    padding-top: 192px; } }
 @media screen and (max-width: 640px) {
   .spacing-m-b-0 {
     margin-bottom: 0; }
+
+  .spacing-m-b-tiny {
+    margin-bottom: 6px; }
 
   .spacing-m-b-half {
     margin-bottom: 12px; }
@@ -314,8 +389,17 @@ Version: 1.0
   .spacing-m-b-6 {
     margin-bottom: 144px; }
 
+  .spacing-m-b-7 {
+    margin-bottom: 168px; }
+
+  .spacing-m-b-8 {
+    margin-bottom: 192px; }
+
   .spacing-m-t-0 {
     margin-top: 0; }
+
+  .spacing-m-t-tiny {
+    margin-top: 6px; }
 
   .spacing-m-t-half {
     margin-top: 12px; }
@@ -338,8 +422,17 @@ Version: 1.0
   .spacing-m-t-6 {
     margin-top: 144px; }
 
+  .spacing-m-t-7 {
+    margin-top: 168px; }
+
+  .spacing-m-t-8 {
+    margin-top: 192px; }
+
   .spacing-m-p-b-0 {
     padding-bottom: 0; }
+
+  .spacing-m-p-b-tiny {
+    padding-bottom: 6px; }
 
   .spacing-m-p-b-half {
     padding-bottom: 12px; }
@@ -362,8 +455,17 @@ Version: 1.0
   .spacing-m-p-b-6 {
     padding-bottom: 144px; }
 
+  .spacing-m-p-b-7 {
+    padding-bottom: 168px; }
+
+  .spacing-m-p-b-8 {
+    padding-bottom: 192px; }
+
   .spacing-m-p-t-0 {
     padding-top: 0; }
+
+  .spacing-m-p-t-tiny {
+    padding-top: 6px; }
 
   .spacing-m-p-t-half {
     padding-top: 12px; }
@@ -384,7 +486,13 @@ Version: 1.0
     padding-top: 120px; }
 
   .spacing-m-p-t-6 {
-    padding-top: 144px; } }
+    padding-top: 144px; }
+
+  .spacing-m-p-t-7 {
+    padding-top: 168px; }
+
+  .spacing-m-p-t-8 {
+    padding-top: 192px; } }
 *,
 *:after,
 *:before {

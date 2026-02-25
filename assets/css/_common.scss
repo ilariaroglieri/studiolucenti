@@ -111,13 +111,16 @@ $d-aliases: (
 
 $spacing-scale: (
   0: 0,
+  tiny: $half-spacing / 4,
   half: $half-spacing / 2,
   1: $half-spacing,
   2: $spacing,
   3: $half-spacing * 3,
   4: $double-spacing,
   5: $half-spacing * 5,
-  6: $triple-spacing
+  6: $triple-spacing,
+  7: $half-spacing * 7,
+  8: $half-spacing * 8
 );
 
 
