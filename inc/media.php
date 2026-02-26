@@ -93,7 +93,7 @@
     };
   ?>
 
-  <project id="post-<?php the_ID(); ?>" class="<?= $curr_size ?> p-relative spacing-b-3 spacing-t-3">
+  <project id="post-<?php the_ID(); ?>" class="<?= $curr_size ?> m-whole p-relative spacing-b-3 spacing-t-3">
     <a class="p-absolute overall" href="<?php the_permalink(); ?>"></a>
     <h2 class="project-title s-regular spacing-b-half"><?php the_title(); ?></h2>
     <?php render_media($medium_id, $width, false); ?>

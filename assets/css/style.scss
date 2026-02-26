@@ -279,9 +279,11 @@ header {
   }
 }
 
-.content:not(#content-home) {
-  margin-top: 100px;
-  margin-bottom: 100px;
+.content {
+  margin-bottom: 300px;
+  &:not(#content-home) {
+    margin-top: 100px;
+  }
 }
 
 .home, .blog {
@@ -413,8 +415,17 @@ header {
 }
 
 footer {
+  height: 100vh;
+  width: 100vw;
+  position: fixed;
+  bottom: -100dvh;
   background-color: $primaryColor;
   color: $secColor;
+  transition: all .75s;
+  z-index: 1100;
+  &.visible {
+    bottom: 0;
+  }
   a {
     color: $secColor;
     opacity: 1;
@@ -423,9 +434,6 @@ footer {
       color: $secColor;    
       opacity: .6;
     }
-  }
-  #contact-details {
-    height: 50vh;
   }
 }
 

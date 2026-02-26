@@ -699,9 +699,10 @@ header {
   header.active div[class*="menu-1"] {
     left: 0; }
 
-.content:not(#content-home) {
-  margin-top: 100px;
-  margin-bottom: 100px; }
+.content {
+  margin-bottom: 300px; }
+  .content:not(#content-home) {
+    margin-top: 100px; }
 
 .home project .overall:hover + .project-title, .blog project .overall:hover + .project-title {
   opacity: 1;
@@ -789,8 +790,16 @@ header {
   text-align: left; }
 
 footer {
+  height: 100vh;
+  width: 100vw;
+  position: fixed;
+  bottom: -100dvh;
   background-color: #323232;
-  color: #fffff7; }
+  color: #fffff7;
+  transition: all .75s;
+  z-index: 1100; }
+  footer.visible {
+    bottom: 0; }
   footer a {
     color: #fffff7;
     opacity: 1;
@@ -798,8 +807,6 @@ footer {
     footer a:hover {
       color: #fffff7;
       opacity: .6; }
-  footer #contact-details {
-    height: 50vh; }
 
 @media screen and (max-width: 768px) {
   .t-hidden {
