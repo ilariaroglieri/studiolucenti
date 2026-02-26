@@ -14,21 +14,27 @@
         </div>
       </section>
       
-      <?php if ( have_rows( 'featured_projects' ) ) : ?>
-        <div class="d-flex flex-row wrap v-center">
-          <?php while ( have_rows( 'featured_projects' ) ) : the_row();
-            $project = get_sub_field( 'featured_project' );
-            $home_width = get_sub_field( 'override_width' );
+      <?php 
+        $rows = get_field('featured_projects');
 
-            if ($project) :
+        if ( $rows ):
+          shuffle($rows);
+        ?>
+        <div class="d-flex flex-row wrap v-center">
+          <?php foreach ( $rows as $row ) :
+            $project = $row['featured_project'];
+            $home_width = $row['override_width'];
+
+            if ( $project ) :
               $post = $project;
-              setup_postdata( $post ); 
-              
+              setup_postdata( $post );
+
               displayGridProject($home_width);
-            
-              wp_reset_postdata(); 
-            endif; 
-          endwhile; ?>
+
+              wp_reset_postdata();
+
+            endif;
+          endforeach; ?>
         </div>
       <?php endif; ?>
       
