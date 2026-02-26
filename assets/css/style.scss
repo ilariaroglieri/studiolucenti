@@ -190,13 +190,13 @@ header {
   top: 0;
   left: 0;
   padding: $half-spacing $spacing;
-  z-index: 10000;
+  z-index: 1000;
   width: 100%;
   background-color: $secColor;
   transition: all .5s;
   #inner-header {
     position: relative;
-    z-index: 10000;
+    z-index: 1000;
     transition: all .5s;
   }
   div[class*="menu-1"]{
@@ -210,7 +210,7 @@ header {
     padding: 0 $spacing;
     background-color: $primaryColor;
     color: $secColor;
-    z-index: 9999;
+    z-index: 999;
     transition: left 1s cubic-bezier(0.22, 1, 0.36, 1);
     ul li {
       margin-bottom: $half-spacing/2;
@@ -241,7 +241,7 @@ header {
     background: transparent;
     opacity: 1;
     cursor: pointer;
-    z-index: 10001;
+    z-index: 1001;
     span {
       position: relative;
       height: 2px;
@@ -367,6 +367,47 @@ header {
         padding-bottom: $half-spacing*3;
         margin-bottom: 0;
       }
+    }
+  }
+}
+
+// simplelightbox
+.sl-overlay {
+  opacity: .9;
+  background-color: $secColor;
+}
+.sl-wrapper {
+  button {
+    color: $primaryColor;
+    transition: all .5s;
+    &:hover {
+      opacity: .5;
+    }
+  }
+  .sl-close {
+    @extend .s-regular;
+    width: unset;
+    top: unset;
+    right: $spacing;
+    bottom: $half-spacing;
+    margin-top: 0;
+    margin-right: 0;
+  }
+  .sl-counter {
+    @extend .s-regular;
+    top: unset;
+    left: $spacing;
+    bottom: $half-spacing;
+    pointer-events: none;
+  }
+  .sl-navigation {
+    button.sl-next {
+      right: $spacing;
+      text-align: right;
+    }
+    button.sl-prev {
+      left: $spacing;
+      text-align: left;
     }
   }
 }

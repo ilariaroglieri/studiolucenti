@@ -20,7 +20,7 @@ Version: 1.0
 .s-medium {
   font-size: 30px; }
 
-.s-regular {
+.s-regular, .sl-wrapper .sl-close, .sl-wrapper .sl-counter {
   font-size: 22px; }
 
 .s-small, .wysiwyg.s-small * {
@@ -627,13 +627,13 @@ header {
   top: 0;
   left: 0;
   padding: 24px 48px;
-  z-index: 10000;
+  z-index: 1000;
   width: 100%;
   background-color: #fffff7;
   transition: all .5s; }
   header #inner-header {
     position: relative;
-    z-index: 10000;
+    z-index: 1000;
     transition: all .5s; }
   header div[class*="menu-1"] {
     display: flex;
@@ -646,7 +646,7 @@ header {
     padding: 0 48px;
     background-color: #323232;
     color: #fffff7;
-    z-index: 9999;
+    z-index: 999;
     transition: left 1s cubic-bezier(0.22, 1, 0.36, 1); }
     header div[class*="menu-1"] ul li {
       margin-bottom: 12px; }
@@ -672,7 +672,7 @@ header {
     background: transparent;
     opacity: 1;
     cursor: pointer;
-    z-index: 10001; }
+    z-index: 1001; }
     header .menu-toggle span {
       position: relative;
       height: 2px;
@@ -759,6 +759,34 @@ header {
   .single .content-module.dark:has(+ .dark) {
     padding-bottom: 72px;
     margin-bottom: 0; }
+
+.sl-overlay {
+  opacity: .9;
+  background-color: #fffff7; }
+
+.sl-wrapper button {
+  color: #323232;
+  transition: all .5s; }
+  .sl-wrapper button:hover {
+    opacity: .5; }
+.sl-wrapper .sl-close {
+  width: unset;
+  top: unset;
+  right: 48px;
+  bottom: 24px;
+  margin-top: 0;
+  margin-right: 0; }
+.sl-wrapper .sl-counter {
+  top: unset;
+  left: 48px;
+  bottom: 24px;
+  pointer-events: none; }
+.sl-wrapper .sl-navigation button.sl-next {
+  right: 48px;
+  text-align: right; }
+.sl-wrapper .sl-navigation button.sl-prev {
+  left: 48px;
+  text-align: left; }
 
 footer {
   background-color: #323232;

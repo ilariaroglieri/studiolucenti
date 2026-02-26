@@ -28,7 +28,7 @@
   }
 
   // img attachment defaults
-  function render_media($medium_id, $cols, $is_hero = false) {
+  function render_media($medium_id, $cols, $is_hero = false, $isLightbox = false) {
     $meta = wp_get_attachment_metadata($medium_id);
 
     if (!$meta) {
@@ -63,9 +63,17 @@
         <video class="el bnd" muted loop autoplay playsinline>
           <source src="<?= esc_url(wp_get_attachment_url($medium_id)); ?>">
         </video>
-      <?php else: 
-        echo wp_get_attachment_image($medium_id, $size, false, ['class' => 'project_image', 'sizes' => $sizes, 'loading' => $loading]);
-      endif; ?>
+      <?php else: ?>
+        <?php if ($isLightbox): 
+          $attachmentUrl = wp_get_attachment_image_url($medium_id, 'full-width');
+          ?>
+          <a class="single-lightbox-el" href="<?= $attachmentUrl; ?>">
+           <?= wp_get_attachment_image($medium_id, $size, false, ['class' => 'project_image', 'sizes' => $sizes, 'loading' => $loading]); ?>
+          </a>
+        <?php else:
+          echo wp_get_attachment_image($medium_id, $size, false, ['class' => 'project_image', 'sizes' => $sizes, 'loading' => $loading]); ?>
+        <?php endif; ?>
+      <?php endif; ?>
     </div>
 <?php }
 
