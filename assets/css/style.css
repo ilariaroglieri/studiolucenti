@@ -579,6 +579,9 @@ Version: 1.0
   max-width: 500px; }
 
 /* basic elements */
+html {
+  scroll-behavior: smooth; }
+
 body {
   font-family: 'PP Mori', sans-serif;
   color: #323232;

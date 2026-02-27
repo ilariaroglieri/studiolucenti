@@ -33,15 +33,23 @@ jQuery(document).ready(function($) {
 
   checkScroll();
 
-
-// --- Hamburger menu
+  // --- Hamburger menu
   $('.menu-toggle').click(function() {
     $(this).toggleClass('open');
     $('header').toggleClass('active');
     $('body').toggleClass('blocked');
   });
 
-// --- Lightbox
+  // --- Footer button
+  $('.contact a').on('click', function(e) {
+    e.preventDefault();
+    $('.menu-toggle').removeClass('open');
+    $('header').removeClass('active');
+    window.scrollTo(0, document.body.scrollHeight);
+  });
+
+
+  // --- Lightbox
   if ($('body').hasClass('single')) {
     var lightbox = $('a.single-lightbox-el').simpleLightbox({
       showCounter: true, 

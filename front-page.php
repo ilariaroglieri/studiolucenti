@@ -18,7 +18,7 @@
         $rows = get_field('featured_projects');
 
         if ( $rows ):
-          shuffle($rows);
+          // shuffle($rows);
         ?>
         <div class="d-flex flex-row wrap v-center">
           <?php foreach ( $rows as $row ) :

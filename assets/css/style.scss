@@ -131,6 +131,10 @@ Version: 1.0
 
 
 /* basic elements */
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   font-family: 'PP Mori', sans-serif;
   color: $primaryColor;

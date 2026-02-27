@@ -1,4 +1,4 @@
-	<footer id="footer">
+	<footer id="contact">
 		<div class="container full-height spacing-p-t-1 spacing-p-b-1 d-flex d-column">
 			<div class="d-flex flex-row spacing-b-3">
 				<div class="d-whole">
