@@ -173,7 +173,7 @@ img, video {
 }
 
 .container {
-  width: calc(100% - $double-spacing);
+  width: calc(100% - #{$double-spacing});
   margin-left: $spacing;
   margin-right: $spacing;
 }

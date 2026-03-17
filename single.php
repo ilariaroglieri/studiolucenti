@@ -179,9 +179,42 @@
 
 </div>
 
-<div class="navigation">
-  <div class="navi previous"><?php previous_post_link( '%link','⟵', false ); ?></div>
-  <div class="navi next"><?php next_post_link( '%link','⟶', false ); ?></div>
+
+<?php 
+  $next = get_circular_adjacent_post(get_the_ID(), '', '', 'next');
+  $prev = get_circular_adjacent_post(get_the_ID(), '', '', 'prev');
+?>
+
+<div class="navi container spacing-b-6">
+  <div class="d-flex flex-row m-column">
+    <?php if ($next): 
+      $title = get_the_title($next->ID);
+      $permalink = get_the_permalink($next->ID);
+      $featured_medium = get_field('featured_medium', $next->ID);
+      $medium_id = get_medium_id_from_acf($featured_medium); 
+      ?>
+      <project id="post-<?php the_ID(); ?>" class="d-half m-whole p-relative spacing-b-3 spacing-t-3">
+        <a class="p-absolute overall" href="<?= $permalink; ?>"></a>
+        <h2 class="project-title s-regular spacing-b-half"><?= esc_html($title); ?></h2>
+        <?php render_media($medium_id, 6, false); ?>
+      </project>
+      
+    <?php endif; ?>
+
+    <?php if ($prev): 
+      $title = get_the_title($prev->ID);
+      $permalink = get_the_permalink($prev->ID);
+      $featured_medium = get_field('featured_medium', $prev->ID);
+      $medium_id = get_medium_id_from_acf($featured_medium); 
+      ?>
+      <project id="post-<?php the_ID(); ?>" class="d-half m-whole p-relative spacing-b-3 spacing-t-3">
+        <a class="p-absolute overall" href="<?= $permalink; ?>"></a>
+        <h2 class="project-title s-regular spacing-b-half"><?= esc_html($title); ?></h2>
+        <?php render_media($medium_id, 6, false); ?>
+      </project>
+      
+    <?php endif; ?>
+  </div>
 </div>
 
 <?php get_footer(); ?>

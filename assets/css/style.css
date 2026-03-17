@@ -612,7 +612,7 @@ img, video {
   height: auto; }
 
 .container {
-  width: calc(100% - $double-spacing);
+  width: calc(100% - 96px);
   margin-left: 48px;
   margin-right: 48px; }
 
