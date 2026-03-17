@@ -811,6 +811,48 @@ footer {
       color: #fffff7;
       opacity: .6; }
 
+:root {
+  --plyr-color-main: $primaryColor;
+  --plyr-badge-text-color: #f7f7f7;
+  --plyr-captions-text-color: #f7f7f7;
+  --plyr-video-control-color: #f7f7f7;
+  --plyr-audio-controls-background: #f7f7f7;
+  --plyr-range-thumb-background: #e7e7e7;
+  --plyr-video-control-color-hover: #e7e7e7;
+  --plyr-audio-control-color-hover: #e7e7e7;
+  --plyr-badge-border-radius: 0; }
+
+.plyr__control.plyr__control--overlaid svg {
+  --plyr-control-icon-size: 50px; }
+.plyr__control.plyr__control--overlaid[data-plyr='play'] svg {
+  display: none; }
+.plyr__control.plyr__control--overlaid[data-plyr='play']:before {
+  content: '';
+  display: block;
+  width: 50px;
+  height: 50px;
+  background: url("../img/plyr-play-big.svg") no-repeat center center;
+  background-size: contain; }
+
+.plyr__controls__item.plyr__control[data-plyr='play'] svg {
+  display: none; }
+.plyr__controls__item.plyr__control[data-plyr='play']:before {
+  content: '';
+  display: block;
+  width: 20px;
+  height: 20px;
+  background: url("../img/plyr-play.svg") no-repeat center center;
+  background-size: contain; }
+.plyr__controls__item.plyr__control.plyr__control--pressed svg {
+  display: none; }
+.plyr__controls__item.plyr__control.plyr__control--pressed:before {
+  content: '';
+  display: block;
+  width: 20px;
+  height: 20px;
+  background: url("../img/plyr-pause.svg") no-repeat left center;
+  background-size: contain; }
+
 @media screen and (max-width: 768px) {
   .t-hidden {
     display: none; }

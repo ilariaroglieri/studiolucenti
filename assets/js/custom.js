@@ -1,4 +1,5 @@
 const player = new Plyr('#hls-video');
+
 const video = document.getElementById('hls-video');
 const source = video.querySelector('source');
 const src = source.getAttribute('src');
