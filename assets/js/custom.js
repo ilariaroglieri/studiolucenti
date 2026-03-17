@@ -1,26 +1,21 @@
-function checkScroll() {
-	var currentScrollPos = $(window).scrollTop();
+const player = new Plyr('#hls-video');
+const video = document.getElementById('hls-video');
+const source = video.querySelector('source');
+const src = source.getAttribute('src');
 
-  if ($('body').hasClass('home')) {
-  	if (currentScrollPos > window.innerHeight) {
-  		$('.icon, #logo, .menu-toggle').removeClass('white');
-    } else {
-  		$('.icon, #logo, .menu-toggle').addClass('white');
-    }
-  }
+if (Hls.isSupported()) {
+  const hls = new Hls();
+  hls.loadSource(src);
+  hls.attachMedia(player.media);
 }
 
-//-----------DOCUMENT.READY----------------
 
+//-----------DOCUMENT.READY----------------
 jQuery(document).ready(function($) {
 
-// --- header behaviour
-	
   // scroll events
   var prevScrollPos = $(window).scrollTop();
   $(window).scroll(function() {
-    checkScroll();
-
     var currentScrollPos = $(window).scrollTop();
     if (prevScrollPos > currentScrollPos && prevScrollPos > 0) {
 	    $('header').addClass('visible')
@@ -30,8 +25,6 @@ jQuery(document).ready(function($) {
 
 	  prevScrollPos = currentScrollPos;
   });
-
-  checkScroll();
 
   // --- Hamburger menu
   $('.menu-toggle').click(function() {
