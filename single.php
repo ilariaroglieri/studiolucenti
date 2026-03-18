@@ -17,9 +17,11 @@
             <div class="d-whole">
               <h1 class="s-medium spacing-b-half"><?php the_title(); ?></h1>
               <?php if ($featured_embed): ?>
-                <video id="hls-video" controls playsinline>
-                  <source src="<?= esc_url($featured_embed); ?>?>">
-                </video>
+                <div class="video-container">
+                  <video id="hls-video" controls playsinline>
+                    <source src="<?= esc_url($featured_embed); ?>?>">
+                  </video>
+                </div>
               <?php else: 
                 render_media($medium_id, 12, true); 
               endif; ?>
