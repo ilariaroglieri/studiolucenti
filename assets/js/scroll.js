@@ -98,8 +98,22 @@ document.addEventListener("DOMContentLoaded", function(event){
           once: true
         }
       });
-
     });
+
+    // about
+    gsap.from('#info-list .text-element, #clients-list .text-element', {
+      yPercent: 20,
+      opacity: 0,
+      duration: 1.2,
+      ease: "power3.out",
+      stagger: 0.15,
+      scrollTrigger: {
+        trigger: '#infos',
+        start: "top 85%",
+        once: false
+      }
+    });
+
 
   }, false);
 

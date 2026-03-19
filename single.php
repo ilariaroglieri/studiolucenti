@@ -17,7 +17,7 @@
             <div class="d-whole">
               <h1 class="text-element s-medium spacing-b-half"><?php the_title(); ?></h1>
               <?php if ($featured_embed): ?>
-                <div class="element video-container">
+                <div class="video-container">
                   <video id="hls-video" controls playsinline>
                     <source src="<?= esc_url($featured_embed); ?>?>">
                   </video>

@@ -7,7 +7,7 @@
       <section id="text-section" class="spacing-t-8">
         <div class="d-flex flex-row">
           <div class="d-10-twelfth m-whole">
-            <div class="wysiwyg s-medium">
+            <div class="text-element-lines wysiwyg s-medium">
               <?php the_content(); ?>
             </div>
           </div>
@@ -20,8 +20,8 @@
           
           <div id="info-list" class="d-two-thirds t-half m-whole">
             <?php if ($maintitle): ?>
-              <div id="info-main-title" class="spacing-b-1">
-                <h2 class="s-xxsmall uppercase"><?= $maintitle ?></h2>
+              <div id="info-main-title" class="text-element spacing-b-1">
+                <h2 class="s-xxsmall uppercase"><?= $maintitle; ?></h2>
               </div>
             <?php endif; ?>
 
@@ -29,7 +29,7 @@
               $title = get_sub_field( 'info_title' );
               $text = get_sub_field( 'info_text' ); 
             ?>
-              <div class="info spacing-b-2">
+              <div class="text-element info spacing-b-2">
                 <?php if ($title): ?>
                   <h3 class="s-xxsmall uppercase spacing-b-tiny"><?= $title; ?></h3>
                 <?php endif; ?>
@@ -48,11 +48,11 @@
         if( $terms ): ?>
 
           <div id="clients-list" class="d-one-third t-half m-whole">
-            <div id="clients-main-title" class="spacing-b-1">
+            <div id="clients-main-title" class="text-element spacing-b-1">
               <h2 class="s-xxsmall uppercase">Selected clients</h2>
             </div>
             <?php foreach( $terms as $term ): ?>
-              <p class="s-regular"><?php echo esc_html( $term->name ); ?></p>
+              <p class="s-regular text-element"><?php echo esc_html( $term->name ); ?></p>
             <?php endforeach; ?>
           </div>
         <?php endif; ?>

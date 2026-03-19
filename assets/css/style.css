@@ -877,10 +877,20 @@ footer {
     margin-left: 24px;
     margin-right: 24px; }
 
-  .home .full-height {
+  .container {
+    width: calc(100% - 48px);
+    margin-left: 24px;
+    margin-right: 24px; }
+
+  .home #intro-text {
     height: unset;
     margin-top: 10vh;
-    margin-bottom: 10vh; } }
+    margin-bottom: 10vh; }
+
+  header {
+    padding: 24px; }
+    header .menu-toggle {
+      right: 24px; } }
 @media screen and (max-width: 640px) {
   .m-hidden {
     display: none; }

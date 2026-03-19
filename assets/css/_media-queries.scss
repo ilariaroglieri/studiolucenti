@@ -34,10 +34,23 @@
     margin-right: #{$half-spacing};
   }
 
-  .home .full-height {
+  .container {
+    width: calc(100% - #{$spacing});
+    margin-left: $half-spacing;
+    margin-right: $half-spacing;
+  }
+
+  .home #intro-text {
     height: unset;
     margin-top: 10vh;
     margin-bottom: 10vh;
+  }
+
+  header {
+    padding: $half-spacing;
+    .menu-toggle {
+      right: $half-spacing;
+    }
   }
 }
 
