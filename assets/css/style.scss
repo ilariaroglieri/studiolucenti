@@ -284,7 +284,12 @@ header {
 }
 
 .content {
-  margin-bottom: 300px;
+  margin-bottom: 50vh;
+  opacity: 0;
+  transition: opacity 1s;
+  &.loaded {
+    opacity: 1;
+  }
   &:not(#content-home) {
     margin-top: 100px;
   }

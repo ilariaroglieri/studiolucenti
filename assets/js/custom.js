@@ -13,27 +13,6 @@ if (video) {
   }
 }
 
-// group projects into rows to animate them sequentially
-function groupByRows(elements) {
-  const rows = [];
-
-  elements.forEach((el) => {
-    const top = el.offsetTop;
-
-    let row = rows.find(r => Math.abs(r.top - top) < 5);
-
-    if (!row) {
-      row = { top, items: [] };
-      rows.push(row);
-    }
-
-    row.items.push(el);
-  });
-
-  return rows;
-}
-
-
 //-----------DOCUMENT.READY----------------
 jQuery(document).ready(function($) {
 
@@ -64,6 +43,8 @@ jQuery(document).ready(function($) {
     $('header').removeClass('active');
     window.scrollTo(0, document.body.scrollHeight);
   });
+
+  $('.content').addClass('loaded');
 
 
   // --- Lightbox

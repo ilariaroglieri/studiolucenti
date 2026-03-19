@@ -703,7 +703,11 @@ header {
     left: 0; }
 
 .content {
-  margin-bottom: 300px; }
+  margin-bottom: 50vh;
+  opacity: 0;
+  transition: opacity 1s; }
+  .content.loaded {
+    opacity: 1; }
   .content:not(#content-home) {
     margin-top: 100px; }
 

@@ -15,9 +15,9 @@
         <section id="hero-section" class="container spacing-b-2">
           <div class="d-flex flex-row">
             <div class="d-whole">
-              <h1 class="s-medium spacing-b-half"><?php the_title(); ?></h1>
+              <h1 class="text-element s-medium spacing-b-half"><?php the_title(); ?></h1>
               <?php if ($featured_embed): ?>
-                <div class="video-container">
+                <div class="element video-container">
                   <video id="hls-video" controls playsinline>
                     <source src="<?= esc_url($featured_embed); ?>?>">
                   </video>
@@ -34,7 +34,7 @@
       <section id="text-section" class="container spacing-t-2 spacing-b-3">
         <div class="d-flex flex-row m-column">
           <div class="d-7-twelfth m-whole">
-            <div class="wysiwyg s-regular">
+            <div class="text-element-lines wysiwyg s-regular">
               <?php the_content(); ?>
             </div>
           </div>
@@ -49,14 +49,14 @@
               ?>
               
               <?php if ($year): ?>
-                <div class="project-info">
+                <div class="text-element project-info">
                   <p class="s-xxsmall uppercase">Year</p>
                   <h3 class="s-small"><?= $year; ?></h3>
                 </div>
               <?php endif; ?>
 
               <?php if ($client): ?>
-                <div class="project-info">
+                <div class="text-element project-info">
                   <p class="s-xxsmall uppercase">Client</p>
                   <h3 class="s-small"><?= $client; ?></h3>
                 </div>
@@ -64,7 +64,7 @@
 
               <?php if( have_rows('credits') ): while ( have_rows('credits') ) : the_row(); ?>
 
-                <div class="project-info">
+                <div class="text-element project-info">
                   <p class="s-xxsmall uppercase"><?php the_sub_field('role'); ?></p>
                   <h3 class="s-small"><?php the_sub_field('name'); ?></h3>
                 </div>
@@ -95,7 +95,7 @@
                 $textAlignment = get_sub_field('text_alignment');
               ?>
               <div class="d-flex flex-row <?= $textAlignment; ?>">
-                <div class="d-two-thirds t-whole">
+                <div class="text-element-lines d-two-thirds t-whole">
                   <div class="wysiwyg s-regular">
                     <?= $text; ?>
                   </div>
@@ -110,12 +110,12 @@
                 $medium_id   = get_medium_id_from_acf($medium); 
               ?>
                 <div class="d-flex flex-row <?= $alignment; ?>">
-                  <div class="d-half t-whole">
+                  <div class="text-element d-half t-whole">
                     <div class="wysiwyg s-regular">
                       <?= $text; ?>
                     </div>
                   </div>
-                  <div class="d-half t-whole">
+                  <div class="element d-half t-whole">
                     <?php render_media($medium_id, 6, false, true); ?>
                   </div>
                 </div>
@@ -157,7 +157,7 @@
                     $medium_id = get_medium_id_from_acf($m);
                   ?>
 
-                  <div class="<?= $class; ?> m-whole">
+                  <div class="element <?= $class; ?> m-whole">
                     <?php render_media($medium_id, $imgSize, false, true); ?>
                   </div>
 
@@ -192,7 +192,7 @@
         $featured_medium = get_field('featured_medium', $next->ID);
         $medium_id = get_medium_id_from_acf($featured_medium); 
         ?>
-        <project id="post-<?php the_ID(); ?>" class="d-half m-whole p-relative spacing-b-3 spacing-t-3">
+        <project id="post-<?php the_ID(); ?>" class="project d-half m-whole p-relative spacing-b-3 spacing-t-3">
           <a class="p-absolute overall" href="<?= $permalink; ?>"></a>
           <h2 class="project-title s-regular spacing-b-half"><?= esc_html($title); ?></h2>
           <?php render_media($medium_id, 6, false); ?>
@@ -206,7 +206,7 @@
         $featured_medium = get_field('featured_medium', $prev->ID);
         $medium_id = get_medium_id_from_acf($featured_medium); 
         ?>
-        <project id="post-<?php the_ID(); ?>" class="d-half m-whole p-relative spacing-b-3 spacing-t-3">
+        <project id="post-<?php the_ID(); ?>" class="project d-half m-whole p-relative spacing-b-3 spacing-t-3">
           <a class="p-absolute overall" href="<?= $permalink; ?>"></a>
           <h2 class="project-title s-regular spacing-b-half"><?= esc_html($title); ?></h2>
           <?php render_media($medium_id, 6, false); ?>

@@ -7,7 +7,7 @@
       <section id="text-section" class="d-flex center full-height">
         <div class="d-flex flex-row">
           <div class="d-10-twelfth m-whole">
-            <div class="wysiwyg s-medium">
+            <div class="text-element-lines wysiwyg s-medium">
               <?php the_content(); ?>
             </div>
           </div>

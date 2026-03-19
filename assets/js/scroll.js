@@ -20,6 +20,7 @@ document.addEventListener("DOMContentLoaded", function(event){
   // Disable lag smoothing in GSAP to prevent any delay in scroll animations
     gsap.ticker.lagSmoothing(0);
 
+    // home + archive
     const projects = gsap.utils.toArray('.project');
     const rows = groupByRows(projects);
 
@@ -30,7 +31,7 @@ document.addEventListener("DOMContentLoaded", function(event){
         opacity: 0,
         duration: 1.2,
         ease: "power3.out",
-        stagger: 0.25,
+        stagger: 0.5,
         scrollTrigger: {
           trigger: row.items[0],
           start: "top 85%",
@@ -39,6 +40,74 @@ document.addEventListener("DOMContentLoaded", function(event){
       });
     });
 
+    // single page
+    gsap.utils.toArray('.single .flex-row').forEach((row) => {
+  
+      const items = row.querySelectorAll('.element');
+
+      gsap.from(items, {
+        yPercent: 20,
+        skewY: 3,
+        opacity: 0,
+        duration: 1.2,
+        ease: "power3.out",
+        stagger: 0.5,
+        scrollTrigger: {
+          trigger: row,
+          start: "top 85%",
+          once: false
+        }
+      });
+
+    });
+
+    // single page text element
+    gsap.utils.toArray('.single .flex-row').forEach((row) => {
+  
+      const items = row.querySelectorAll('.text-element');
+
+      gsap.from(items, {
+        yPercent: 20,
+        opacity: 0,
+        duration: 1.2,
+        ease: "power3.out",
+        stagger: 0.15,
+        scrollTrigger: {
+          trigger: row,
+          start: "top 85%",
+          once: false
+        }
+      });
+
+    });
+
+    gsap.utils.toArray('.text-element-lines').forEach((el) => {
+      splitLines(el);
+
+      const lines = el.querySelectorAll('.line');
+
+      gsap.from(lines, {
+        yPercent: 110,
+        opacity: 0,
+        duration: .5,
+        ease: "power3.out",
+        stagger: 0.08,
+        scrollTrigger: {
+          trigger: el,
+          start: "top 85%",
+          once: true
+        }
+      });
+
+    });
+
   }, false);
+
+  window.addEventListener('resize', () => {
+    document.querySelectorAll('.text-element-lines').forEach(el => {
+      splitLines(el);
+    });
+    ScrollTrigger.refresh();
+  });
 
 });
