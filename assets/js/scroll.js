@@ -1,0 +1,44 @@
+// wait until DOM is ready
+document.addEventListener("DOMContentLoaded", function(event){
+
+  //wait until images, links, fonts, stylesheets, and js is loaded
+  window.addEventListener("load", function(e){
+
+    const lenis = new Lenis({
+      autoRaf: true,
+    });
+
+    // Synchronize Lenis scrolling with GSAP's ScrollTrigger plugin
+    lenis.on('scroll', ScrollTrigger.update);
+
+    // Add Lenis's requestAnimationFrame (raf) method to GSAP's ticker
+    // This ensures Lenis's smooth scroll animation updates on each GSAP tick
+    gsap.ticker.add((time) => {
+      lenis.raf(time * 1000); // Convert time from seconds to milliseconds
+    });
+
+  // Disable lag smoothing in GSAP to prevent any delay in scroll animations
+    gsap.ticker.lagSmoothing(0);
+
+    const projects = gsap.utils.toArray('.project');
+    const rows = groupByRows(projects);
+
+    rows.forEach((row) => {
+      gsap.from(row.items, {
+        yPercent: 20,
+        skewY: 3,
+        opacity: 0,
+        duration: 1.2,
+        ease: "power3.out",
+        stagger: 0.25,
+        scrollTrigger: {
+          trigger: row.items[0],
+          start: "top 85%",
+          once: false
+        }
+      });
+    });
+
+  }, false);
+
+});

@@ -292,6 +292,10 @@ header {
 
 .home, .blog {
   project {
+    overflow: hidden;
+    & > * {
+      transform-origin: left top;
+    }
     .overall:hover {
       // & ~ .media-container {
       //   transform: skew(0, 5deg);

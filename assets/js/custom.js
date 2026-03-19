@@ -1,13 +1,36 @@
 const player = new Plyr('#hls-video');
 
 const video = document.getElementById('hls-video');
-const source = video.querySelector('source');
-const src = source.getAttribute('src');
 
-if (Hls.isSupported()) {
-  const hls = new Hls();
-  hls.loadSource(src);
-  hls.attachMedia(player.media);
+if (video) {  
+  const source = video.querySelector('source');
+  const src = source.getAttribute('src');
+
+  if (Hls.isSupported()) {
+    const hls = new Hls();
+    hls.loadSource(src);
+    hls.attachMedia(player.media);
+  }
+}
+
+// group projects into rows to animate them sequentially
+function groupByRows(elements) {
+  const rows = [];
+
+  elements.forEach((el) => {
+    const top = el.offsetTop;
+
+    let row = rows.find(r => Math.abs(r.top - top) < 5);
+
+    if (!row) {
+      row = { top, items: [] };
+      rows.push(row);
+    }
+
+    row.items.push(el);
+  });
+
+  return rows;
 }
 
 

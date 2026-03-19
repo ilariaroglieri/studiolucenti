@@ -19,11 +19,27 @@
 	}
 	add_action('wp_enqueue_scripts', 'custom_video_player_scripts');
 
-	function lb_scripts() {
+	function lightbox_scripts() {
 		wp_enqueue_script( 'simplelightbox', get_stylesheet_directory_uri() . '/assets/js/simplelightbox/simple-lightbox.js', array(), '1.0.0', true );
 		wp_enqueue_style( 'simplelightbox-style', get_stylesheet_directory_uri() . '/assets/js/simplelightbox/simplelightbox.css' );
 	}
-	add_action( 'wp_enqueue_scripts', 'lb_scripts' );
+	add_action( 'wp_enqueue_scripts', 'lightbox_scripts' );
+
+	function lenis_scripts() {
+		wp_enqueue_script( 'lenis', 'https://unpkg.com/lenis@1.3.19/dist/lenis.min.js', array(), '', true );
+	}
+	add_action( 'wp_enqueue_scripts', 'lenis_scripts' );
+
+	function theme_gsap_script(){
+    // The core GSAP library
+    wp_enqueue_script( 'gsap-js', 'https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/gsap.min.js', array(), false, true );
+    // ScrollTrigger - with gsap.js passed as a dependency
+    wp_enqueue_script( 'gsap-st', 'https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/ScrollTrigger.min.js', array('gsap-js'), false, true );
+    // Your animation code file - with gsap.js passed as a dependency
+    wp_enqueue_script( 'gsap-js2', get_template_directory_uri() . '/assets/js/scroll.js', array('gsap-js'), false, true );
+	}
+
+	add_action( 'wp_enqueue_scripts', 'theme_gsap_script' );
 
 	function js_scripts() {
 		wp_enqueue_script( 'custom', get_stylesheet_directory_uri() . '/assets/js/custom.js', array(), '1.0.0', true );
