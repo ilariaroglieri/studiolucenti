@@ -711,6 +711,10 @@ header {
   .content:not(#content-home) {
     margin-top: 100px; }
 
+.home .text-element-lines .line, .blog .text-element-lines .line {
+  overflow: hidden; }
+.home .text-element-lines .line-inner, .blog .text-element-lines .line-inner {
+  display: inline-block; }
 .home project, .blog project {
   overflow: hidden; }
   .home project > *, .blog project > * {

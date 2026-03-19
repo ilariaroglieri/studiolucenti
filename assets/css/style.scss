@@ -296,6 +296,15 @@ header {
 }
 
 .home, .blog {
+  .text-element-lines {
+    .line {
+      // display: block;
+      overflow: hidden;
+    }
+    .line-inner {
+      display: inline-block;
+    }
+  }
   project {
     overflow: hidden;
     & > * {

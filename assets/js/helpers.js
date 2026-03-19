@@ -1,34 +1,40 @@
 // split text in lines
-function splitLines(element) {
-  const words = element.innerText.split(" ");
-  element.innerHTML = "";
+function splitLines(el) {
+
+  const words = el.innerText.split(" ");
+  el.innerHTML = words.map(word => `<span class="word">${word}</span>`).join(" ");
+
+  const wordEls = el.querySelectorAll('.word');
 
   const lines = [];
-  let currentLine = "";
+  let currentLine = [];
+  let currentTop = null;
 
-  words.forEach((word) => {
-    const testLine = currentLine + word + " ";
-    element.innerHTML = `<span>${testLine}</span>`;
+  wordEls.forEach((word) => {
+    const top = word.offsetTop;
 
-    const span = element.querySelector("span");
+    if (currentTop === null) currentTop = top;
 
-    if (span.offsetHeight > span.scrollHeight) {
+    if (Math.abs(top - currentTop) > 5) {
       lines.push(currentLine);
-      currentLine = word + " ";
-    } else {
-      currentLine = testLine;
+      currentLine = [];
+      currentTop = top;
     }
+
+    currentLine.push(word);
   });
 
-  lines.push(currentLine);
+  if (currentLine.length) lines.push(currentLine);
 
-  element.innerHTML = lines
-    .map(line => `
+  // ricostruisci HTML
+  el.innerHTML = lines.map(line => {
+    const lineContent = line.map(w => w.innerText).join(" ");
+    return `
       <span class="line">
-        <span class="line-inner">${line}</span>
+        <span class="line-inner">${lineContent}</span>
       </span>
-    `)
-    .join("");
+    `;
+  }).join("");
 }
 
 // group projects into rows to animate them sequentially

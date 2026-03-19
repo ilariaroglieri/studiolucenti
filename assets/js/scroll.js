@@ -89,9 +89,9 @@ document.addEventListener("DOMContentLoaded", function(event){
       gsap.from(lines, {
         yPercent: 110,
         opacity: 0,
-        duration: .5,
+        duration: 1,
         ease: "power3.out",
-        stagger: 0.08,
+        stagger: 0.15,
         scrollTrigger: {
           trigger: el,
           start: "top 85%",
