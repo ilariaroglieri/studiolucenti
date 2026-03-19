@@ -875,7 +875,12 @@ footer {
   .t-half {
     width: calc(50% - 48px);
     margin-left: 24px;
-    margin-right: 24px; } }
+    margin-right: 24px; }
+
+  .home .full-height {
+    height: unset;
+    margin-top: 10vh;
+    margin-bottom: 10vh; } }
 @media screen and (max-width: 640px) {
   .m-hidden {
     display: none; }

@@ -33,6 +33,12 @@
     margin-left: #{$half-spacing};
     margin-right: #{$half-spacing};
   }
+
+  .home .full-height {
+    height: unset;
+    margin-top: 10vh;
+    margin-bottom: 10vh;
+  }
 }
 
 @media screen and (max-width: $mobile) {
