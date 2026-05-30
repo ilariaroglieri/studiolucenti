@@ -16,6 +16,7 @@ $secColor: #fffff7;
       url('../fonts/PPMori-Regular.woff') format('woff'),
       url('../fonts/PPMori-Regular.ttf') format('ttf');
   font-weight: 400;
+  font-display: swap;
 }
 
 @font-face {
@@ -24,6 +25,7 @@ $secColor: #fffff7;
       url('../fonts/PPMori-Semibold.woff') format('woff'),
       url('../fonts/PPMori-Semibold.ttf') format('ttf');
   font-weight: 500;
+  font-display: swap;
 }
 
 .s-large { 

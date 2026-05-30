@@ -1,6 +1,6 @@
 <?php get_header(); ?>
 
-<section class="content" id="content-work">
+<section role="main" class="content" id="content-work">
   <div class="container">
     <?php if ( have_posts() ) : ?>
       <div class="d-flex flex-row wrap v-center">

@@ -215,7 +215,7 @@ header {
     background-color: $primaryColor;
     color: $secColor;
     z-index: 999;
-    transition: left 1s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: left .6s cubic-bezier(0.22, 1, 0.36, 1);
     ul li {
       margin-bottom: $half-spacing/2;
       a {
@@ -255,20 +255,7 @@ header {
       transform: rotate(0deg);
       transition: all .5s;
     }
-    &.open span:nth-child(1) {
-      transform: rotate(45deg);
-      transform-origin: top left;
-      left: .75vw;
-    }
-    &.open span:nth-child(2) {
-      width: 0%;
-      opacity: 0;
-    }
-    &.open span:nth-child(3) {
-      transform: rotate(-45deg);
-      transform-origin: bottom left;
-      left: .75vw;
-    }
+    
   }
   &.active {
     #inner-header #logo a {
@@ -284,7 +271,7 @@ header {
 }
 
 .content {
-  margin-bottom: 50vh;
+  margin-bottom: 65vh;
   opacity: 0;
   transition: opacity 1s;
   &.loaded {
@@ -297,12 +284,17 @@ header {
 
 .home, .blog {
   .text-element-lines {
+    &.hidden {
+      opacity: 0;
+    }
     .line {
       // display: block;
       overflow: hidden;
     }
-    .line-inner {
-      display: inline-block;
+  }
+  #video-reel {
+    .plyr__controls {
+      display: none;
     }
   }
   project {
@@ -353,11 +345,11 @@ header {
   }
 }
 
-.video-container { 
-  > div {
-    aspect-ratio: 16/8;
-  }
-}
+// .video-container { 
+//   > div {
+//     aspect-ratio: 16/9;
+//   }
+// }
 
 
 #text-section {

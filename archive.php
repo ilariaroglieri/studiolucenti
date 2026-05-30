@@ -1,6 +1,6 @@
 <?php get_header(); ?>
 
-<section class="content" id="content-archive">
+<section role="main" class="content" id="content-archive">
   <?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
 
     <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>

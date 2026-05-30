@@ -4,6 +4,8 @@ document.addEventListener("DOMContentLoaded", function(event){
   //wait until images, links, fonts, stylesheets, and js is loaded
   window.addEventListener("load", function(e){
 
+    console.log('loaded');
+
     const lenis = new Lenis({
       autoRaf: true,
     });

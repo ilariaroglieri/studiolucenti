@@ -93,8 +93,8 @@
     };
   ?>
 
-  <project id="post-<?php the_ID(); ?>" class="<?= $curr_size ?> project m-whole p-relative spacing-b-3 spacing-t-3">
-    <a class="p-absolute overall" href="<?php the_permalink(); ?>"></a>
+  <project id="post-<?php the_ID(); ?>" class="<?= $curr_size ?> project m-whole p-relative spacing-b-3 spacing-t-3 spacing-m-b-2 spacing-m-t-2">
+    <a class="p-absolute overall" aria-label="<?php the_title(); ?>" href="<?php the_permalink(); ?>"></a>
     <h2 class="project-title s-regular spacing-b-half"><?php the_title(); ?></h2>
     <?php render_media($medium_id, $width, false); ?>
   </project>

@@ -8,7 +8,7 @@
 	<!--[if IE 9 ]>
 	<html class="no-js ie9" <?php language_attributes(); ?>> <![endif]-->
 	<!--[if gt IE 9]><!-->
-<html> <!--<![endif]-->
+<html <?php language_attributes(); ?>> <!--<![endif]-->
 	<head>
 
 		<meta charset="<?php bloginfo( 'charset' ); ?>"/>
@@ -28,7 +28,7 @@
 	</head>
 
 	<body <?php body_class(); ?>>
-		<header class="p-fixed">
+		<header role="banner" class="p-fixed">
 			<div id="inner-header">
 				<div id="logo">
 					<h2 id="site-name" class="s-big">
@@ -37,7 +37,7 @@
 					</h2>
 				</div>
 
-				<button class="menu-toggle d-none">
+				<button aria-label="Main-Menu" class="menu-toggle d-none">
 					<span></span>
 					<span></span>
 					<span></span>

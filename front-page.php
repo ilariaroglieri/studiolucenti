@@ -1,6 +1,6 @@
 <?php get_header(); ?>
 
-<section class="content" id="content-home">
+<section role="main" class="content" id="content-home">
   <div class="container">
     <?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
 
@@ -13,6 +13,26 @@
           </div>
         </div>
       </section>
+
+      <?php
+        $hasReel = get_field('show_video_reel');
+        $reel = get_field('video_reel');
+
+        if ($hasReel == 1): ?>
+
+        <section id="video-reel">
+          <div class="d-flex flex-row">
+            <div class="d-whole">
+              <div class="video-container">
+                <video id="hls-video" playsinline loop autoplay>
+                  <source src="<?= esc_url($reel); ?>?>">
+                </video>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      <?php endif; ?>
       
       <?php 
         $rows = get_field('featured_projects');

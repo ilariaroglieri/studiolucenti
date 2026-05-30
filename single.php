@@ -1,6 +1,6 @@
 <?php get_header(); ?>
 
-<div class="content" id="content-single">
+<div role="main" class="content" id="content-single">
   <?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
 
     <project id="post-<?php the_ID(); ?>" <?php post_class('container-fluid'); ?>>
@@ -31,7 +31,7 @@
 
       <?php endif; ?>
 
-      <section id="text-section" class="container spacing-t-2 spacing-b-3">
+      <section id="text-section" class="container spacing-t-2 spacing-b-3 spacing-m-b-2">
         <div class="d-flex flex-row m-column">
           <div class="d-7-twelfth m-whole">
             <div class="text-element-lines wysiwyg s-regular">
@@ -41,36 +41,34 @@
 
           <div class="spacer d-1-twelfth m-hidden"></div>
 
-          <div class="d-one-third m-whole">
-            <div class="wysiwyg s-regular">
-              <?php
-                $year = get_post_terms($post->ID, 'project_year'); 
-                $client = get_post_terms($post->ID, 'project_client');
-              ?>
-              
-              <?php if ($year): ?>
-                <div class="text-element project-info">
-                  <p class="s-xxsmall uppercase">Year</p>
-                  <h3 class="s-small"><?= $year; ?></h3>
-                </div>
-              <?php endif; ?>
+          <div class="d-one-third m-whole spacing-m-t-2">
+            <?php
+              $year = get_post_terms($post->ID, 'project_year'); 
+              $client = get_post_terms($post->ID, 'project_client');
+            ?>
+            
+            <?php if ($year): ?>
+              <div class="text-element project-info">
+                <p class="s-xxsmall uppercase">Year</p>
+                <h3 class="s-small"><?= $year; ?></h3>
+              </div>
+            <?php endif; ?>
 
-              <?php if ($client): ?>
-                <div class="text-element project-info">
-                  <p class="s-xxsmall uppercase">Client</p>
-                  <h3 class="s-small"><?= $client; ?></h3>
-                </div>
-              <?php endif; ?>
+            <?php if ($client): ?>
+              <div class="text-element project-info">
+                <p class="s-xxsmall uppercase">Client</p>
+                <h3 class="s-small"><?= $client; ?></h3>
+              </div>
+            <?php endif; ?>
 
-              <?php if( have_rows('credits') ): while ( have_rows('credits') ) : the_row(); ?>
+            <?php if( have_rows('credits') ): while ( have_rows('credits') ) : the_row(); ?>
 
-                <div class="text-element project-info">
-                  <p class="s-xxsmall uppercase"><?php the_sub_field('role'); ?></p>
-                  <h3 class="s-small"><?php the_sub_field('name'); ?></h3>
-                </div>
+              <div class="text-element project-info">
+                <p class="s-xxsmall uppercase"><?php the_sub_field('role'); ?></p>
+                <h3 class="s-small"><?php the_sub_field('name'); ?></h3>
+              </div>
 
-              <?php endwhile; endif; ?>
-            </div>
+            <?php endwhile; endif; ?>
           </div>
         </div>
       </section>
@@ -88,20 +86,19 @@
           };
           ?>
 
-          <div data-type="<?= $moduleType; ?>" class="container-fluid content-module spacing-p-t-3 spacing-p-b-3<?php if ($bndCol == 1): ?> dark<?php endif; ?>">
+          <div data-type="<?= $moduleType; ?>" class="container-fluid content-module spacing-p-t-3 spacing-p-b-3 spacing-m-p-t-0 spacing-m-p-b-0<?php if ($bndCol == 1): ?> dark<?php endif; ?>">
             <div class="container">
               <?php if( get_row_layout() == 'text_row' ):
                 $text = get_sub_field('text');
                 $textAlignment = get_sub_field('text_alignment');
               ?>
               <div class="d-flex flex-row <?= $textAlignment; ?>">
-                <div class="text-element-lines d-two-thirds t-whole">
+                <div class="text-element-lines d-two-thirds t-whole spacing-m-b-3">
                   <div class="wysiwyg s-regular">
                     <?= $text; ?>
                   </div>
                 </div>
               </div>
-
 
               <?php elseif( get_row_layout() == 'media_text_row' ): 
                 $text = get_sub_field('text');
@@ -109,13 +106,13 @@
                 $medium = get_sub_field('all_row_media');
                 $medium_id   = get_medium_id_from_acf($medium); 
               ?>
-                <div class="d-flex flex-row <?= $alignment; ?>">
-                  <div class="text-element d-half t-whole">
+                <div class="d-flex flex-row <?= $alignment; ?> m-column">
+                  <div class="text-element d-half m-whole spacing-m-b-3">
                     <div class="wysiwyg s-regular">
                       <?= $text; ?>
                     </div>
                   </div>
-                  <div class="element d-half t-whole">
+                  <div class="element d-half m-whole spacing-m-b-3">
                     <?php render_media($medium_id, 6, false, true); ?>
                   </div>
                 </div>
@@ -157,7 +154,7 @@
                     $medium_id = get_medium_id_from_acf($m);
                   ?>
 
-                  <div class="element <?= $class; ?> m-whole">
+                  <div class="element <?= $class; ?> m-whole spacing-m-b-3">
                     <?php render_media($medium_id, $imgSize, false, true); ?>
                   </div>
 
@@ -192,8 +189,9 @@
         $featured_medium = get_field('featured_medium', $next->ID);
         $medium_id = get_medium_id_from_acf($featured_medium); 
         ?>
-        <project id="post-<?php the_ID(); ?>" class="project d-half m-whole p-relative spacing-b-3 spacing-t-3">
+        <project id="post-<?php the_ID(); ?>" class="project d-half m-whole p-relative spacing-b-3 spacing-t-3 spacing-m-t-2 spacing-m-b-2">
           <a class="p-absolute overall" href="<?= $permalink; ?>"></a>
+          <h3 class="s-xxsmall uppercase spacing-b-tiny">Previous</h3>
           <h2 class="project-title s-regular spacing-b-half"><?= esc_html($title); ?></h2>
           <?php render_media($medium_id, 6, false); ?>
         </project>
@@ -206,8 +204,9 @@
         $featured_medium = get_field('featured_medium', $prev->ID);
         $medium_id = get_medium_id_from_acf($featured_medium); 
         ?>
-        <project id="post-<?php the_ID(); ?>" class="project d-half m-whole p-relative spacing-b-3 spacing-t-3">
+        <project id="post-<?php the_ID(); ?>" class="project d-half m-whole p-relative spacing-b-3 spacing-t-3 spacing-m-t-2 spacing-m-b-2">
           <a class="p-absolute overall" href="<?= $permalink; ?>"></a>
+          <h3 class="s-xxsmall uppercase spacing-b-tiny">Next</h3>
           <h2 class="project-title s-regular spacing-b-half"><?= esc_html($title); ?></h2>
           <?php render_media($medium_id, 6, false); ?>
         </project>
