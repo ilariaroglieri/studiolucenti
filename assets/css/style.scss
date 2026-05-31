@@ -217,7 +217,7 @@ header {
     z-index: 999;
     transition: left .6s cubic-bezier(0.22, 1, 0.36, 1);
     ul li {
-      margin-bottom: $half-spacing/2;
+      margin-bottom: calc($half-spacing / 2);
       a {
         color: $secColor;
         @extend .s-large;

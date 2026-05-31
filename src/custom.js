@@ -1,36 +1,40 @@
-import Plyr from 'plyr';
-import Hls from 'hls.js';
-import SimpleLightbox from 'simplelightbox';
+import 'plyr/dist/plyr.css';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Video player setup
-  const video = document.getElementById('hls-video');
-  if (video) {
-    const player = new Plyr('#hls-video');
-    const source = video.querySelector('source');
-    const src = source ? source.getAttribute('src') : null;
+  // Plyr + HLS.js: loaded only on pages with the video element (~1.7 MB saved on other pages)
+  if (document.getElementById('hls-video')) {
+    Promise.all([import('plyr'), import('hls.js/light')]).then(
+      ([{ default: Plyr }, { default: Hls }]) => {
+        const player = new Plyr('#hls-video');
+        const source = document.querySelector('#hls-video source');
+        const src = source ? source.getAttribute('src') : null;
 
-    if (src && Hls.isSupported()) {
-      const hls = new Hls();
-      hls.loadSource(src);
-      hls.attachMedia(player.media);
-    }
+        if (src && Hls.isSupported()) {
+          const hls = new Hls();
+          hls.loadSource(src);
+          hls.attachMedia(player.media);
+        }
+      }
+    );
   }
 
-  // Lightbox (single pages)
+  // SimpleLightbox: loaded only on single pages
   if (document.body.classList.contains('single')) {
     const lightboxEls = document.querySelectorAll('a.single-lightbox-el');
     if (lightboxEls.length) {
-      new SimpleLightbox('a.single-lightbox-el', {
-        showCounter: true,
-        overlayOpacity: 0.9,
-        closeText: 'Close',
-        animationSpeed: 500,
-        animationSlide: false,
-        navText: [
-          '<svg width="27" height="46" viewBox="0 0 27 46" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M25.1965 1.08765L2.19653 22.9289L25.1965 44.0876" stroke="#323232" stroke-width="2"/></svg>',
-          '<svg width="27" height="46" viewBox="0 0 27 46" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.03272 1.08765L24.0327 22.9289L1.03272 44.0876" stroke="#323232" stroke-width="2"/></svg>',
-        ],
+      import('simplelightbox').then(({ default: SimpleLightbox }) => {
+        new SimpleLightbox('a.single-lightbox-el', {
+          showCounter: true,
+          overlayOpacity: 0.9,
+          closeText: 'Close',
+          animationSpeed: 500,
+          animationSlide: false,
+          navText: [
+            '<svg width="27" height="46" viewBox="0 0 27 46" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M25.1965 1.08765L2.19653 22.9289L25.1965 44.0876" stroke="#323232" stroke-width="2"/></svg>',
+            '<svg width="27" height="46" viewBox="0 0 27 46" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.03272 1.08765L24.0327 22.9289L1.03272 44.0876" stroke="#323232" stroke-width="2"/></svg>',
+          ],
+        });
       });
     }
   }
