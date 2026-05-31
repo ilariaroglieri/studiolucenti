@@ -344,11 +344,17 @@ header {
   }
 }
 
-// .video-container { 
+// .video-container {
 //   > div {
 //     aspect-ratio: 16/9;
 //   }
 // }
+
+.video-module-container {
+  .plyr {
+    aspect-ratio: 16 / 9;
+  }
+}
 
 
 #text-section {

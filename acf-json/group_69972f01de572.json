@@ -402,7 +402,7 @@
                 },
                 "layout_6a1c6bb79661a": {
                     "key": "layout_6a1c6bb79661a",
-                    "name": "video_row_copia",
+                    "name": "video_row",
                     "label": "Video row",
                     "display": "block",
                     "sub_fields": [
@@ -834,5 +834,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1780247623
+    "modified": 1780247829
 }

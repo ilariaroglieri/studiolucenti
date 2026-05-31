@@ -2,19 +2,21 @@ import 'plyr/dist/plyr.css';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Plyr + HLS.js: loaded only on pages with the video element (~1.7 MB saved on other pages)
-  if (document.getElementById('hls-video')) {
+  // Plyr + HLS.js: loaded only on pages with video elements (~1.7 MB saved on other pages)
+  const hlsVideos = document.querySelectorAll('.hls-video');
+  if (hlsVideos.length) {
     Promise.all([import('plyr'), import('hls.js')]).then(
       ([{ default: Plyr }, { default: Hls }]) => {
-        const player = new Plyr('#hls-video');
-        const source = document.querySelector('#hls-video source');
-        const src = source ? source.getAttribute('src') : null;
+        hlsVideos.forEach((videoEl) => {
+          const player = new Plyr(videoEl);
+          const src = videoEl.querySelector('source')?.getAttribute('src');
 
-        if (src && Hls.isSupported()) {
-          const hls = new Hls();
-          hls.loadSource(src);
-          hls.attachMedia(player.media);
-        }
+          if (src && Hls.isSupported()) {
+            const hls = new Hls();
+            hls.loadSource(src);
+            hls.attachMedia(player.media);
+          }
+        });
       }
     );
   }

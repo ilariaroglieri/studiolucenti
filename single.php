@@ -5,6 +5,14 @@
 
     <project id="post-<?php the_ID(); ?>" <?php post_class('container-fluid'); ?>>
 
+     <div class="container">
+        <div class="d-flex flex-row">
+          <div class="d-whole">
+            <h1 class="text-element s-medium spacing-b-half"><?php the_title(); ?></h1>
+          </div>
+        </div>
+      </div>
+
       <?php 
         $featured_medium = get_field('hero_medium');
         $featured_embed = get_field('hero_video_embed');
@@ -13,13 +21,14 @@
 
         if ($medium_id || $featured_embed):
       ?>
+       
+
         <section id="hero-section" class="container spacing-b-2">
           <div class="d-flex flex-row">
             <div class="d-whole">
-              <h1 class="text-element s-medium spacing-b-half"><?php the_title(); ?></h1>
               <?php if ($featured_embed): ?>
                 <div class="video-container">
-                  <video id="hls-video" controls playsinline <?php if ($video_poster): ?> poster="<?= esc_url($video_poster); ?>"<?php endif; ?>>
+                  <video class="hls-video" controls playsinline<?php if ($video_poster): ?> poster="<?= esc_url($video_poster); ?>"<?php endif; ?>>
                     <source src="<?= esc_url($featured_embed); ?>?>">
                   </video>
                 </div>
@@ -82,6 +91,7 @@
             $moduleType = match (get_row_layout()) {
               'text_row'       => 'text-module',
               'media_text_row' => 'media-text-module',
+              'video_row' => 'video-module',
               default          => 'media-module',
             };
             $layoutFile = str_replace('_', '-', get_row_layout());
