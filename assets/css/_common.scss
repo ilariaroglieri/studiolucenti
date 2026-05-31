@@ -68,10 +68,10 @@ $secColor: #fffff7;
 // =============================
 
 $spacing: 48px;
-$half-spacing: calc($spacing / 2);
-$double-spacing: calc($spacing * 2);
-$triple-spacing: calc($spacing * 3);
-$fourfold-spacing: calc($spacing * 4) ;
+$half-spacing: $spacing / 2;
+$double-spacing: $spacing * 2;
+$triple-spacing: $spacing * 3;
+$fourfold-spacing: $spacing * 4;
 
 $col: 8.3333%; // 12 columns
 
@@ -113,8 +113,8 @@ $d-aliases: (
 
 $spacing-scale: (
   0: 0,
-  tiny: calc($half-spacing / 4),
-  half: calc($half-spacing / 2),
+  tiny: $half-spacing / 4,
+  half: $half-spacing / 2,
   1: $half-spacing,
   2: $spacing,
   3: $half-spacing * 3,

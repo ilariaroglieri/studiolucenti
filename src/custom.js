@@ -4,7 +4,7 @@ import 'simplelightbox/dist/simple-lightbox.min.css';
 document.addEventListener('DOMContentLoaded', () => {
   // Plyr + HLS.js: loaded only on pages with the video element (~1.7 MB saved on other pages)
   if (document.getElementById('hls-video')) {
-    Promise.all([import('plyr'), import('hls.js/light')]).then(
+    Promise.all([import('plyr'), import('hls.js')]).then(
       ([{ default: Plyr }, { default: Hls }]) => {
         const player = new Plyr('#hls-video');
         const source = document.querySelector('#hls-video source');

@@ -1,31 +1,4 @@
-export function splitLines(el) {
-  const words = el.innerText.split(' ');
-  el.innerHTML = words.map(word => `<span class="word">${word}</span>`).join(' ');
 
-  const wordEls = el.querySelectorAll('.word');
-  const lines = [];
-  let currentLine = [];
-  let currentTop = null;
-
-  wordEls.forEach((word) => {
-    const top = word.offsetTop;
-    if (currentTop === null) currentTop = top;
-
-    if (Math.abs(top - currentTop) > 5) {
-      lines.push(currentLine);
-      currentLine = [];
-      currentTop = top;
-    }
-    currentLine.push(word);
-  });
-
-  if (currentLine.length) lines.push(currentLine);
-
-  el.innerHTML = lines.map(line => {
-    const lineContent = line.map(w => w.innerText).join(' ');
-    return `<span class="line"><span class="line-inner">${lineContent}</span></span>`;
-  }).join('');
-}
 
 export function groupByRows(elements) {
   const rows = [];

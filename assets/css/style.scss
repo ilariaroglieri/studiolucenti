@@ -188,6 +188,7 @@ img, video {
   margin-right: -#{$half-spacing};
   margin-left: -#{$half-spacing};
   position: relative;
+  width: auto;
 }
 
 header {
@@ -282,14 +283,12 @@ header {
   }
 }
 
+
+
 .home, .blog {
   .text-element-lines {
     &.hidden {
       opacity: 0;
-    }
-    .line {
-      // display: block;
-      overflow: hidden;
     }
   }
   #video-reel {
@@ -442,5 +441,5 @@ footer {
   }
 }
 
-@import 'custom-plyr';
+@import 'custom-video';
 @import 'media-queries';

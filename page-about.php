@@ -1,3 +1,9 @@
+<?php
+/*
+ * Template Name: About
+ */
+?>
+
 <?php get_header(); ?>
 
 <section role="main" class="content" id="content-page">

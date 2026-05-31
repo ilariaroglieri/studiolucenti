@@ -8,7 +8,8 @@
       <?php 
         $featured_medium = get_field('hero_medium');
         $featured_embed = get_field('hero_video_embed');
-        $medium_id   = get_medium_id_from_acf($featured_medium); 
+        $video_poster   = get_field('hero_video_poster');
+        $medium_id   = get_medium_id_from_acf($featured_medium);
 
         if ($medium_id || $featured_embed):
       ?>
@@ -18,7 +19,7 @@
               <h1 class="text-element s-medium spacing-b-half"><?php the_title(); ?></h1>
               <?php if ($featured_embed): ?>
                 <div class="video-container">
-                  <video id="hls-video" controls playsinline>
+                  <video id="hls-video" controls playsinline <?php if ($video_poster): ?> poster="<?= esc_url($video_poster); ?>"<?php endif; ?>>
                     <source src="<?= esc_url($featured_embed); ?>?>">
                   </video>
                 </div>
@@ -74,96 +75,23 @@
       </section>
 
       <!-- flexible acf -->
-      <?php
-      if( have_rows('project_modules') ): ?>
+      <?php if ( have_rows('project_modules') ): ?>
         <div class="modules-container">
-        <?php while ( have_rows('project_modules') ) : the_row();
-          $bndCol = get_sub_field('dark_background');
-          $moduleType = match (get_row_layout()) {
-            'text_row' => 'text-module',
-            'media_text_row' => 'media-text-module',
-            default => 'media-module',
-          };
+          <?php while ( have_rows('project_modules') ) : the_row();
+            $bndCol     = get_sub_field('dark_background');
+            $moduleType = match (get_row_layout()) {
+              'text_row'       => 'text-module',
+              'media_text_row' => 'media-text-module',
+              default          => 'media-module',
+            };
+            $layoutFile = str_replace('_', '-', get_row_layout());
           ?>
-
-          <div data-type="<?= $moduleType; ?>" class="container-fluid content-module spacing-p-t-3 spacing-p-b-3 spacing-m-p-t-0 spacing-m-p-b-0<?php if ($bndCol == 1): ?> dark<?php endif; ?>">
-            <div class="container">
-              <?php if( get_row_layout() == 'text_row' ):
-                $text = get_sub_field('text');
-                $textAlignment = get_sub_field('text_alignment');
-              ?>
-              <div class="d-flex flex-row <?= $textAlignment; ?>">
-                <div class="text-element-lines d-two-thirds t-whole spacing-m-b-3">
-                  <div class="wysiwyg s-regular">
-                    <?= $text; ?>
-                  </div>
-                </div>
+            <div data-type="<?= $moduleType; ?>" class="container-fluid content-module spacing-p-t-3 spacing-p-b-3 spacing-m-p-t-0 spacing-m-p-b-0<?php if ($bndCol == 1): ?> dark<?php endif; ?>">
+              <div class="container">
+                <?php get_template_part('template-parts/modules/' . $layoutFile); ?>
               </div>
-
-              <?php elseif( get_row_layout() == 'media_text_row' ): 
-                $text = get_sub_field('text');
-                $alignment = get_sub_field('media_alignment');
-                $medium = get_sub_field('all_row_media');
-                $medium_id   = get_medium_id_from_acf($medium); 
-              ?>
-                <div class="d-flex flex-row <?= $alignment; ?> m-column">
-                  <div class="text-element d-half m-whole spacing-m-b-3">
-                    <div class="wysiwyg s-regular">
-                      <?= $text; ?>
-                    </div>
-                  </div>
-                  <div class="element d-half m-whole spacing-m-b-3">
-                    <?php render_media($medium_id, 6, false, true); ?>
-                  </div>
-                </div>
-
-              <?php elseif( get_row_layout() == 'media_row' ): 
-                $media = get_sub_field('all_row_media');
-                $alignment = get_sub_field('media_alignment');
-                $twoSizes = get_sub_field('two_media_sizes');
-                $singleSize = get_sub_field('one_media_size');
-                $count = count($media);
-                ?>
-
-                <div class="d-flex flex-row <?= $alignment; ?> m-column">
-                  <?php foreach ($media as $index => $m):
-                    // DEFAULT
-                    $class = 'd-half';
-                    $imgSize = 6;
-
-                    if ($count === 1) {
-                      $class = $singleSize;
-                      $imgSize = 12;
-
-                    } elseif ($count === 2) {
-                      if ($twoSizes === 'd-half') {
-                        $class = 'd-half';
-                        $imgSize = 6;
-                      } elseif ($twoSizes === 'd-one-third') {
-                        $class = ($index === 0) ? 'd-5-twelfth' : 'd-7-twelfth';
-                        $imgSize = ($index === 0) ? 4 : 6;
-                      } elseif ($twoSizes === 'd-two-thirds') {
-                        $class = ($index === 0) ? 'd-7-twelfth' : 'd-5-twelfth';
-                        $imgSize = ($index === 0) ? 6 : 4;
-                      }
-                    } elseif ($count === 3) {
-                      $class = 'd-one-third';
-                      $imgSize = 4;
-                    }
-
-                    $medium_id = get_medium_id_from_acf($m);
-                  ?>
-
-                  <div class="element <?= $class; ?> m-whole spacing-m-b-3">
-                    <?php render_media($medium_id, $imgSize, false, true); ?>
-                  </div>
-
-                  <?php endforeach; ?>
-                </div>
-              <?php endif; ?>
             </div>
-          </div>
-        <?php endwhile; ?>
+          <?php endwhile; ?>
         </div>
       <?php endif; ?>
       

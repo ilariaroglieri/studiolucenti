@@ -14,6 +14,8 @@
         </div>
       </section>
 
+      
+
       <?php
         $hasReel = get_field('show_video_reel');
         $reel = get_field('video_reel');
