@@ -56,4 +56,11 @@
 		wp_enqueue_style( 'style' );
 	}
 	add_action( 'wp_enqueue_scripts', 'register_theme_styles' );
+
+	function theme_enqueue_dashicons() {
+		if ( is_user_logged_in() ) {
+			wp_enqueue_style( 'dashicons' );
+		}
+	}
+	add_action( 'wp_enqueue_scripts', 'theme_enqueue_dashicons' );
 ?>

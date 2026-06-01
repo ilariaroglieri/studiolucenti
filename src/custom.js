@@ -22,6 +22,21 @@ document.addEventListener('DOMContentLoaded', () => {
     );
   }
 
+  // Background videos: HLS only, no Plyr
+  const bgVideos = document.querySelectorAll('.bg-video');
+  if (bgVideos.length) {
+    import('hls.js').then(({ default: Hls }) => {
+      bgVideos.forEach((videoEl) => {
+        const src = videoEl.querySelector('source')?.getAttribute('src');
+        if (src && Hls.isSupported()) {
+          const hls = new Hls();
+          hls.loadSource(src);
+          hls.attachMedia(videoEl);
+        }
+      });
+    });
+  }
+
   // Swiper: loaded only on pages with sliders
   const sliders = document.querySelectorAll('.slider-module');
   if (sliders.length) {

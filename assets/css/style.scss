@@ -351,8 +351,8 @@ header {
 // }
 
 .video-module-container {
-  .plyr {
-    aspect-ratio: 16 / 9;
+  .plyr, .bg-video {
+    aspect-ratio: var(--video-aspect-ratio, 16/9);
   }
 }
 
@@ -403,6 +403,24 @@ header {
   .project-info {
     line-height: 1.5;
     margin-bottom: $half-spacing;
+  }
+}
+
+.edit-post-link {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 10px;
+  opacity: .35;
+  transition: opacity .3s;
+  vertical-align: middle;
+  &:hover {
+    opacity: 1;
+    color: $primaryColor;
+  }
+  .dashicons {
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
   }
 }
 

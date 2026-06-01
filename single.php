@@ -8,28 +8,45 @@
      <div class="container">
         <div class="d-flex flex-row">
           <div class="d-whole">
-            <h1 class="text-element s-medium spacing-b-half"><?php the_title(); ?></h1>
+            <h1 class="text-element s-medium spacing-b-half">
+              <?php the_title(); ?>
+              <?php if ( current_user_can( 'edit_post', get_the_ID() ) ): ?>
+                <a href="<?= esc_url( get_edit_post_link() ); ?>" class="edit-post-link" title="Edit project">
+                  <span class="dashicons dashicons-edit"></span>
+                </a>
+              <?php endif; ?>
+            </h1>
           </div>
         </div>
       </div>
 
       <?php 
-        $featured_medium = get_field('hero_medium');
-        $featured_embed = get_field('hero_video_embed');
-        $video_poster   = get_field('hero_video_poster');
-        $medium_id   = get_medium_id_from_acf($featured_medium);
+        $featured_medium       = get_field('hero_medium');
+        $featured_embed        = get_field('hero_video_embed');
+        $video_poster          = get_field('hero_video_poster');
+        $hero_background_video = get_field('hero_background_video');
+        $hero_aspect_ratio     = get_field('hero_aspect_ratio') ?: '16/9';
+        $medium_id             = get_medium_id_from_acf($featured_medium);
+
+        if ($hero_background_video) {
+          $hero_video_class = 'bg-video';
+          $hero_video_attrs = 'autoplay loop muted playsinline';
+        } else {
+          $hero_video_class = 'hls-video';
+          $hero_video_attrs = 'controls playsinline';
+        }
 
         if ($medium_id || $featured_embed):
       ?>
-       
+
 
         <section id="hero-section" class="container spacing-b-2">
           <div class="d-flex flex-row">
             <div class="d-whole">
               <?php if ($featured_embed): ?>
-                <div class="video-container">
-                  <video class="hls-video" controls playsinline<?php if ($video_poster): ?> poster="<?= esc_url($video_poster); ?>"<?php endif; ?>>
-                    <source src="<?= esc_url($featured_embed); ?>?>">
+                <div class="video-container" style="aspect-ratio: <?= esc_attr($hero_aspect_ratio); ?>">
+                  <video class="<?= $hero_video_class; ?>" <?= $hero_video_attrs; ?><?php if ($video_poster): ?> poster="<?= esc_url($video_poster); ?>"<?php endif; ?>>
+                    <source src="<?= esc_url($featured_embed); ?>">
                   </video>
                 </div>
               <?php else: 
@@ -97,7 +114,7 @@
             };
             $layoutFile = str_replace('_', '-', get_row_layout());
           ?>
-            <div data-type="<?= $moduleType; ?>" class="container-fluid content-module spacing-p-t-3 spacing-p-b-3 spacing-m-p-t-0 spacing-m-p-b-0<?php if ($bndCol == 1): ?> dark<?php endif; ?>">
+            <div data-type="<?= $moduleType; ?>" class="container-fluid content-module spacing-t-3 spacing-b-3 spacing-m-t-0 spacing-m-b-0<?php if ($bndCol == 1): ?> dark<?php endif; ?>">
               <div class="container">
                 <?php get_template_part('template-parts/modules/' . $layoutFile); ?>
               </div>
