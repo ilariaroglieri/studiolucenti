@@ -356,6 +356,48 @@ header {
   }
 }
 
+.slider-container {
+  .slider-track {
+    display: flex;
+    align-items: center;
+    gap: $half-spacing;
+
+    .slider-nav {
+      flex-shrink: 0;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      color: $primaryColor;
+      transition: all .5s;
+
+      &:hover {
+        opacity: .5;
+      }
+
+      &.swiper-button-disabled {
+        opacity: 0.3;
+        cursor: default;
+      }
+    }
+
+    .slider-module {
+      flex: 1;
+      min-width: 0;
+
+      .swiper-slide img {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+    }
+  }
+
+  .slider-fraction {
+    margin-top: calc($half-spacing / 2);
+  }
+}
+
 
 #text-section {
   .project-info {

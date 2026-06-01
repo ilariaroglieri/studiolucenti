@@ -400,6 +400,79 @@
                     "min": "",
                     "max": ""
                 },
+                "layout_6b1a00000001a": {
+                    "key": "layout_6b1a00000001a",
+                    "name": "slider_row",
+                    "label": "Slider row",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_6b1a00000001b",
+                            "label": "Dark background",
+                            "name": "dark_background",
+                            "aria-label": "",
+                            "type": "true_false",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": { "width": "25", "class": "", "id": "" },
+                            "message": "",
+                            "default_value": 0,
+                            "ui": 0,
+                            "ui_on_text": "",
+                            "ui_off_text": ""
+                        },
+                        {
+                            "key": "field_6b1a00000001c",
+                            "label": "Media size",
+                            "name": "media_size",
+                            "aria-label": "",
+                            "type": "select",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": { "width": "25", "class": "", "id": "" },
+                            "choices": {
+                                "d-whole": "XL (Full width)",
+                                "d-10-twelfth": "L (10 col)",
+                                "d-two-thirds": "M (8 col)"
+                            },
+                            "default_value": "d-whole",
+                            "return_format": "value",
+                            "multiple": 0,
+                            "allow_null": 0,
+                            "ui": 0,
+                            "ajax": 0,
+                            "placeholder": ""
+                        },
+                        {
+                            "key": "field_6b1a00000001d",
+                            "label": "Gallery",
+                            "name": "gallery",
+                            "aria-label": "",
+                            "type": "gallery",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": { "width": "", "class": "", "id": "" },
+                            "return_format": "array",
+                            "library": "all",
+                            "min": 1,
+                            "max": "",
+                            "min_width": "",
+                            "min_height": "",
+                            "min_size": "",
+                            "max_width": "",
+                            "max_height": "",
+                            "max_size": "",
+                            "mime_types": "jpg, jpeg, png, webp",
+                            "insert": "append",
+                            "preview_size": "thumbnail"
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
+                },
                 "layout_6a1c6bb79661a": {
                     "key": "layout_6a1c6bb79661a",
                     "name": "video_row",
@@ -834,5 +907,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1780247829
+    "modified": 1780250000
 }

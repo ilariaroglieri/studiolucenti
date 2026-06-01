@@ -91,7 +91,8 @@
             $moduleType = match (get_row_layout()) {
               'text_row'       => 'text-module',
               'media_text_row' => 'media-text-module',
-              'video_row' => 'video-module',
+              'video_row'      => 'video-module',
+              'slider_row'     => 'slider-module',
               default          => 'media-module',
             };
             $layoutFile = str_replace('_', '-', get_row_layout());

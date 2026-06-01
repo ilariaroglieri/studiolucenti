@@ -1,5 +1,6 @@
 import 'plyr/dist/plyr.css';
 import 'simplelightbox/dist/simple-lightbox.min.css';
+import 'swiper/css/bundle';
 
 document.addEventListener('DOMContentLoaded', () => {
   // Plyr + HLS.js: loaded only on pages with video elements (~1.7 MB saved on other pages)
@@ -19,6 +20,29 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       }
     );
+  }
+
+  // Swiper: loaded only on pages with sliders
+  const sliders = document.querySelectorAll('.slider-module');
+  if (sliders.length) {
+    import('swiper/bundle').then(({ default: Swiper }) => {
+      sliders.forEach((el) => {
+        const container = el.closest('.slider-container');
+        new Swiper(el, {
+          loop: true,
+          navigation: {
+            prevEl: container.querySelector('.slider-nav-prev'),
+            nextEl: container.querySelector('.slider-nav-next'),
+          },
+          pagination: {
+            el: container.querySelector('.slider-fraction'),
+            type: 'fraction',
+            renderFraction: (currentClass, totalClass) =>
+              `<span class="${currentClass}"></span>/<span class="${totalClass}"></span>`,
+          },
+        });
+      });
+    });
   }
 
   // SimpleLightbox: loaded only on single pages

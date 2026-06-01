@@ -880,6 +880,40 @@ header.active div[class*=menu-1] {
   aspect-ratio: 16/9;
 }
 
+.slider-container .slider-track {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.slider-container .slider-track .slider-nav {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: #323232;
+  transition: all 0.5s;
+}
+.slider-container .slider-track .slider-nav:hover {
+  opacity: 0.5;
+}
+.slider-container .slider-track .slider-nav.swiper-button-disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+.slider-container .slider-track .slider-module {
+  flex: 1;
+  min-width: 0;
+}
+.slider-container .slider-track .slider-module .swiper-slide img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.slider-container .slider-fraction {
+  margin-top: 12px;
+}
+
 #text-section .project-info {
   line-height: 1.5;
   margin-bottom: 24px;
