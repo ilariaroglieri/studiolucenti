@@ -8,6 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (hlsVideos.length) {
     Promise.all([import('plyr'), import('hls.js')]).then(
       ([{ default: Plyr }, { default: Hls }]) => {
+        const players = [];
+
         hlsVideos.forEach((videoEl) => {
           const player = new Plyr(videoEl);
           const src = videoEl.querySelector('source')?.getAttribute('src');
@@ -17,6 +19,16 @@ document.addEventListener('DOMContentLoaded', () => {
             hls.loadSource(src);
             hls.attachMedia(player.media);
           }
+
+          players.push(player);
+        });
+
+        players.forEach((player) => {
+          player.on('play', () => {
+            players.forEach((other) => {
+              if (other !== player) other.pause();
+            });
+          });
         });
       }
     );

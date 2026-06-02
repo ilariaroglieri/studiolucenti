@@ -180,13 +180,13 @@
                 "id": ""
             },
             "choices": {
-                "16/9": "16:9 (Default)",
-                "4/5": "4:5",
-                "3/4": "3:4",
-                "1/1": "1:1",
-                "2/1": "2:1"
+                "16\/9": "16:9 (Default)",
+                "4\/5": "4:5",
+                "3\/4": "3:4",
+                "1\/1": "1:1",
+                "2\/1": "2:1"
             },
-            "default_value": "16/9",
+            "default_value": "16\/9",
             "return_format": "value",
             "multiple": 0,
             "allow_null": 0,
@@ -335,9 +335,9 @@
                             "placeholder": ""
                         },
                         {
-                            "key": "field_6a1c6c3c1f664",
-                            "label": "Media sizes (copia)",
-                            "name": "two_media_sizes_copia",
+                            "key": "field_6b2a00000001a",
+                            "label": "Media size",
+                            "name": "one_media_size",
                             "aria-label": "",
                             "type": "select",
                             "instructions": "",
@@ -347,7 +347,7 @@
                                     {
                                         "field": "field_699730a62be07",
                                         "operator": "==",
-                                        "value": "d-half"
+                                        "value": "full-width"
                                     }
                                 ]
                             ],
@@ -357,11 +357,15 @@
                                 "id": ""
                             },
                             "choices": {
-                                "d-half": "S + S (6 + 6 col)",
-                                "d-one-third": "XS + M (5 + 7 col)",
-                                "d-two-thirds": "M + XS (7 + 5 col)"
+                                "d-whole": "XXL (Full Width)",
+                                "d-10-twelfth": "XL (10 col)",
+                                "d-two-thirds": "L (8 col)",
+                                "d-7-twelfth": "M (7 col)",
+                                "d-half": "S (6 col)",
+                                "d-5-twelfth": "XS (5 col)",
+                                "d-one-third": "XXS (4 col)"
                             },
-                            "default_value": "d-half",
+                            "default_value": "d-whole",
                             "return_format": "value",
                             "multiple": 0,
                             "allow_null": 0,
@@ -380,16 +384,14 @@
                             "conditional_logic": [
                                 [
                                     {
-                                        "field": "field_699732b72be09",
-                                        "operator": "==",
-                                        "value": "d-10-twelfth"
-                                    }
-                                ],
-                                [
+                                        "field": "field_6b2a00000001a",
+                                        "operator": "!=",
+                                        "value": "d-whole"
+                                    },
                                     {
-                                        "field": "field_699732b72be09",
+                                        "field": "field_699730a62be07",
                                         "operator": "==",
-                                        "value": "d-two-thirds"
+                                        "value": "full-width"
                                     }
                                 ]
                             ],
@@ -400,6 +402,7 @@
                             },
                             "choices": {
                                 "flex-start": "Align to the left",
+                                "v-center": "Center",
                                 "flex-end": "Align to the right"
                             },
                             "default_value": "flex-start",
@@ -464,7 +467,11 @@
                             "instructions": "",
                             "required": 0,
                             "conditional_logic": 0,
-                            "wrapper": { "width": "25", "class": "", "id": "" },
+                            "wrapper": {
+                                "width": "25",
+                                "class": "",
+                                "id": ""
+                            },
                             "message": "",
                             "default_value": 0,
                             "ui": 0,
@@ -480,7 +487,11 @@
                             "instructions": "",
                             "required": 0,
                             "conditional_logic": 0,
-                            "wrapper": { "width": "25", "class": "", "id": "" },
+                            "wrapper": {
+                                "width": "25",
+                                "class": "",
+                                "id": ""
+                            },
                             "choices": {
                                 "d-whole": "XL (Full width)",
                                 "d-10-twelfth": "L (10 col)",
@@ -503,7 +514,11 @@
                             "instructions": "",
                             "required": 0,
                             "conditional_logic": 0,
-                            "wrapper": { "width": "", "class": "", "id": "" },
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
                             "return_format": "array",
                             "library": "all",
                             "min": 1,
@@ -622,13 +637,15 @@
                                 "id": ""
                             },
                             "choices": {
-                                "16/9": "16:9 (Default)",
-                                "4/5": "4:5",
-                                "3/4": "3:4",
-                                "1/1": "1:1",
-                                "2/1": "2:1"
+                                "16\/9": "16:9 (Default)",
+                                "4\/5": "4:5",
+                                "3\/4": "3:4",
+                                "1\/1": "1:1",
+                                "4\/3": "4:3",
+                                "2\/1": "2:1",
+                                "auto": "auto"
                             },
-                            "default_value": "16/9",
+                            "default_value": "16\/9",
                             "return_format": "value",
                             "multiple": 0,
                             "allow_null": 0,
@@ -1005,5 +1022,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1780310000
+    "modified": 1780350652
 }

@@ -11,8 +11,9 @@ $count      = count($media);
     $imgSize = 6;
 
     if ($count === 1) {
-      $class   = $singleSize;
-      $imgSize = 12;
+      $class   = $singleSize ?: 'd-whole';
+      $sizeMap = ['d-whole' => 12, 'd-10-twelfth' => 10, 'd-two-thirds' => 8, 'd-7-twelfth' => 7, 'd-half' => 6, 'd-5-twelfth' => 5, 'd-one-third' => 4];
+      $imgSize = $sizeMap[$class] ?? 12;
     } elseif ($count === 2) {
       if ($twoSizes === 'd-half') {
         $class   = 'd-half';

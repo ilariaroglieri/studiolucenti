@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
               opacity: 0,
               duration: 1.2,
               ease: 'power3.out',
-              stagger: 0.5,
+              stagger: 0.5, 
               scrollTrigger: { trigger: row, start: 'top 85%', once: false },
             });
           }
@@ -83,6 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!split.lines.length) return;
 
+        
         gsap.from(split.lines, {
           yPercent: 100,
           autoAlpha: 0,
