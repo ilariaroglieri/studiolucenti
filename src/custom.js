@@ -2,6 +2,13 @@ import 'plyr/dist/plyr.css';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import 'swiper/css/bundle';
 
+function updateHeaderHeight() {
+  const header = document.querySelector('header');
+  if (header) document.documentElement.style.setProperty('--header-height', header.offsetHeight + 'px');
+}
+updateHeaderHeight();
+window.addEventListener('resize', updateHeaderHeight);
+
 document.addEventListener('DOMContentLoaded', () => {
   // Plyr + HLS.js: loaded only on pages with video elements (~1.7 MB saved on other pages)
   const hlsVideos = document.querySelectorAll('.hls-video');
@@ -11,7 +18,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const players = [];
 
         hlsVideos.forEach((videoEl) => {
-          const player = new Plyr(videoEl);
+          const player = new Plyr(videoEl, {
+            controls: ['play-large', 'play', 'progress', 'current-time', 'mute', /*'volume',*/ 'captions', 'airplay', 'fullscreen'],
+          });
           const src = videoEl.querySelector('source')?.getAttribute('src');
 
           if (src && Hls.isSupported()) {

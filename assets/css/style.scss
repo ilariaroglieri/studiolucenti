@@ -348,6 +348,23 @@ header {
   }
 }
 
+#hero-section {
+  &.has-hero-bg {
+    padding-top: $spacing;
+    padding-bottom: $spacing;
+  }
+
+  .hero-vertical-outer {
+    display: flex;
+    justify-content: center;
+
+    .hero-vertical {
+      max-height: calc(100vh - var(--header-height, 100px));
+      width: min(100%, calc((100vh - var(--header-height, 100px)) * var(--ar-w) / var(--ar-h)));
+    }
+  }
+}
+
 // .video-container {
 //   > div {
 //     aspect-ratio: 16/9;

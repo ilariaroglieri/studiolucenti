@@ -75,7 +75,9 @@
                         "class": "",
                         "id": ""
                     },
-                    "post_type": "",
+                    "post_type": [
+                        "post"
+                    ],
                     "post_status": "",
                     "taxonomy": "",
                     "return_format": "object",
@@ -160,5 +162,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1780219857
+    "modified": 1780417428
 }

@@ -66,7 +66,7 @@
                 "d-10-twelfth": "XL (10 col)",
                 "d-two-thirds": "L (8 col)",
                 "d-7-twelfth": "M (7 col)",
-                "d-half": "L (6 col)",
+                "d-half": "S (6 col)",
                 "d-5-twelfth": "XS (5 col)",
                 "d-one-third": "XXS (4 col)"
             },
@@ -213,6 +213,24 @@
             "ui": 1,
             "ui_on_text": "",
             "ui_off_text": ""
+        },
+        {
+            "key": "field_6a1c62debafe7",
+            "label": "Background color",
+            "name": "hero_background_color",
+            "aria-label": "",
+            "type": "color_picker",
+            "instructions": "Se impostato, il video appare all'interno di un'area colorata con margini in alto e in basso.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "25",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "enable_opacity": 0,
+            "return_format": "string"
         },
         {
             "key": "field_69973c0732165",
@@ -571,12 +589,42 @@
                             "type": "select",
                             "instructions": "",
                             "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "25",
+                                "class": "",
+                                "id": ""
+                            },
+                            "choices": {
+                                "d-whole": "XL (Full width)",
+                                "d-10-twelfth": "L (10 col)",
+                                "d-two-thirds": "M (8 col)",
+                                "d-half": "S (6 col)",
+                                "d-5-twelfth": "XS (5 col)",
+                                "d-one-third": "XXS (4 col)"
+                            },
+                            "default_value": "d-whole",
+                            "return_format": "value",
+                            "multiple": 0,
+                            "allow_null": 0,
+                            "ui": 0,
+                            "ajax": 0,
+                            "placeholder": ""
+                        },
+                        {
+                            "key": "field_6a1c6bb796625",
+                            "label": "Media alignment",
+                            "name": "media_alignment",
+                            "aria-label": "",
+                            "type": "select",
+                            "instructions": "",
+                            "required": 0,
                             "conditional_logic": [
                                 [
                                     {
-                                        "field": "field_699730a62be07",
-                                        "operator": "==",
-                                        "value": "full-width"
+                                        "field": "field_699732b72be09",
+                                        "operator": "!=",
+                                        "value": "d-whole"
                                     }
                                 ]
                             ],
@@ -586,11 +634,11 @@
                                 "id": ""
                             },
                             "choices": {
-                                "d-whole": "XL (Full width)",
-                                "d-10-twelfth": "L (10 col)",
-                                "d-two-thirds": "M (8 col)"
+                                "flex-start": "Align to the left",
+                                "v-center": "Center",
+                                "flex-end": "Align to the right"
                             },
-                            "default_value": "full-width",
+                            "default_value": "v-center",
                             "return_format": "value",
                             "multiple": 0,
                             "allow_null": 0,
@@ -1022,5 +1070,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1780350652
+    "modified": 1780417232
 }

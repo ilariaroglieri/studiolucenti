@@ -20,13 +20,15 @@
         </div>
       </div>
 
-      <?php 
+      <?php
         $featured_medium       = get_field('hero_medium');
         $featured_embed        = get_field('hero_video_embed');
         $video_poster          = get_field('hero_video_poster');
         $hero_background_video = get_field('hero_background_video');
         $hero_aspect_ratio     = get_field('hero_aspect_ratio') ?: '16/9';
+        $hero_bg_color         = get_field('hero_background_color');
         $medium_id             = get_medium_id_from_acf($featured_medium);
+        $is_vertical           = in_array($hero_aspect_ratio, ['4/5', '3/4']);
 
         if ($hero_background_video) {
           $hero_video_class = 'bg-video';
@@ -36,22 +38,31 @@
           $hero_video_attrs = 'controls playsinline';
         }
 
+        $ar_vars = '';
+        if ($is_vertical) {
+          [$ar_w, $ar_h] = explode('/', $hero_aspect_ratio);
+          $ar_vars = " --ar-w: {$ar_w}; --ar-h: {$ar_h};";
+        }
+
         if ($medium_id || $featured_embed):
       ?>
 
-
-        <section id="hero-section" class="container spacing-b-2">
-          <div class="d-flex flex-row">
-            <div class="d-whole">
-              <?php if ($featured_embed): ?>
-                <div class="video-container" style="aspect-ratio: <?= esc_attr($hero_aspect_ratio); ?>">
-                  <video class="<?= $hero_video_class; ?>" <?= $hero_video_attrs; ?><?php if ($video_poster): ?> poster="<?= esc_url($video_poster); ?>"<?php endif; ?>>
-                    <source src="<?= esc_url($featured_embed); ?>">
-                  </video>
-                </div>
-              <?php else: 
-                render_media($medium_id, 12, true); 
-              endif; ?>
+        <section id="hero-section" class="container-fluid spacing-b-2<?php if ($hero_bg_color): ?> has-hero-bg<?php endif; ?>"<?php if ($hero_bg_color): ?> style="background-color: <?= esc_attr($hero_bg_color); ?>"<?php endif; ?>>
+          <div class="container">
+            <div class="d-flex flex-row">
+              <div class="d-whole">
+                <?php if ($featured_embed): ?>
+                  <div class="hero-video-outer<?= $is_vertical ? ' hero-vertical-outer' : ''; ?>">
+                    <div class="video-container<?= $is_vertical ? ' hero-vertical' : ''; ?>" style="aspect-ratio: <?= esc_attr($hero_aspect_ratio); ?><?= $ar_vars; ?>">
+                      <video class="<?= $hero_video_class; ?>" <?= $hero_video_attrs; ?><?php if ($video_poster): ?> poster="<?= esc_url($video_poster); ?>"<?php endif; ?>>
+                        <source src="<?= esc_url($featured_embed); ?>">
+                      </video>
+                    </div>
+                  </div>
+                <?php else:
+                  render_media($medium_id, 12, true);
+                endif; ?>
+              </div>
             </div>
           </div>
         </section>
