@@ -67,7 +67,7 @@
         <?php if ($isLightbox): 
           $attachmentUrl = wp_get_attachment_image_url($medium_id, 'full-width');
           ?>
-          <a class="single-lightbox-el" href="<?= $attachmentUrl; ?>">
+          <a class="single-lightbox-el" aria-label="<?= esc_attr(get_post_meta($medium_id, '_wp_attachment_image_alt', true)); ?>" href="<?= $attachmentUrl; ?>">
            <?= wp_get_attachment_image($medium_id, $size, false, ['class' => 'project_image', 'sizes' => $sizes, 'loading' => $loading]); ?>
           </a>
         <?php else:

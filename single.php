@@ -157,7 +157,7 @@
         $medium_id = get_medium_id_from_acf($featured_medium); 
         ?>
         <project id="post-<?php the_ID(); ?>" class="project d-half m-whole p-relative spacing-b-3 spacing-t-3 spacing-m-t-2 spacing-m-b-2">
-          <a class="p-absolute overall" href="<?= $permalink; ?>"></a>
+          <a class="p-absolute overall" href="<?= $permalink; ?>" aria-label="<?= esc_attr($title); ?>"></a>
           <h3 class="s-xxsmall uppercase spacing-b-tiny">Previous</h3>
           <h2 class="project-title s-regular spacing-b-half"><?= esc_html($title); ?></h2>
           <?php render_media($medium_id, 6, false); ?>
@@ -172,7 +172,7 @@
         $medium_id = get_medium_id_from_acf($featured_medium); 
         ?>
         <project id="post-<?php the_ID(); ?>" class="project d-half m-whole p-relative spacing-b-3 spacing-t-3 spacing-m-t-2 spacing-m-b-2">
-          <a class="p-absolute overall" href="<?= $permalink; ?>"></a>
+          <a class="p-absolute overall" href="<?= $permalink; ?>" aria-label="<?= esc_attr($title); ?>"></a>
           <h3 class="s-xxsmall uppercase spacing-b-tiny">Next</h3>
           <h2 class="project-title s-regular spacing-b-half"><?= esc_html($title); ?></h2>
           <?php render_media($medium_id, 6, false); ?>

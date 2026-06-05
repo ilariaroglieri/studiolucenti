@@ -13,16 +13,11 @@
 
 		<meta charset="<?php bloginfo( 'charset' ); ?>"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta name="description" content="">
+		<meta name="description" content="<?= get_the_excerpt() ?>">
 		
 		<title><?php bloginfo( 'name' ); ?><?php wp_title( '—', true, 'left' ); ?></title>
 
 		<link rel="profile" href="http://gmpg.org/xfn/11"/>
-		<link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>"/>
-
-		<!-- <?php wp_enqueue_script("jquery"); ?>	 -->
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
-
 		<?php wp_head(); ?>
 	
 	</head>
