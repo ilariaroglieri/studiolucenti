@@ -104,8 +104,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // jQuery-dependent UI (WordPress provides jQuery globally)
 jQuery(document).ready(function ($) {
-  // Fade in content
+  // Fade in content, then footer after content is fully opaque
   $('.content').addClass('loaded');
+  setTimeout(() => $('footer').addClass('loaded'), 1000);
 
   // Hamburger menu
   $('.menu-toggle').click(function () {
@@ -134,12 +135,4 @@ jQuery(document).ready(function ($) {
     prevScrollPos = currentScrollPos;
   });
 
-  // Show footer when near bottom
-  $(window).scroll(function () {
-    if ($(window).scrollTop() + $(window).height() > $(document).height() - 100) {
-      $('footer').addClass('visible');
-    } else {
-      $('footer').removeClass('visible');
-    }
-  });
 });

@@ -276,14 +276,17 @@ header {
 }
 
 .content {
-  margin-bottom: 65vh;
+  margin-bottom: 100vh;
   opacity: 0;
   transition: opacity 1s;
+  position: relative;
+  z-index: 2;
+  background-color: $secColor;
   &.loaded {
     opacity: 1;
   }
   &:not(#content-home) {
-    margin-top: 100px;
+    padding-top: 100px;
   }
 }
 
@@ -509,20 +512,21 @@ footer {
   height: 100vh;
   width: 100vw;
   position: fixed;
-  bottom: -100dvh;
+  bottom: 0;
   background-color: $primaryColor;
   color: $secColor;
-  transition: all .75s;
-  z-index: 1100;
-  &.visible {
-    bottom: 0;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 1s;
+  &.loaded {
+    opacity: 1;
   }
   a {
     color: $secColor;
     opacity: 1;
     transition: .5s;
     &:hover {
-      color: $secColor;    
+      color: $secColor;
       opacity: .6;
     }
   }

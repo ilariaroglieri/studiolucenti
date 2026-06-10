@@ -5,21 +5,6 @@
 
     <project id="post-<?php the_ID(); ?>" <?php post_class('container-fluid'); ?>>
 
-     <div class="container">
-        <div class="d-flex flex-row">
-          <div class="d-whole">
-            <h1 class="text-element s-medium spacing-b-half">
-              <?php the_title(); ?>
-              <?php if ( current_user_can( 'edit_post', get_the_ID() ) ): ?>
-                <a href="<?= esc_url( get_edit_post_link() ); ?>" class="edit-post-link" title="Edit project">
-                  <span class="dashicons dashicons-edit"></span>
-                </a>
-              <?php endif; ?>
-            </h1>
-          </div>
-        </div>
-      </div>
-
       <?php
         $featured_medium       = get_field('hero_medium');
         $featured_embed        = get_field('hero_video_embed');
@@ -69,7 +54,22 @@
 
       <?php endif; ?>
 
-      <section id="text-section" class="container spacing-t-2 spacing-b-3 spacing-m-b-2">
+      <div class="container">
+        <div class="d-flex flex-row">
+          <div class="d-whole">
+            <h1 class="text-element s-medium spacing-b-half">
+              <?php the_title(); ?>
+              <?php if ( current_user_can( 'edit_post', get_the_ID() ) ): ?>
+                <a href="<?= esc_url( get_edit_post_link() ); ?>" class="edit-post-link" title="Edit project">
+                  <span class="dashicons dashicons-edit"></span>
+                </a>
+              <?php endif; ?>
+            </h1>
+          </div>
+        </div>
+      </div>
+
+      <section id="text-section" class="container spacing-t-1 spacing-b-3 spacing-m-b-2">
         <div class="d-flex flex-row m-column">
           <div class="d-7-twelfth m-whole">
             <div class="text-element-lines wysiwyg s-regular">
