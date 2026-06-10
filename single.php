@@ -28,7 +28,7 @@
         $hero_aspect_ratio     = get_field('hero_aspect_ratio') ?: '16/9';
         $hero_bg_color         = get_field('hero_background_color');
         $medium_id             = get_medium_id_from_acf($featured_medium);
-        $is_vertical           = in_array($hero_aspect_ratio, ['4/5', '3/4']);
+        $is_vertical           = in_array($hero_aspect_ratio, ['4/5', '3/4', '1/1']);
 
         if ($hero_background_video) {
           $hero_video_class = 'bg-video';
