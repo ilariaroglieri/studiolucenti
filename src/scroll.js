@@ -7,18 +7,17 @@ import { groupByRows } from './helpers';
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
 document.addEventListener('DOMContentLoaded', () => {
-  window.addEventListener('load', () => {
-    const lenis = new Lenis({ autoRaf: true });
+  const lenis = new Lenis({ autoRaf: true });
 
-    lenis.on('scroll', ScrollTrigger.update);
+  lenis.on('scroll', ScrollTrigger.update);
 
-    gsap.ticker.add((time) => {
-      lenis.raf(time * 1000);
-    });
-    gsap.ticker.lagSmoothing(0);
+  gsap.ticker.add((time) => {
+    lenis.raf(time * 1000);
+  });
+  gsap.ticker.lagSmoothing(0);
 
-    document.fonts.ready.then(() => {
-      const body = document.body;
+  document.fonts.ready.then(() => {
+    const body = document.body;
 
       // home + archive: animate project rows
       if (body.classList.contains('home') || body.classList.contains('blog')) {
@@ -100,6 +99,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // animate flex-row elements + text elements
         gsap.utils.toArray('.single .flex-row').forEach((row) => {
+          const inViewport = row.getBoundingClientRect().top < window.innerHeight;
+          const scrollOpts = inViewport
+            ? {}
+            : { scrollTrigger: { trigger: row, start: 'top bottom', once: false } };
+
           const elements = row.querySelectorAll('.element');
           if (elements.length) {
             gsap.from(elements, {
@@ -108,8 +112,8 @@ document.addEventListener('DOMContentLoaded', () => {
               opacity: 0,
               duration: 1.2,
               ease: 'power3.out',
-              stagger: 0.5, 
-              scrollTrigger: { trigger: row, start: 'top 85%', once: false },
+              stagger: 0.5,
+              ...scrollOpts,
             });
           }
 
@@ -121,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
               duration: 1.2,
               ease: 'power3.out',
               stagger: 0.15,
-              scrollTrigger: { trigger: row, start: 'top 85%', once: false },
+              ...scrollOpts,
             });
           }
         });
@@ -163,7 +167,10 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       ScrollTrigger.refresh();
-    });
+  });
+
+  window.addEventListener('load', () => {
+    ScrollTrigger.refresh();
   });
 
   window.addEventListener('resize', () => {

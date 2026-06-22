@@ -76,4 +76,13 @@
     return null;
   }
 
+  function offusca_email_shortcode( $atts, $content = null ) {
+    if ( ! is_email( $content ) ) {
+        return $content;
+    }
+    return '<a href="mailto:' . antispambot( $content ) . '">' . antispambot( $content ) . '</a>';
+}
+add_shortcode( 'email', 'offusca_email_shortcode' );
+
 ?>
+
