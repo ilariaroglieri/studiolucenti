@@ -198,31 +198,61 @@ function initAnimations() {
 
 const MAX_SKEW = 2;          // gradi
 const SKEW_SATURATION = 80;  // px/frame ai quali si tocca MAX_SKEW
-const SKEW_LERP = 0.12;      // ritorno morbido a zero, non uno scatto
+
+// Sopra questa soglia non è uno scroll: è un salto. Il browser che ripristina
+// la posizione dopo un reload, un'ancora, lo scrollTo(0) di una navigazione.
+// Lenis li fa passare tutti da `onNativeScroll`, che emette **un solo evento**
+// con `velocity` pari all'intero salto — migliaia di px contro le decine di una
+// rotella. Senza questo filtro ogni media scattava al massimo dello skew
+// insieme agli altri, che è esattamente quello che si vedeva al reload.
+const JUMP_VELOCITY = 400;   // px/frame
+
+// Costante di tempo dell'inseguimento. Non è un lerp per frame a caso: con
+// tau = --dur-micro / 3 lo skew copre il 95% della distanza in --dur-micro,
+// che è il token del feedback immediato — ed è quello che deve essere.
+// Scritta come esponenziale sul delta reale, così non cambia comportamento
+// fra 60 e 120 Hz.
+const SKEW_TAU = (DUR.micro * 1000) / 3;
 
 let targetSkew = 0;
 let currentSkew = 0;
+let skewArmed = false;
+
+function writeSkew(value) {
+  currentSkew = value;
+  document.documentElement.style.setProperty('--skew', value.toFixed(3));
+}
 
 function initScrollSkew() {
   // Con movimento ridotto Lenis non viene istanziato, e con lui non esiste
   // nemmeno questo: `--skew` resta 0 e la regola CSS è inerte.
   if (!lenis) return;
 
+  skewArmed = true;
   const clampSkew = gsap.utils.clamp(-MAX_SKEW, MAX_SKEW);
 
   lenis.on('scroll', ({ velocity }) => {
+    if (Math.abs(velocity) > JUMP_VELOCITY) return;
     targetSkew = clampSkew((velocity / SKEW_SATURATION) * MAX_SKEW);
   });
 
-  gsap.ticker.add(() => {
-    const next = currentSkew + (targetSkew - currentSkew) * SKEW_LERP;
-    // sotto il centesimo di grado si azzera: senza, la variabile continuerebbe
-    // a essere riscritta all'infinito con valori che nessuno vede
+  gsap.ticker.add((time, deltaTime) => {
+    const alpha = 1 - Math.exp(-deltaTime / SKEW_TAU);
+    const next = currentSkew + (targetSkew - currentSkew) * alpha;
+    // sotto il centesimo di grado si azzera, così la variabile smette di essere
+    // riscritta invece di oscillare all'infinito su cifre che nessuno vede
     const value = Math.abs(next) < 0.01 && Math.abs(targetSkew) < 0.01 ? 0 : next;
     if (value === currentSkew) return;
-    currentSkew = value;
-    document.documentElement.style.setProperty('--skew', value.toFixed(3));
+    writeSkew(value);
   });
+}
+
+// Le navigazioni Swup riportano lo scroll in cima: lì lo skew va azzerato
+// subito, non accompagnato.
+function resetScrollSkew() {
+  if (!skewArmed) return;
+  targetSkew = 0;
+  writeSkew(0);
 }
 
 // =============================
@@ -408,6 +438,7 @@ document.addEventListener('DOMContentLoaded', () => {
   swup.hooks.on('content:replace', (visit) => {
     ScrollTrigger.getAll().forEach((t) => t.kill());
     scrollTo(0, { immediate: true });
+    resetScrollSkew();
 
     if (isNative(visit)) {
       // Siamo dentro il callback di startViewTransition: lo snapshot della
