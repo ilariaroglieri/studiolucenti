@@ -12,7 +12,7 @@
 						<div class="wysiwyg s-medium">
 							<?php the_field('contact_details', 'option'); ?>
 						</div>
-						<p class="s-xsmall">© <?php the_time('Y'); ?> </p>
+						<p class="s-xsmall">© <?= date('Y'); ?></p>
 					</div>
 				</div>
 
@@ -20,7 +20,7 @@
 					<?php if( have_rows('socials','option') ): while ( have_rows('socials','option') ) : the_row(); 
 						$link = get_sub_field('social_link'); ?>
 
-            <a class="s-small" href="<?= $link['url']; ?>" target="_blank"><?= $link['title']; ?></a>
+            <a class="s-small" href="<?= esc_url($link['url']); ?>" target="<?= esc_attr($link['target'] ?: '_blank'); ?>" rel="noopener noreferrer"><?= esc_html($link['title']); ?></a>
 
           <?php endwhile; endif; ?>
 				</div>

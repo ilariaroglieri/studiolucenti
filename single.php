@@ -15,13 +15,15 @@
         $medium_id             = get_medium_id_from_acf($featured_medium);
         $is_vertical           = in_array($hero_aspect_ratio, ['4/5', '3/4', '1/1']);
 
-        if ($hero_background_video) {
-          $hero_video_class = 'bg-video';
-          $hero_video_attrs = 'autoplay loop muted playsinline';
-        } else {
-          $hero_video_class = 'hls-video';
-          $hero_video_attrs = 'controls playsinline';
-        }
+        // attributi dall'helper condiviso: `hero => true` significa
+        // preload="auto", perché questo è l'LCP della pagina
+        $hero_video_attrs = render_video_attrs([
+          'autoplay' => (bool) $hero_background_video,
+          'controls' => ! $hero_background_video,
+          'hero'     => true,
+          'poster'   => $video_poster,
+          'class'    => $hero_background_video ? 'bg-video' : 'hls-video',
+        ]);
 
         $ar_vars = '';
         if ($is_vertical) {
@@ -38,8 +40,11 @@
               <div class="d-whole">
                 <?php if ($featured_embed): ?>
                   <div class="hero-video-outer<?= $is_vertical ? ' hero-vertical-outer' : ''; ?>">
-                    <div class="video-container<?= $is_vertical ? ' hero-vertical' : ''; ?>" style="aspect-ratio: <?= esc_attr($hero_aspect_ratio); ?><?= $ar_vars; ?>">
-                      <video class="<?= $hero_video_class; ?>" <?= $hero_video_attrs; ?><?php if ($video_poster): ?> poster="<?= esc_url($video_poster); ?>"<?php endif; ?>>
+                    <?php // data-vt-media: lato d'arrivo della transizione FLIP, speculare
+                          // alla thumbnail in griglia. L'hero da embed non passa da
+                          // render_media(), quindi l'aggancio va messo a mano ?>
+                    <div class="video-container<?= $is_vertical ? ' hero-vertical' : ''; ?>" data-vt-media style="aspect-ratio: <?= esc_attr($hero_aspect_ratio); ?><?= $ar_vars; ?>">
+                      <video <?= $hero_video_attrs; ?>>
                         <source src="<?= esc_url($featured_embed); ?>">
                       </video>
                     </div>
@@ -156,8 +161,8 @@
         $featured_medium = get_field('featured_medium', $next->ID);
         $medium_id = get_medium_id_from_acf($featured_medium); 
         ?>
-        <project id="post-<?php the_ID(); ?>" class="project d-half m-whole p-relative spacing-b-3 spacing-t-3 spacing-m-t-2 spacing-m-b-2">
-          <a class="p-absolute overall" href="<?= $permalink; ?>" aria-label="<?= esc_attr($title); ?>"></a>
+        <project id="post-<?= (int) $next->ID; ?>" class="project d-half m-whole p-relative spacing-b-3 spacing-t-3 spacing-m-t-2 spacing-m-b-2">
+          <a class="p-absolute overall" href="<?= esc_url($permalink); ?>" aria-label="<?= esc_attr($title); ?>"></a>
           <h3 class="s-xxsmall uppercase spacing-b-tiny">Previous</h3>
           <h2 class="project-title s-regular spacing-b-half"><?= esc_html($title); ?></h2>
           <?php render_media($medium_id, 6, false); ?>
@@ -171,8 +176,8 @@
         $featured_medium = get_field('featured_medium', $prev->ID);
         $medium_id = get_medium_id_from_acf($featured_medium); 
         ?>
-        <project id="post-<?php the_ID(); ?>" class="project d-half m-whole p-relative spacing-b-3 spacing-t-3 spacing-m-t-2 spacing-m-b-2">
-          <a class="p-absolute overall" href="<?= $permalink; ?>" aria-label="<?= esc_attr($title); ?>"></a>
+        <project id="post-<?= (int) $prev->ID; ?>" class="project d-half m-whole p-relative spacing-b-3 spacing-t-3 spacing-m-t-2 spacing-m-b-2">
+          <a class="p-absolute overall" href="<?= esc_url($permalink); ?>" aria-label="<?= esc_attr($title); ?>"></a>
           <h3 class="s-xxsmall uppercase spacing-b-tiny">Next</h3>
           <h2 class="project-title s-regular spacing-b-half"><?= esc_html($title); ?></h2>
           <?php render_media($medium_id, 6, false); ?>

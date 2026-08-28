@@ -1,11 +1,14 @@
 <?php
 $media      = get_sub_field('all_row_media');
+
+if ( ! is_array($media) || ! $media ) return;
+
 $alignment  = get_sub_field('media_alignment');
 $twoSizes   = get_sub_field('two_media_sizes');
 $singleSize = get_sub_field('one_media_size');
 $count      = count($media);
 ?>
-<div class="d-flex flex-row <?= $alignment; ?> m-column">
+<div class="d-flex flex-row <?= esc_attr($alignment); ?> m-column">
   <?php foreach ($media as $index => $m):
     $class   = 'd-half';
     $imgSize = 6;
@@ -31,8 +34,10 @@ $count      = count($media);
     }
 
     $medium_id = get_medium_id_from_acf($m);
+
+    if ( ! $medium_id ) continue;
   ?>
-    <div class="element <?= $class; ?> m-whole spacing-m-b-3">
+    <div class="element <?= esc_attr($class); ?> m-whole spacing-m-b-3">
       <?php render_media($medium_id, $imgSize, false, true); ?>
     </div>
   <?php endforeach; ?>

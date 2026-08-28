@@ -1,5 +1,5 @@
 :root {
-  --plyr-color-main: $primaryColor;
+  --plyr-color-main: var(--fg); // era `$primaryColor`: Sass non interpola dentro una custom property, usciva la stringa letterale
   --plyr-badge-text-color: #f7f7f7;
   --plyr-captions-text-color: #f7f7f7;
   --plyr-video-control-color: #f7f7f7;

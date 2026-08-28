@@ -22,7 +22,6 @@ function size_info_column($column, $post_id) {
 }
 
 function my_column_init() {
-  echo get_current_screen();
   add_filter( 'manage_post_posts_columns' , 'add_acf_columns' );
   add_action('manage_post_posts_custom_column', 'size_info_column', 10, 2);
 }
@@ -71,5 +70,3 @@ add_action('acf/input/admin_head', function() {
     }
   </style>';
 });
-
-?>

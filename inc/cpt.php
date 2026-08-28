@@ -107,4 +107,3 @@
     register_taxonomy( 'project_client', array( 'post' ), $args );
   }
   add_action( 'init', 'project_client_taxonomy', 0 );
-?>

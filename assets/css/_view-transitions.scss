@@ -1,0 +1,44 @@
+// =============================
+// Transizione di pagina — FLIP griglia → progetto
+// =============================
+// INERTE al momento: `FLIP_ENABLED = false` in `src/scroll.js` tiene spento
+// `native` su Swup, quindi nessuna view transition parte e queste regole non
+// hanno su cosa applicarsi. Restano qui perché la taratura è già fatta: per
+// riaccendere l'effetto basta il flag, non serve riscrivere il CSS.
+//
+// Quando è acceso, Swup gira con `native: true` e la sostituzione del
+// contenuto è avvolta in `document.startViewTransition()`. Il morph nasce dall'accoppiamento di due
+// `view-transition-name` identici — la thumbnail cliccata e l'hero della
+// scheda — assegnati al click in `src/scroll.js`.
+//
+// Qui si tara solo il tempo. Il nome `project-hero` deve restare unico nella
+// pagina: se compare due volte il browser annulla la transizione in silenzio,
+// senza errori in console. È il modo tipico in cui questo effetto "non parte".
+
+// Il fondo che si scambia. Mezza durata: la pagina sotto è solo un contesto,
+// il protagonista è il morph.
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: calc(var(--dur-page) / 2);
+  animation-timing-function: var(--ease-inout);
+}
+
+// L'elemento che si trasforma: posizione e dimensione sull'intero --dur-page.
+::view-transition-group(project-hero) {
+  animation-duration: var(--dur-page);
+  animation-timing-function: var(--ease-inout);
+}
+
+// Thumbnail e hero non sono quasi mai lo stesso ritaglio. Senza `object-fit`
+// i due snapshot vengono stirati sul rettangolo intermedio e il morph legge
+// come una deformazione, non come una continuità.
+::view-transition-old(project-hero),
+::view-transition-new(project-hero) {
+  animation-duration: var(--dur-page);
+  animation-timing-function: var(--ease-inout);
+  height: 100%;
+  object-fit: cover;
+}
+
+// Firefox non ha ancora le view transition abilitate di default: lì Swup
+// ricade sul crossfade GSAP e questo blocco resta inerte.

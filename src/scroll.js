@@ -2,178 +2,444 @@ import Lenis from 'lenis';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
+import Swup from 'swup';
+import SwupHeadPlugin from '@swup/head-plugin';
+import SwupBodyClassPlugin from '@swup/body-class-plugin';
 import { groupByRows } from './helpers';
+import { DUR, EASE, STAGGER, prefersReducedMotion } from './tokens';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
-document.addEventListener('DOMContentLoaded', () => {
-  const lenis = new Lenis({ autoRaf: true });
+let lenis = null;
 
-  lenis.on('scroll', ScrollTrigger.update);
+// Con movimento ridotto Lenis non viene istanziato: lo scroll smooth è
+// movimento anche quando nessun elemento si anima. Ogni scrollTo passa di qui.
+function scrollTo(target, options = {}) {
+  if (lenis) {
+    lenis.scrollTo(target, options);
+    return;
+  }
+  const top =
+    typeof target === 'number'
+      ? target
+      : (target?.getBoundingClientRect().top ?? 0) + window.scrollY;
+  window.scrollTo({ top, behavior: 'auto' });
+}
 
-  gsap.ticker.add((time) => {
-    lenis.raf(time * 1000);
-  });
-  gsap.ticker.lagSmoothing(0);
+// Con movimento ridotto lo stato finale è già quello del CSS: un gsap.from()
+// non va accorciato, va evitato. Anche 10ms di stato iniziale sono un salto.
+function reveal(targets, vars) {
+  const items = gsap.utils.toArray(targets);
+  if (!items.length) return null;
+  if (prefersReducedMotion()) return null;
+  return gsap.from(items, vars);
+}
 
-  document.fonts.ready.then(() => {
-    const body = document.body;
+function initAnimations() {
+  const body = document.body;
+  const reduced = prefersReducedMotion();
 
-      // home + archive: animate project rows
-      if (body.classList.contains('home') || body.classList.contains('blog')) {
-        const projects = gsap.utils.toArray('.project');
-        if (projects.length) {
-          const rows = groupByRows(projects);
-          rows.forEach((row) => {
-            gsap.from(row.items, {
-              yPercent: 20,
-              skewY: 3,
-              opacity: 0,
-              duration: 1.2,
-              ease: 'power3.out',
-              stagger: 0.5,
-              scrollTrigger: {
-                trigger: row.items[0],
-                start: 'top 85%',
-                once: false,
-              },
-            });
-          });
-        }
-      }
-
-      // single page
-      if (body.classList.contains('single')) {
-        // hero video: expand to full width on play, collapse on pause/end
-        const heroSection = document.querySelector('#hero-section');
-        const heroInner  = heroSection?.querySelector(':scope > .container');
-        const heroVideo  = heroSection?.querySelector('.hls-video');
-
-        if (heroVideo && heroInner) {
-          const cs = getComputedStyle(heroInner);
-          const originalW  = cs.width;
-          const originalML = cs.marginLeft;
-          const originalMR = cs.marginRight;
-          const siteHeader = document.querySelector('header');
-
-          const videoContainer = heroSection.querySelector('.video-container');
-
-          heroVideo.addEventListener('play', () => {
-            gsap.to(heroInner, {
-              width: '100%',
-              marginLeft: 0,
-              marginRight: 0,
-              duration: 0.8,
-              ease: 'power3.inOut',
-            });
-            gsap.to(siteHeader, {
-              yPercent: -100,
-              autoAlpha: 0,
-              duration: 0.5,
-              ease: 'power2.in',
-            });
-            lenis.scrollTo(videoContainer ?? heroSection, { duration: 1, offset: 0 });
-          });
-
-          const collapse = () => {
-            gsap.to(heroInner, {
-              width: originalW,
-              marginLeft: originalML,
-              marginRight: originalMR,
-              duration: 0.6,
-              ease: 'power3.inOut',
-              onComplete: () => gsap.set(heroInner, { clearProps: 'width,marginLeft,marginRight' }),
-            });
-            gsap.to(siteHeader, {
-              yPercent: 0,
-              autoAlpha: 1,
-              duration: 0.5,
-              ease: 'power2.out',
-              onComplete: () => gsap.set(siteHeader, { clearProps: 'yPercent,opacity,visibility' }),
-            });
-          };
-
-          heroVideo.addEventListener('pause', collapse);
-          heroVideo.addEventListener('ended', collapse);
-        }
-
-        // animate flex-row elements + text elements
-        gsap.utils.toArray('.single .flex-row').forEach((row) => {
-          const inViewport = row.getBoundingClientRect().top < window.innerHeight;
-          const scrollOpts = inViewport
-            ? {}
-            : { scrollTrigger: { trigger: row, start: 'top bottom', once: false } };
-
-          const elements = row.querySelectorAll('.element');
-          if (elements.length) {
-            gsap.from(elements, {
-              yPercent: 20,
-              skewY: 3,
-              opacity: 0,
-              duration: 1.2,
-              ease: 'power3.out',
-              stagger: 0.5,
-              ...scrollOpts,
-            });
-          }
-
-          const textElements = row.querySelectorAll('.text-element');
-          if (textElements.length) {
-            gsap.from(textElements, {
-              yPercent: 20,
-              opacity: 0,
-              duration: 1.2,
-              ease: 'power3.out',
-              stagger: 0.15,
-              ...scrollOpts,
-            });
-          }
-        });
-      }
-
-      // split + animate text lines (any page)
-      gsap.utils.toArray('.text-element-lines').forEach((el) => {
-        const split = SplitText.create(el, {
-          type: 'lines',
-          linesClass: 'line++',
-          mask: 'lines',
-        });
-
-        if (!split.lines.length) return;
-
-        
-        gsap.from(split.lines, {
-          yPercent: 100,
-          autoAlpha: 0,
-          duration: 1,
-          ease: 'power3.out',
-          stagger: 0.1,
-          scrollTrigger: { trigger: el, start: 'top 85%', once: true },
-          onComplete: () => { split.revert(); },
-        });
-      });
-
-      // about page
-      const infos = document.querySelector('#infos');
-      if (infos) {
-        gsap.from('#info-list .text-element, #clients-list .text-element', {
+  // home + archive: animate project rows
+  if (body.classList.contains('home') || body.classList.contains('blog')) {
+    const projects = gsap.utils.toArray('.project');
+    if (projects.length) {
+      const rows = groupByRows(projects);
+      rows.forEach((row) => {
+        // niente skewY in entrata: lo skew appartiene allo scroll, non al reveal
+        reveal(row.items, {
           yPercent: 20,
           opacity: 0,
-          duration: 1.2,
-          ease: 'power3.out',
-          stagger: 0.15,
-          scrollTrigger: { trigger: infos, start: 'top 85%', once: false },
+          duration: DUR.base,
+          ease: EASE.out,
+          stagger: STAGGER.base,
+          scrollTrigger: {
+            trigger: row.items[0],
+            start: 'top 85%',
+            once: true,
+          },
         });
-      }
+      });
+    }
+  }
 
-      ScrollTrigger.refresh();
+  // single page
+  if (body.classList.contains('single')) {
+    // hero video: expand to full width on play, collapse on pause/end
+    const heroSection = document.querySelector('#hero-section');
+    const heroInner  = heroSection?.querySelector(':scope > .container');
+    const heroVideo  = heroSection?.querySelector('.hls-video');
+
+    // l'espansione dell'hero è la più ampia delle animazioni del sito:
+    // con movimento ridotto non si tara più piano, si toglie
+    if (heroVideo && heroInner && !reduced) {
+      const cs = getComputedStyle(heroInner);
+      const originalW  = cs.width;
+      const originalML = cs.marginLeft;
+      const originalMR = cs.marginRight;
+      const siteHeader = document.querySelector('header');
+      const videoContainer = heroSection.querySelector('.video-container');
+
+      heroVideo.addEventListener('play', () => {
+        gsap.to(heroInner, {
+          width: '100%',
+          marginLeft: 0,
+          marginRight: 0,
+          duration: DUR.base,
+          ease: EASE.inOut,
+        });
+        gsap.to(siteHeader, {
+          yPercent: -100,
+          autoAlpha: 0,
+          duration: DUR.base,
+          ease: EASE.inOut,
+        });
+        scrollTo(videoContainer ?? heroSection, { duration: DUR.page, offset: 0 });
+      });
+
+      const collapse = () => {
+        gsap.to(heroInner, {
+          width: originalW,
+          marginLeft: originalML,
+          marginRight: originalMR,
+          duration: DUR.base,
+          ease: EASE.inOut,
+          onComplete: () => gsap.set(heroInner, { clearProps: 'width,marginLeft,marginRight' }),
+        });
+        gsap.to(siteHeader, {
+          yPercent: 0,
+          autoAlpha: 1,
+          duration: DUR.base,
+          ease: EASE.inOut,
+          onComplete: () => gsap.set(siteHeader, { clearProps: 'yPercent,opacity,visibility' }),
+        });
+      };
+
+      heroVideo.addEventListener('pause', collapse);
+      heroVideo.addEventListener('ended', collapse);
+    }
+
+    // animate flex-row elements + text elements
+    gsap.utils.toArray('.single .flex-row').forEach((row) => {
+      const inViewport = row.getBoundingClientRect().top < window.innerHeight;
+      const scrollOpts = inViewport
+        ? {}
+        : { scrollTrigger: { trigger: row, start: 'top bottom', once: true } };
+
+      reveal(row.querySelectorAll('.element'), {
+        yPercent: 20,
+        opacity: 0,
+        duration: DUR.base,
+        ease: EASE.out,
+        stagger: STAGGER.base,
+        ...scrollOpts,
+      });
+
+      reveal(row.querySelectorAll('.text-element'), {
+        yPercent: 20,
+        opacity: 0,
+        duration: DUR.base,
+        ease: EASE.out,
+        stagger: STAGGER.base,
+        ...scrollOpts,
+      });
+    });
+  }
+
+  // split + animate text lines (any page)
+  // Con movimento ridotto non si splitta nemmeno: SplitText riscrive il markup
+  // in <div> annidati e le maschere restano, con il testo dentro a opacità 0.
+  if (!reduced) {
+    gsap.utils.toArray('.text-element-lines').forEach((el) => {
+      const split = SplitText.create(el, {
+        type: 'lines',
+        linesClass: 'line++',
+        mask: 'lines',
+      });
+
+      if (!split.lines.length) return;
+
+      gsap.from(split.lines, {
+        yPercent: 100,
+        autoAlpha: 0,
+        duration: DUR.base,
+        ease: EASE.out,
+        stagger: STAGGER.base,
+        scrollTrigger: { trigger: el, start: 'top 85%', once: true },
+        onComplete: () => { split.revert(); },
+      });
+    });
+  }
+
+  // about page
+  const infos = document.querySelector('#infos');
+  if (infos) {
+    reveal('#info-list .text-element, #clients-list .text-element', {
+      yPercent: 20,
+      opacity: 0,
+      duration: DUR.base,
+      ease: EASE.out,
+      stagger: STAGGER.base,
+      scrollTrigger: { trigger: infos, start: 'top 85%', once: true },
+    });
+  }
+
+  ScrollTrigger.refresh();
+}
+
+// =============================
+// Skew legato alla velocità di scroll
+// =============================
+// Le immagini si inclinano quanto più veloce va lo scroll, e tornano dritte da
+// sole. Il limite è il punto: oltre i 2–3 gradi diventa il portfolio del 2022.
+//
+// Una sola scrittura per frame, su <html>: `--skew` è ereditata da tutte le
+// `.media-container`, quindi il costo non cresce con il numero di thumbnail e
+// non c'è niente da smontare quando Swup sostituisce il contenuto.
+
+const MAX_SKEW = 2;          // gradi
+const SKEW_SATURATION = 80;  // px/frame ai quali si tocca MAX_SKEW
+const SKEW_LERP = 0.12;      // ritorno morbido a zero, non uno scatto
+
+let targetSkew = 0;
+let currentSkew = 0;
+
+function initScrollSkew() {
+  // Con movimento ridotto Lenis non viene istanziato, e con lui non esiste
+  // nemmeno questo: `--skew` resta 0 e la regola CSS è inerte.
+  if (!lenis) return;
+
+  const clampSkew = gsap.utils.clamp(-MAX_SKEW, MAX_SKEW);
+
+  lenis.on('scroll', ({ velocity }) => {
+    targetSkew = clampSkew((velocity / SKEW_SATURATION) * MAX_SKEW);
+  });
+
+  gsap.ticker.add(() => {
+    const next = currentSkew + (targetSkew - currentSkew) * SKEW_LERP;
+    // sotto il centesimo di grado si azzera: senza, la variabile continuerebbe
+    // a essere riscritta all'infinito con valori che nessuno vede
+    const value = Math.abs(next) < 0.01 && Math.abs(targetSkew) < 0.01 ? 0 : next;
+    if (value === currentSkew) return;
+    currentSkew = value;
+    document.documentElement.style.setProperty('--skew', value.toFixed(3));
+  });
+}
+
+// =============================
+// FLIP griglia → progetto
+// =============================
+// Swup gira con `native: true`: la sostituzione del contenuto è avvolta in
+// document.startViewTransition(). Il morph nasce da due `view-transition-name`
+// identici sui due lati della navigazione — la thumbnail cliccata e l'hero
+// della scheda. La taratura in tempo sta in `_view-transitions.scss`.
+
+// ── Interruttore ──────────────────────────────────────────
+// DISATTIVATA il 28 agosto 2026. Il morph regge solo se la thumbnail e l'hero
+// sono lo stesso materiale, e oggi non lo sono: parecchi progetti non hanno
+// un hero (e la thumbnail resta senza approdo, quindi si dissolve da sola),
+// in altri l'hero è un'immagine diversa dalla thumbnail e il morph legge come
+// uno scambio, non come una continuità.
+//
+// Con `false` Swup non usa affatto le view transition e ricade sul crossfade
+// GSAP: tutto quello che sta sotto si spegne da solo, perché ogni gancio è
+// condizionato a `isNative(visit)`, che segue questo flag.
+//
+// Per riaccenderla basta rimettere `true`, ma prima va risolto il contenuto —
+// vedi [[Fase 2 — Task list]] → H.
+const FLIP_ENABLED = false;
+
+const VT_NAME = 'project-hero';
+
+function clearTransitionName() {
+  document.querySelectorAll('[data-vt-active]').forEach((el) => {
+    el.style.removeProperty('view-transition-name');
+    el.removeAttribute('data-vt-active');
+  });
+}
+
+// Il nome deve essere unico nella pagina: se compare due volte il browser
+// annulla la transizione in silenzio, senza errori in console. Si pulisce
+// quindi sempre prima di assegnare, mai in due punti diversi.
+function setTransitionName(el) {
+  clearTransitionName();
+  if (!el) return;
+  el.style.setProperty('view-transition-name', VT_NAME);
+  el.setAttribute('data-vt-active', '');
+}
+
+function mediaOfProject(el) {
+  return el?.closest('project')?.querySelector('[data-vt-media]') ?? null;
+}
+
+function samePath(href, url) {
+  try {
+    return new URL(href, window.location.origin).pathname
+        === new URL(url, window.location.origin).pathname;
+  } catch (_) {
+    return false;
+  }
+}
+
+function projectMediaByUrl(url) {
+  if (!url) return null;
+  const link = Array.from(document.querySelectorAll('project a.overall'))
+    .find((a) => samePath(a.href, url));
+  return mediaOfProject(link);
+}
+
+// Dove atterra il morph nella pagina appena inserita: sulla scheda è l'hero,
+// tornando in griglia è la thumbnail del progetto da cui si arriva — così il
+// tasto indietro riavvolge lo stesso gesto invece di sfumare.
+function transitionTarget(visit) {
+  return (
+    document.querySelector('#hero-section [data-vt-media]') ??
+    projectMediaByUrl(visit.from.url)
+  );
+}
+
+// Swup spegne `native` da solo se il browser non ha startViewTransition
+// (oggi: Firefox), e lì resta il crossfade GSAP.
+const isNative = (visit) => !!visit.animation.native;
+
+// Il primo paint non deve aspettare i font: con il preload document.fonts.ready
+// arriva presto, ma oltre questa soglia si rivela comunque.
+const REVEAL_FONT_TIMEOUT = 400;
+
+function fontsSettled() {
+  return Promise.race([
+    document.fonts.ready,
+    new Promise((resolve) => { setTimeout(resolve, REVEAL_FONT_TIMEOUT); }),
+  ]);
+}
+
+function revealContent(delay = DUR.base) {
+  // con movimento ridotto il gate va tolto, non attraversato in dissolvenza:
+  // qui serve davvero un set() allo stato finale, l'opacità 0 arriva dal CSS
+  if (prefersReducedMotion()) {
+    document.documentElement.classList.remove('is-loading');
+    gsap.set(['.content', 'footer'], { opacity: 1 });
+    return;
+  }
+
+  // l'opacità va ripresa inline PRIMA di togliere la classe: altrimenti gsap
+  // legge già 1 come valore di partenza e il fade in ingresso sparisce
+  gsap.set(['.content', 'footer'], { opacity: 0 });
+  document.documentElement.classList.remove('is-loading');
+  gsap.to('.content', { opacity: 1, duration: DUR.base, ease: EASE.out });
+  gsap.to('footer', { opacity: 1, duration: DUR.base, delay });
+}
+
+// resize: un solo refresh a raffica finita. Su mobile la barra degli indirizzi
+// che si ritrae emette resize durante lo scroll, e ogni refresh ricalcola tutto.
+function onIdleResize(callback, wait = 200) {
+  let timer;
+  let lastW = window.innerWidth;
+  let lastH = window.innerHeight;
+
+  return () => {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    const isChromeCollapse = w === lastW && Math.abs(h - lastH) < 120;
+    lastW = w;
+    lastH = h;
+    if (isChromeCollapse) return;
+
+    clearTimeout(timer);
+    timer = setTimeout(callback, wait);
+  };
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  // un solo driver: il ticker GSAP. Con autoRaf: true Lenis avanzava due volte
+  // per frame e lo smooth scroll diventava irregolare.
+  if (!prefersReducedMotion()) {
+    lenis = new Lenis();
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add((time) => { lenis.raf(time * 1000); });
+    gsap.ticker.lagSmoothing(0);
+    initScrollSkew();
+  }
+
+  const swup = new Swup({
+    containers: ['.content'],
+    animationSelector: false,
+    animateHistoryBrowsing: true,
+    // il browser avvolge la sostituzione in una view transition; Swup
+    // disattiva l'opzione da solo dove l'API non c'è (oggi: Firefox)
+    native: FLIP_ENABLED,
+    ignoreVisit: (url, { el } = {}) => !!el?.closest('a.single-lightbox-el'),
+    plugins: [
+      new SwupHeadPlugin(),
+      new SwupBodyClassPlugin(),
+    ],
+  });
+  window.swup = swup;
+
+  // Initial page load
+  fontsSettled().then(() => {
+    initAnimations();
+    revealContent();
+  });
+
+  // Solo la thumbnail cliccata prende il nome. `a.overall` è il link che copre
+  // la scheda in griglia: è l'unico click che deve produrre un morph.
+  swup.hooks.on('visit:start', (visit) => {
+    if (!isNative(visit)) return;
+    // sul popstate non c'è nessun click, e il nome è già sull'hero da quando
+    // la scheda è entrata: è quello che fa tornare indietro il morph
+    if (visit.history.popstate) return;
+    setTransitionName(mediaOfProject(visit.trigger.el?.closest('a.overall')));
+  });
+
+  // Leave: hide footer instantly (avoids bleed-through as content fades), then fade content
+  swup.hooks.on('animation:out:start', (visit) => {
+    // Con la view transition nativa l'uscita la disegna il browser. Un fade
+    // GSAP qui fotograferebbe la pagina vecchia già a opacità 0 e la
+    // transizione sfumerebbe nel vuoto.
+    if (isNative(visit)) return undefined;
+
+    gsap.set('footer', { opacity: 0 });
+    if (prefersReducedMotion()) return gsap.set('.content', { opacity: 0 });
+    // --dur-page è il budget dell'intera transizione: metà in uscita, metà in entrata
+    return gsap.to('.content', { opacity: 0, duration: DUR.page / 2, ease: EASE.inOut });
+  });
+
+  // After DOM swap: kill old ScrollTriggers, scroll to top
+  swup.hooks.on('content:replace', (visit) => {
+    ScrollTrigger.getAll().forEach((t) => t.kill());
+    scrollTo(0, { immediate: true });
+
+    if (isNative(visit)) {
+      // Siamo dentro il callback di startViewTransition: lo snapshot della
+      // pagina nuova viene preso quando questo blocco è finito. Le animazioni
+      // vanno inizializzate adesso, o gli elementi verrebbero fotografati
+      // visibili e sparirebbero un attimo dopo, all'inizio del loro reveal.
+      setTransitionName(transitionTarget(visit));
+      initAnimations();
+      return;
+    }
+
+    // Il container nuovo nasce senza opacità inline (il gate CSS vale solo al
+    // primo load): va nascosto qui, o lampeggia prima del fade in ingresso.
+    gsap.set('.content', { opacity: 0 });
+  });
+
+  // Enter: re-init animations, fade in content + footer
+  swup.hooks.on('animation:in:start', async (visit) => {
+    if (isNative(visit)) return undefined; // già fatto dentro la view transition
+
+    await fontsSettled();
+    initAnimations();
+
+    if (prefersReducedMotion()) return gsap.set(['.content', 'footer'], { opacity: 1 });
+
+    gsap.to('footer', { opacity: 1, duration: DUR.base, delay: DUR.base });
+    return gsap.to('.content', { opacity: 1, duration: DUR.page / 2, ease: EASE.inOut });
   });
 
   window.addEventListener('load', () => {
     ScrollTrigger.refresh();
   });
 
-  window.addEventListener('resize', () => {
-    ScrollTrigger.refresh();
-  });
+  window.addEventListener('resize', onIdleResize(() => ScrollTrigger.refresh()));
 });

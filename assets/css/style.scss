@@ -4,6 +4,7 @@ Author: Ilaria roglieri
 Version: 1.0
 */
 
+@import 'tokens';
 @import 'common';
 
 *,
@@ -202,11 +203,11 @@ header {
   z-index: 1000;
   width: 100%;
   background-color: $secColor;
-  transition: all .5s;
+  transition: all var(--dur-base) var(--ease-inout);
   #inner-header {
     position: relative;
     z-index: 1000;
-    transition: all .5s;
+    transition: all var(--dur-base) var(--ease-inout);
   }
   div[class*="menu-1"]{
     display: flex;
@@ -220,14 +221,14 @@ header {
     background-color: $primaryColor;
     color: $secColor;
     z-index: 999;
-    transition: left .6s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: left var(--dur-base) var(--ease-inout);
     ul li {
       margin-bottom: calc($half-spacing / 2);
       a {
         color: $secColor;
         @extend .s-large;
         opacity: 1;
-        transition: opacity .3s;
+        transition: opacity var(--dur-micro) var(--ease-quick);
         &:hover {
           opacity: .6;
         }
@@ -258,7 +259,7 @@ header {
       background: $primaryColor;
       opacity: 1;
       transform: rotate(0deg);
-      transition: all .5s;
+      transition: all var(--dur-base) var(--ease-inout);
     }
     
   }
@@ -277,14 +278,9 @@ header {
 
 .content {
   margin-bottom: 100vh;
-  opacity: 0;
-  transition: opacity 1s;
   position: relative;
   z-index: 2;
   background-color: $secColor;
-  &.loaded {
-    opacity: 1;
-  }
   &:not(#content-home) {
     padding-top: 100px;
   }
@@ -304,10 +300,12 @@ header {
     }
   }
   project {
-    overflow: hidden;
-    & > * {
-      transform-origin: left top;
-    }
+    // Niente `overflow: hidden` qui: verificato che non serve. Il titolo a
+    // riposo resta dentro il box (lo nasconde `opacity: 0`, non un clip) e il
+    // ritaglio che al layout serve davvero sta su `.media-container`.
+    // Il clip tagliava invece l'angolo dello skew di scroll, che sborda ~11px.
+    // Stessa storia per `transform-origin: left top` sui figli: era del
+    // `skew(0, 5deg)` commentato qui sotto, e raddoppiava lo sbordo.
     .overall:hover {
       // & ~ .media-container {
       //   transform: skew(0, 5deg);
@@ -324,7 +322,7 @@ header {
       position: relative;
       bottom: -100px;
       opacity: 0;
-      transition: all .7s cubic-bezier(0.22, 1, 0.36, 1);
+      transition: all var(--dur-base) var(--ease-out);
     }
     .media-container {
       display: flex;
@@ -334,10 +332,20 @@ header {
         object-fit: cover;
         object-position: center;
         transform: scale(1);
-        transition: all .5s;
+        transition: all var(--dur-base) var(--ease-out);
       }
     }
   }
+}
+
+// ── Skew legato alla velocità di scroll — [[Scroll con inerzia contenuta]] ──
+// La variabile la scrive `scroll.js` su <html>, una volta per frame: qui la
+// leggono tutti i media insieme, quindi il costo non cresce con il numero di
+// thumbnail. A riposo vale 0 e la regola è inerte — anche con movimento
+// ridotto, dove Lenis non esiste e nessuno la scrive mai.
+.media-container {
+  transform-origin: center center;
+  transform: skewY(calc(var(--skew, 0) * 1deg));
 }
 
 // single page
@@ -393,7 +401,7 @@ header {
       padding: 0;
       cursor: pointer;
       color: $primaryColor;
-      transition: all .5s;
+      transition: all var(--dur-micro) var(--ease-quick);
 
       &:hover {
         opacity: .5;
@@ -430,12 +438,39 @@ header {
   }
 }
 
+// Link di testo. Il commento `border-bottom: 1px solid` lasciato in `a:hover`
+// diceva l'intenzione giusta: qui la sottolineatura si disegna invece di
+// apparire, entra da sinistra ed esce a destra. Nessun colore: il sistema non
+// ne ha, e un link non è un posto dove introdurne uno.
+.link-line {
+  position: relative;
+  display: inline-block;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -0.15em;
+    height: 1px;
+    background-color: currentColor;
+    transform: scaleX(0);
+    transform-origin: right center;
+    transition: transform var(--dur-micro) var(--ease-quick);
+  }
+
+  &:hover::after {
+    transform: scaleX(1);
+    transform-origin: left center;
+  }
+}
+
 .edit-post-link {
   display: inline-flex;
   align-items: center;
   margin-left: 10px;
   opacity: .35;
-  transition: opacity .3s;
+  transition: opacity var(--dur-micro) var(--ease-quick);
   vertical-align: middle;
   &:hover {
     opacity: 1;
@@ -465,6 +500,53 @@ header {
       }
     }
   }
+  .content-module.dark + .content-module.dark {
+    margin-top: 0;
+  }
+}
+
+// ── Prev / next in fondo alla scheda ────────────────────────────────
+// Le due thumbnail devono leggere come una coppia. Oggi ogni media conserva le
+// sue proporzioni, quindi due progetti di formato diverso producono due
+// rettangoli diversi e la riga si sbilancia.
+.navi {
+  .project {
+    overflow: hidden;
+
+    // Colonna con il media spinto in fondo. Le due schede hanno già la stessa
+    // altezza (`align-items: stretch` sulla riga flex), quindi i due media
+    // partono dalla stessa riga anche quando un titolo va a capo e l'altro no.
+    // Nessuna altezza fissa da indovinare, e zero spazio sprecato quando i
+    // titoli stanno su una riga sola.
+    display: flex;
+    flex-flow: column;
+  }
+
+  // Stessa forma di `.hero-container`: rettangolo fisso, immagine ritagliata
+  // dentro. È questa la regolarità che manca. Per cambiare taglio si tocca
+  // solo questa riga.
+  .media-container {
+    margin-top: auto;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+
+    img,
+    video {
+      height: 100%; // senza un'altezza definita `object-fit` non ha effetto
+      object-fit: cover;
+      object-position: center;
+      transform: scale(1);
+      transition: transform var(--dur-base) var(--ease-out);
+    }
+  }
+
+  // Lo zoom esisteva solo dentro `.home, .blog`: qui non arrivava.
+  // Serve `~` e non `+` come in griglia, perché fra il link e il media c'è
+  // l'etichetta Previous / Next e i due non sono adiacenti.
+  .overall:hover ~ .media-container img,
+  .overall:hover ~ .media-container video {
+    transform: scale(1.05);
+  }
 }
 
 // simplelightbox
@@ -475,7 +557,7 @@ header {
 .sl-wrapper {
   button {
     color: $primaryColor;
-    transition: all .5s;
+    transition: all var(--dur-micro) var(--ease-quick);
     &:hover {
       opacity: .5;
     }
@@ -516,15 +598,10 @@ footer {
   background-color: $primaryColor;
   color: $secColor;
   z-index: 1;
-  opacity: 0;
-  transition: opacity 1s;
-  &.loaded {
-    opacity: 1;
-  }
   a {
     color: $secColor;
     opacity: 1;
-    transition: .5s;
+    transition: all var(--dur-micro) var(--ease-quick);
     &:hover {
       color: $secColor;
       opacity: .6;
@@ -534,3 +611,15 @@ footer {
 
 @import 'custom-video';
 @import 'media-queries';
+@import 'view-transitions';
+
+// Gate del primo paint. La classe la mette uno script inline in <head> e la
+// toglie il bundle (con watchdog): così una pagina senza JS non resta bianca.
+html.is-loading {
+  .content,
+  footer {
+    opacity: 0;
+  }
+}
+
+@import 'reduced-motion';

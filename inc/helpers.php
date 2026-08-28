@@ -83,6 +83,3 @@
     return '<a href="mailto:' . antispambot( $content ) . '">' . antispambot( $content ) . '</a>';
 }
 add_shortcode( 'email', 'offusca_email_shortcode' );
-
-?>
-

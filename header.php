@@ -13,9 +13,24 @@
 
 		<meta charset="<?php bloginfo( 'charset' ); ?>"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta name="description" content="<?= get_the_excerpt() ?>">
+		<meta name="description" content="<?= esc_attr( get_the_excerpt() ); ?>">
 		
 		<title><?php bloginfo( 'name' ); ?><?php wp_title( '—', true, 'left' ); ?></title>
+
+		<?php // i font sono il cammino critico: senza preload document.fonts.ready
+		      // arrivava a 2,2s e teneva la pagina bianca fino ad allora ?>
+		<link rel="preload" as="font" type="font/woff2" crossorigin href="<?= esc_url( get_template_directory_uri() . '/assets/fonts/PPMori-Regular.woff2' ); ?>">
+		<link rel="preload" as="font" type="font/woff2" crossorigin href="<?= esc_url( get_template_directory_uri() . '/assets/fonts/PPMori-Semibold.woff2' ); ?>">
+
+		<?php // gate del primo paint: la classe la toglie il bundle, il watchdog copre
+		      // il caso in cui il bundle non arrivi. Senza JS non viene mai messa. ?>
+		<script>
+			(function () {
+				var r = document.documentElement;
+				r.classList.add('is-loading');
+				setTimeout(function () { r.classList.remove('is-loading'); }, 2000);
+			})();
+		</script>
 
 		<link rel="profile" href="http://gmpg.org/xfn/11"/>
 		<?php wp_head(); ?>

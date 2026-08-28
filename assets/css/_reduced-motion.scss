@@ -1,0 +1,37 @@
+// =============================
+// prefers-reduced-motion
+// =============================
+// Regola non negoziabile di [[Design system]]. Va importata per ultima: il
+// blocco vince per specificità e `!important`, non per ordine, ma se un
+// partial successivo aggiungesse animazioni sarebbe comunque coperto.
+//
+// Il lato JS sta in `src/tokens.js` (`prefersReducedMotion`): qui si spengono
+// le animazioni dichiarative, lì si evita di farle partire del tutto.
+
+@media (prefers-reduced-motion: reduce) {
+
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  // I pseudo-elementi delle view transition non sono raggiunti da `*`:
+  // sono generati fuori dall'albero del documento e vanno spenti a parte,
+  // altrimenti la transizione di pagina resta l'unica cosa che si muove.
+  ::view-transition-group(root),
+  ::view-transition-old(root),
+  ::view-transition-new(root),
+  ::view-transition-group(project-hero),
+  ::view-transition-old(project-hero),
+  ::view-transition-new(project-hero) {
+    animation-duration: 0.01ms !important;
+  }
+}

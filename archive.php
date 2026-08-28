@@ -1,24 +1,22 @@
 <?php get_header(); ?>
 
 <section role="main" class="content" id="content-archive">
-  <?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
+  <div class="container">
+    <?php if ( have_posts() ) : ?>
 
-    <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-      <h2 class="entry-title"><a href="<?php the_permalink() ?>"><?php the_title(); ?></a></h2>
-      <?php if ( has_post_thumbnail() ) : ?>  
-        <a  href="<?php the_permalink() ?>">          
-          <?php the_post_thumbnail(); ?>
-        </a>
-    </article>
-  
-  <?php endif; ?>
-  <?php endwhile; else: ?>
+      <div class="d-flex flex-row wrap v-center">
+        <?php while ( have_posts() ) : the_post();
+          displayGridProject(null);
+        endwhile; ?>
+      </div>
 
-    <h2>Woops...</h2>
-    <p>Sorry, no posts found.</p>
+    <?php else: ?>
 
-  <?php endif; ?>
+      <h2>Woops...</h2>
+      <p>Sorry, no posts found.</p>
 
+    <?php endif; ?>
+  </div>
 </section>
 
 <?php get_footer(); ?>

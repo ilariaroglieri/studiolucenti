@@ -73,4 +73,28 @@
 		remove_filter( 'comment_text_rss', 'wp_staticize_emoji' );
 		remove_filter( 'wp_mail', 'wp_staticize_emoji_for_email' );
 	} );
-?>
+
+
+	// La options page del footer esisteva solo come record creato dall'interfaccia
+	// ACF: su un ambiente nuovo il gruppo "Footer CF" non aveva dove agganciarsi e
+	// the_field(..., 'option') non stampava nulla, in silenzio.
+	add_action( 'acf/init', function () {
+		if ( ! function_exists( 'acf_add_options_page' ) ) {
+			return;
+		}
+
+		// se è già registrata (record acf-ui-options-page) non duplicare la voce di menu
+		if ( function_exists( 'acf_get_options_page' ) && acf_get_options_page( 'footer' ) ) {
+			return;
+		}
+
+		acf_add_options_page( [
+			'page_title' => 'Footer',
+			'menu_title' => 'Footer',
+			'menu_slug'  => 'footer',
+			'capability' => 'edit_posts',
+			'position'   => 25,
+			'icon_url'   => 'dashicons-editor-insertmore',
+			'redirect'   => false,
+		] );
+	}, 20 );

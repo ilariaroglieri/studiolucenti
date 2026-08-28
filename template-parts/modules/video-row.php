@@ -8,17 +8,19 @@ $aspect_ratio     = get_sub_field('aspect_ratio') ?: '16/9';
 
 if ( ! $video_url ) return;
 
-if ( $background_video ) {
-  $video_class = 'bg-video';
-  $video_attrs = 'autoplay loop muted playsinline';
-} else {
-  $video_class = 'hls-video';
-  $video_attrs = 'controls playsinline';
-}
+// stesso helper dell'hero e delle thumbnail: gli attributi dei <video> del
+// sito stanno in un posto solo, in inc/media.php
+$video_attrs = render_video_attrs([
+  'autoplay' => (bool) $background_video,
+  'controls' => ! $background_video,
+  'hero'     => false,
+  'poster'   => $video_poster,
+  'class'    => $background_video ? 'bg-video' : 'hls-video',
+]);
 ?>
 <div class="d-flex flex-row<?= $size !== 'd-whole' ? ' ' . esc_attr($alignment) : ''; ?>">
-  <div class="video-module-container <?= $size; ?> m-whole" style="--video-aspect-ratio: <?= esc_attr($aspect_ratio); ?>">
-    <video class="<?= $video_class; ?>" <?= $video_attrs; ?><?php if ($video_poster): ?> poster="<?= esc_url($video_poster); ?>"<?php endif; ?>>
+  <div class="video-module-container <?= esc_attr($size); ?> m-whole" style="--video-aspect-ratio: <?= esc_attr($aspect_ratio); ?>">
+    <video <?= $video_attrs; ?>>
       <source src="<?= esc_url($video_url); ?>">
     </video>
   </div>

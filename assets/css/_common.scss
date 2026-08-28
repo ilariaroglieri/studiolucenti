@@ -5,16 +5,14 @@ $desktop: 1440px;
 $tablet: 768px;
 $mobile: 640px;
 
-//colors
-$primaryColor: #323232;
-$secColor: #fffff7;
+// I colori vivono in `_tokens.scss`, importato prima di questo file.
 
 // Typography
 @font-face {
   font-family: 'PP Mori';
   src:url('../fonts/PPMori-Regular.woff2') format('woff2'),
       url('../fonts/PPMori-Regular.woff') format('woff'),
-      url('../fonts/PPMori-Regular.ttf') format('ttf');
+      url('../fonts/PPMori-Regular.ttf') format('truetype');
   font-weight: 400;
   font-display: swap;
 }
@@ -23,7 +21,7 @@ $secColor: #fffff7;
   font-family: 'PP Mori';
   src:url('../fonts/PPMori-Semibold.woff2') format('woff2'),
       url('../fonts/PPMori-Semibold.woff') format('woff'),
-      url('../fonts/PPMori-Semibold.ttf') format('ttf');
+      url('../fonts/PPMori-Semibold.ttf') format('truetype');
   font-weight: 500;
   font-display: swap;
 }

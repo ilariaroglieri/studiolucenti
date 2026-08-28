@@ -1,0 +1,36 @@
+// =============================
+// TOKEN — la sorgente unica
+// =============================
+// Questi valori sono la trascrizione letterale di [[Design system]].
+// Nulla nel tema deve dichiarare un colore, una durata o un easing a mano:
+// se un valore serve e non è qui, la domanda giusta è se serve davvero.
+//
+// Il gemello JS è `src/tokens.js`: GSAP non legge le CSS var, quindi i due
+// file vanno tenuti allineati a mano. Se cambi un numero qui, cambialo lì.
+
+:root {
+  // ── Colore ────────────────────────────────────────────
+  // Nessun accent color. Il colore lo mette il lavoro, mai l'interfaccia.
+  --bg:       #fffff7;
+  --fg:       #323232;
+  --fg-muted: #8a8a85;
+  --hairline: rgba(50, 50, 50, 0.12);
+
+  // ── Motion ────────────────────────────────────────────
+  // Pesante, decelerazione lunga. Mai bounce, mai overshoot.
+  --ease-out:   cubic-bezier(0.16, 1, 0.3, 1);    // entrate, reveal
+  --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);   // stato e transizioni di pagina
+  --ease-quick: cubic-bezier(0.4, 0, 0.2, 1);     // micro-feedback: hover, cursore
+
+  --dur-micro: 160ms;   // hover, cursore, feedback immediato
+  --dur-base:  600ms;   // elementi che entrano, reveal tipografici
+  --dur-page:  1000ms;  // transizioni di pagina
+}
+
+// ── Ponte per SCSS ──────────────────────────────────────
+// Il tema è pieno di `$primaryColor` / `$secColor` e di funzioni Sass che su
+// una `var()` non possono operare. Restano quindi come valori letterali, ma
+// dichiarati una sola volta e qui, accanto ai token da cui dipendono.
+$primaryColor: #323232;  // = --fg
+$secColor:     #fffff7;  // = --bg
+$mutedColor:   #8a8a85;  // = --fg-muted

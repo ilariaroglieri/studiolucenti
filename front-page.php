@@ -26,8 +26,10 @@
           <div class="d-flex flex-row">
             <div class="d-whole">
               <div class="video-container">
-                <video id="hls-video" playsinline loop autoplay>
-                  <source src="<?= esc_url($reel); ?>?>">
+                <?php // quarto e ultimo punto che stampava attributi a mano: passa
+                      // dallo stesso helper degli altri tre ?>
+                <video <?= render_video_attrs(['class' => 'hls-video']); ?>>
+                  <source src="<?= esc_url($reel); ?>">
                 </video>
               </div>
             </div>
@@ -61,7 +63,7 @@
 
         <div class="d-flex flex-row v-center spacing-p-t-2 spacing-p-b-2">
           <div class="d-whole t-center">
-            <a href="<?= esc_url( get_permalink( get_option('page_for_posts') ) ); ?>" class="s-regular">
+            <a href="<?= esc_url( get_permalink( get_option('page_for_posts') ) ); ?>" class="s-regular link-line">
               See all Projects
             </a>
           </div>
