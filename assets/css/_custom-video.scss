@@ -1,59 +1,172 @@
+// =============================
+// Plyr — reskin minimalista
+// =============================
+// Riguarda solo i moduli in-pagina di video-row.php: l'hero ha il proprio
+// tasto unico (scroll.js) e non passa più da Plyr. Stessa lingua grafica di
+// quel tasto — outline sottile, nessun riempimento, nessun accent color —
+// così i controlli video del sito sono un solo linguaggio, non due.
+//
+// Tecnica: le icone SVG che Plyr genera via <use> sono forme piene
+// (path/polygon), non tratteggiate — non restilizzabili in outline con un
+// filtro CSS. Si spengono (`svg { display: none }`) e si sostituiscono con
+// le icone in `assets/img/plyr-*.svg`, agganciate allo stesso toggle
+// `.plyr__control--pressed` che Plyr usa già per play/pausa.
+
 :root {
   --plyr-color-main: var(--fg); // era `$primaryColor`: Sass non interpola dentro una custom property, usciva la stringa letterale
+  --plyr-video-controls-background: rgba(0, 0, 0, 0.28); // scrim piatto, non il gradiente pieno di default
+  --plyr-video-control-color: var(--bg);
+  --plyr-video-control-color-hover: var(--bg);
+  --plyr-control-spacing: 14px;
+  --plyr-control-radius: 0;
+  --plyr-control-icon-size: 15px;
+  --plyr-range-track-height: 1px; // hairline, non la barra spessa di default
+  --plyr-range-thumb-height: 9px;
+  --plyr-range-fill-background: var(--bg);
+  --plyr-range-thumb-background: var(--bg);
   --plyr-badge-text-color: #f7f7f7;
   --plyr-captions-text-color: #f7f7f7;
-  --plyr-video-control-color: #f7f7f7;
-  --plyr-audio-controls-background: #f7f7f7;
-  --plyr-range-thumb-background: #e7e7e7;
-  --plyr-video-control-color-hover: #e7e7e7;
-  --plyr-audio-control-color-hover: #e7e7e7;
   --plyr-badge-border-radius: 0;
 }
 
-.plyr__control.plyr__control--overlaid {
-  svg {
-    --plyr-control-icon-size: 50px;
+// Tutto su una riga: Plyr dispone già play, progresso, tempo, muto e schermo
+// intero in un unico flex — bastava togliere il padding e i margini pensati
+// per una barra più alta.
+.plyr--video .plyr__controls {
+  padding: 8px 12px;
+  gap: 10px;
+}
+
+.plyr__controls__item {
+  margin-left: 0;
+}
+
+.plyr__control {
+  padding: 4px;
+  border-radius: 0;
+}
+
+// Tempo: unico elemento in monospace del player, la stessa lingua
+// dell'orologio e della numerazione dei progetti. DM Mono non è ancora
+// caricato nel tema (Decisioni → D5): fallback di sistema nel frattempo.
+.plyr__time {
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+  padding: 0;
+}
+
+// Il separatore "/" è già Plyr di default (::before sul secondo .plyr__time):
+// niente da aggiungere qui, solo ereditare il monospace dalla regola sopra.
+// Sotto i 767px di viewport Plyr nasconde la durata da solo — bene così,
+// su una riga sola in mobile è una cosa in meno da stringere.
+
+// Il buffering non è un'informazione che deve leggersi in un controllo
+// di una riga: sparisce, resta solo la posizione di lettura.
+.plyr__progress__buffer {
+  display: none;
+}
+
+// Traccia hairline. Il pallino di scrub è invisibile a riposo — "leggero,
+// impercettibile" vale anche qui — e compare solo quando serve davvero:
+// hover, focus da tastiera, o durante il trascinamento.
+input[type='range'] {
+  height: 1px;
+}
+
+// Selettori vendor separati, mai in coda alla stessa virgola: un browser
+// che non riconosce ::-moz-range-thumb scarta l'intera lista se è unita a
+// ::-webkit-slider-thumb nella stessa regola — così com'è già negli
+// stili di default di Plyr, mai in coppia.
+input[type='range']::-webkit-slider-thumb {
+  opacity: 0;
+  transition: opacity var(--dur-micro) var(--ease-quick);
+}
+input[type='range']::-moz-range-thumb {
+  opacity: 0;
+  transition: opacity var(--dur-micro) var(--ease-quick);
+}
+
+input[type='range']:hover::-webkit-slider-thumb,
+input[type='range']:focus-visible::-webkit-slider-thumb,
+input[type='range']:active::-webkit-slider-thumb {
+  opacity: 1;
+}
+input[type='range']:hover::-moz-range-thumb,
+input[type='range']:focus-visible::-moz-range-thumb,
+input[type='range']:active::-moz-range-thumb {
+  opacity: 1;
+}
+
+// Bottone grande al centro: resta lì finché il video è in pausa, come nel
+// comportamento nativo di Plyr — sparisce da solo all'avvio. Il cerchio è
+// un bordo CSS, non un'immagine: un solo triangolo in outline dentro.
+.plyr__control--overlaid {
+  background: transparent;
+  border: 1px solid var(--bg);
+  border-radius: 100%; // la regola generica di .plyr__control sotto lo azzererebbe altrimenti
+  padding: 15px;
+  opacity: 0.85;
+  transition: opacity var(--dur-micro) var(--ease-quick);
+
+  &:hover,
+  &:focus-visible {
+    opacity: 1;
   }
-  &[data-plyr='play'] {
-    svg {
-      display: none;
-    }
-    &:before {
-      content: '';
-      display: block;
-      width: 50px;
-      height: 50px;
-      background: url('../img/plyr-play-big.svg') no-repeat center center;
-      background-size: contain;
-    }
+
+  svg {
+    display: none;
+  }
+  &:before {
+    content: '';
+    display: block;
+    width: 16px;
+    height: 16px;
+    background: url('../img/plyr-play-big.svg') no-repeat center center;
+    background-size: contain;
   }
 }
 
-.plyr__controls__item.plyr__control {
-  &[data-plyr='play'] {
+// Play/pausa, muto, schermo intero: stessa tecnica per tutti e tre, mai sul
+// bottone grande — :not() lo esclude perché condivide data-plyr="play" con
+// il pulsante piccolo e altrimenti la specificità delle due regole pareggia.
+.plyr__control:not(.plyr__control--overlaid) {
+  &[data-plyr='play'],
+  &[data-plyr='mute'],
+  &[data-plyr='fullscreen'] {
     svg {
       display: none;
     }
     &:before {
       content: '';
       display: block;
-      width: 20px;
-      height: 20px;
-      background: url('../img/plyr-play.svg') no-repeat center center;
+      width: var(--plyr-control-icon-size);
+      height: var(--plyr-control-icon-size);
+      background-repeat: no-repeat;
+      background-position: center center;
       background-size: contain;
     }
   }
-  &.plyr__control--pressed {
-    svg {
-      display: none;
-    }
-    &:before {
-      content: '';
-      display: block;
-      width: 20px;
-      height: 20px;
-      background: url('../img/plyr-pause.svg') no-repeat left center;
-      background-size: contain;
-    }
+
+  &[data-plyr='play']:before {
+    background-image: url('../img/plyr-play.svg');
+  }
+  &.plyr__control--pressed[data-plyr='play']:before {
+    background-image: url('../img/plyr-pause.svg');
+  }
+
+  &[data-plyr='mute']:before {
+    background-image: url('../img/plyr-mute.svg');
+  }
+  &.plyr__control--pressed[data-plyr='mute']:before {
+    background-image: url('../img/plyr-muted.svg');
+  }
+
+  &[data-plyr='fullscreen']:before {
+    background-image: url('../img/plyr-enter-fullscreen.svg');
+  }
+  &.plyr__control--pressed[data-plyr='fullscreen']:before {
+    background-image: url('../img/plyr-exit-fullscreen.svg');
   }
 }

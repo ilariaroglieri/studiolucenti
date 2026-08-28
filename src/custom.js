@@ -139,7 +139,9 @@ function initPlugins() {
         hlsVideos.forEach((videoEl) => {
           const player = new Plyr(videoEl, {
             autoplay: !prefersReducedMotion(),
-            controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'captions', 'airplay', 'fullscreen'],
+            // niente sottotitoli né AirPlay: sono i moduli in-pagina, la
+            // striscia resta su una riga sola
+            controls: ['play-large', 'play', 'progress', 'current-time', 'duration', 'mute', 'fullscreen'],
           });
           const src = videoEl.querySelector('source')?.getAttribute('src');
 
