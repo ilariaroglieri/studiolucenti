@@ -45,6 +45,7 @@
       'width'    => 0,
       'height'   => 0,
       'class'    => '',
+      'style'    => '',
     ];
 
     $attrs = [];
@@ -79,25 +80,49 @@
       $attrs[] = sprintf( 'width="%d" height="%d"', (int) $a['width'], (int) $a['height'] );
     }
 
+    if ( $a['style'] ) {
+      $attrs[] = sprintf( 'style="%s"', esc_attr( $a['style'] ) );
+    }
+
     $attrs[] = 'disablepictureinpicture';
 
     return implode( ' ', $attrs );
   }
 
   /**
-   * Poster di un allegato video. Nessun campo ACF nuovo: si usa l'immagine in
-   * evidenza dell'allegato stesso (Media → il video → Immagine in evidenza),
-   * che è dove WordPress la mette già.
+   * Poster di un allegato video, con le sue dimensioni.
+   *
+   * Nessun campo ACF nuovo: si usa l'immagine in evidenza dell'allegato stesso
+   * (Media → il video → Immagine in evidenza), che è dove WordPress la mette già.
+   *
+   * Le dimensioni servono quanto l'URL. `wp_get_attachment_metadata()` è vuoto
+   * per parecchi allegati video, e un <video> senza `src` — quelli in lazy non
+   * ce l'hanno — non ha nessun altro modo di conoscere le proprie proporzioni:
+   * il box collassa all'altezza di default finche il poster non arriva.
+   * Il poster e il primo frame, quindi le sue proporzioni sono quelle giuste.
+   *
+   * @return array{url: string, width: int, height: int}
    */
-  function get_video_poster_url( $attachment_id, $size = 'grid-6' ) {
+  function get_video_poster( $attachment_id, $size = 'grid-6' ) {
     $thumb_id = get_post_thumbnail_id( $attachment_id );
     if ( $thumb_id ) {
-      return wp_get_attachment_image_url( $thumb_id, $size ) ?: '';
+      $src = wp_get_attachment_image_src( $thumb_id, $size );
+      if ( $src && ! empty( $src[0] ) ) {
+        return [ 'url' => $src[0], 'width' => (int) $src[1], 'height' => (int) $src[2] ];
+      }
     }
 
     // fallback: la thumbnail che alcune installazioni generano all'upload
     $meta = wp_get_attachment_metadata( $attachment_id );
-    return ! empty( $meta['image']['src'] ) ? $meta['image']['src'] : '';
+    if ( ! empty( $meta['image']['src'] ) ) {
+      return [
+        'url'    => $meta['image']['src'],
+        'width'  => (int) ( $meta['image']['width'] ?? 0 ),
+        'height' => (int) ( $meta['image']['height'] ?? 0 ),
+      ];
+    }
+
+    return [ 'url' => '', 'width' => 0, 'height' => 0 ];
   }
 
   /**
@@ -176,14 +201,30 @@
         // Fuori dall'hero la sorgente non viene assegnata dal markup: la mette
         // initLazyVideos() in custom.js quando l'elemento entra in viewport.
         // Con movimento ridotto non la mette mai e resta il poster.
-        $is_lazy    = ! $is_hero;
-        $src_attr   = $is_lazy ? 'data-src' : 'src';
-        $sources    = get_video_sources($medium_id);
+        $is_lazy  = ! $is_hero;
+        $src_attr = $is_lazy ? 'data-src' : 'src';
+        $sources  = get_video_sources($medium_id);
+        $poster   = get_video_poster($medium_id, $size);
+
+        // Il box va riservato *sempre*, o il documento nasce molto piu corto di
+        // quanto sara, e tutto quello che sta sotto slitta quando i poster
+        // arrivano. Tre fonti in ordine di attendibilita: i metadati del video,
+        // le dimensioni del poster (che e il primo frame, quindi ha le stesse
+        // proporzioni), e in ultima istanza 16/9 - meglio una proporzione
+        // plausibile che nessuna.
+        $video_w = (int) ($meta['width']  ?? 0);
+        $video_h = (int) ($meta['height'] ?? 0);
+        if (!$video_w || !$video_h) {
+          $video_w = $poster['width'];
+          $video_h = $poster['height'];
+        }
+
         $video_attrs = render_video_attrs([
           'hero'   => $is_hero,
-          'poster' => get_video_poster_url($medium_id, $size),
-          'width'  => $meta['width']  ?? 0,
-          'height' => $meta['height'] ?? 0,
+          'poster' => $poster['url'],
+          'width'  => $video_w,
+          'height' => $video_h,
+          'style'  => ($video_w && $video_h) ? '' : 'aspect-ratio: 16 / 9',
           'class'  => 'el bnd' . ($is_lazy ? ' js-lazy-video' : ''),
         ]);
         ?>
