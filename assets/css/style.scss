@@ -367,57 +367,8 @@ header {
   }
 }
 
-// Ancora per il tasto audio dell'hero interattivo — vedi .hero-audio-toggle
-// più sotto. `.video-container` è il wrapper dell'embed, `.media-container`
-// quello di render_media(): stesso hook, due markup diversi.
-#hero-section {
-  .video-container,
-  .media-container {
-    position: relative;
-  }
-}
-
-// Unico controllo dell'hero interattivo: nessun controllo nativo, nessun Plyr.
-// "Leggero, impercettibile, solo in outline" — un tratto sottile, mai un
-// riempimento pieno, mai un badge. L'icona cambia da play a diffusione audio,
-// non lo stato del bottone: dice cosa succede al click, non cosa sta succedendo ora.
-.hero-audio-toggle {
-  position: absolute;
-  right: $half-spacing;
-  bottom: $half-spacing;
-  z-index: 5;
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  background: transparent;
-  padding: 0;
-  cursor: pointer;
-  color: $secColor;
-  opacity: 0.55;
-  transition: opacity var(--dur-micro) var(--ease-quick), transform var(--dur-micro) var(--ease-quick);
-
-  svg {
-    width: 22px;
-    height: 22px;
-  }
-
-  &:hover,
-  &:focus-visible {
-    opacity: 1;
-  }
-
-  &:focus-visible {
-    outline: 1px solid currentColor;
-    outline-offset: 2px;
-  }
-
-  &:active {
-    transform: scale(0.92);
-  }
-}
+// Niente da aggiungere qui per l'hero: usa Plyr come i moduli in-pagina, e
+// `.plyr` è già `position: relative` nel CSS di default della libreria.
 
 #hero-section {
   &.has-hero-bg {

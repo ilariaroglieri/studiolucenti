@@ -128,6 +128,65 @@ input[type='range']:active::-moz-range-thumb {
   }
 }
 
+// Stato iniziale dell'hero: loop muto in autoplay, e in campo solo il cerchio
+// al centro. La barra c'è già nel DOM ma non si vede: compare al primo click,
+// insieme all'audio e all'allargamento. Nascosto anche il `play-large` di
+// Plyr, che altrimenti lampeggerebbe nell'istante prima che l'autoplay parta.
+#hero-section.hero-idle {
+  .plyr__controls,
+  .plyr__control--overlaid {
+    display: none;
+  }
+}
+
+// Il cerchio dell'hero. Stesso disegno del `play-large` di Plyr — non lo
+// riusa perché quel bottone, al click, metterebbe in pausa un video che sta
+// già andando. Le due misure vanno tenute allineate a mano.
+//
+// Il selettore parte da `.plyr` per necessità, non per abitudine: Plyr
+// dichiara `.plyr button { width: auto }`, che con la sola `.hero-play`
+// vincerebbe di specificità e schiaccerebbe il cerchio alla larghezza del
+// contenuto (48px → 18px, ellisse invece di cerchio).
+.plyr .hero-play {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 4; // sopra i controlli di Plyr, che stanno a 3
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--bg);
+  border-radius: 100%;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  color: var(--bg);
+  opacity: 0.85;
+  transition: opacity var(--dur-micro) var(--ease-quick);
+
+  &:hover,
+  &:focus-visible {
+    opacity: 1;
+  }
+
+  &:focus-visible {
+    outline: 1px solid currentColor;
+    outline-offset: 3px;
+  }
+
+  &:before {
+    content: '';
+    display: block;
+    width: 16px;
+    height: 16px;
+    background: url('../img/plyr-play-big.svg') no-repeat center center;
+    background-size: contain;
+  }
+}
+
 // Play/pausa, muto, schermo intero: stessa tecnica per tutti e tre, mai sul
 // bottone grande — :not() lo esclude perché condivide data-plyr="play" con
 // il pulsante piccolo e altrimenti la specificità delle due regole pareggia.

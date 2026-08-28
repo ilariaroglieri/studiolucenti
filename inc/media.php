@@ -274,14 +274,19 @@
         }
 
         $video_attrs = render_video_attrs([
-          'hero'   => $is_hero,
-          'poster' => $poster['url'],
-          'width'  => $video_w,
-          'height' => $video_h,
-          'style'  => ($video_w && $video_h) ? '' : 'aspect-ratio: 16 / 9',
-          // hero-video: stesso aggancio del branch embed in single.php,
-          // per il tasto audio + allargamento di scroll.js
-          'class'  => 'el bnd' . ($is_hero ? ' hero-video' : '') . ($is_lazy ? ' js-lazy-video' : ''),
+          // Loop muto in autoplay sempre, in griglia come in hero. In hero
+          // (fallback quando il progetto non ha un embed Vimeo) arrivano anche
+          // i controlli, che pero' restano nascosti finche' non si clicca il
+          // cerchio al centro — stesso comportamento del branch embed in
+          // single.php, agganciato da .hero-video.
+          'autoplay' => true,
+          'controls' => $is_hero,
+          'hero'     => $is_hero,
+          'poster'   => $poster['url'],
+          'width'    => $video_w,
+          'height'   => $video_h,
+          'style'    => ($video_w && $video_h) ? '' : 'aspect-ratio: 16 / 9',
+          'class'    => 'el bnd' . ($is_hero ? ' hero-video' : '') . ($is_lazy ? ' js-lazy-video' : ''),
         ]);
         ?>
         <video <?= $video_attrs; ?>>

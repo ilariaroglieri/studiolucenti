@@ -15,15 +15,18 @@
         $medium_id             = get_medium_id_from_acf($featured_medium);
         $is_vertical           = in_array($hero_aspect_ratio, ['4/5', '3/4', '1/1']);
 
-        // Il film in hero parte sempre muto in loop, come un loop decorativo:
-        // il tasto leggero (scroll.js) attiva audio e allargamento al click.
-        // `hero_background_video` resta per i loop puramente ambientali — spesso
-        // senza audio — che non ricevono il tasto e restano così per sempre.
-        // Classe `hero-video`: l'aggancio con cui scroll.js li distingue.
+        // L'hero parte SEMPRE come loop muto in autoplay. Sul film interattivo
+        // Plyr c'è già ma la sua barra resta nascosta (stato `.hero-idle`):
+        // si vede solo il cerchio al centro. Al click compaiono insieme audio,
+        // allargamento e controlli — vedi initHeroIdleOverlay() in custom.js.
+        // `hero_background_video` resta per i loop puramente ambientali, che
+        // non ricevono né Plyr né cerchio: loop muto per sempre.
         $hero_video_attrs = render_video_attrs([
-          'hero'   => true,
-          'poster' => $video_poster,
-          'class'  => $hero_background_video ? 'bg-video' : 'hls-video hero-video',
+          'autoplay' => true,
+          'controls' => ! $hero_background_video,
+          'hero'     => true,
+          'poster'   => $video_poster,
+          'class'    => $hero_background_video ? 'bg-video' : 'hls-video hero-video',
         ]);
 
         $ar_vars = '';
@@ -131,7 +134,12 @@
             };
             $layoutFile = str_replace('_', '-', get_row_layout());
           ?>
-            <div data-type="<?= $moduleType; ?>" class="container-fluid content-module spacing-t-3 spacing-b-3 spacing-m-t-0 spacing-m-b-0<?php if ($bndCol == 1): ?> dark<?php endif; ?>">
+            <?php // spacing-m-t-0/spacing-m-b-0 non ci vanno: azzerano il margine su
+                  // OGNI modulo da mobile in giù, non solo su quelli scuri consecutivi
+                  // per cui esiste il compenso in padding — vedi .content-module.dark
+                  // in style.scss. Con quella coppia, un modulo video o testo qualsiasi
+                  // restava incollato al contenuto sopra e sotto. ?>
+            <div data-type="<?= $moduleType; ?>" class="container-fluid content-module spacing-t-3 spacing-b-3<?php if ($bndCol == 1): ?> dark<?php endif; ?>">
               <div class="container">
                 <?php get_template_part('template-parts/modules/' . $layoutFile); ?>
               </div>

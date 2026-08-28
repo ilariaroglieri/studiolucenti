@@ -36,59 +36,49 @@ function reveal(targets, vars) {
 }
 
 // =============================
-// Hero — tasto audio + allargamento
+// Hero — allargamento all'attivazione
 // =============================
-// Il film in hero parte sempre come loop ambientale: muto, in automatico.
-// Un tasto leggero, solo in outline, è l'unica interfaccia — non ci sono
-// controlli nativi né Plyr su questo video. Al click: si attiva l'audio e
-// parte l'allargamento a piena larghezza, con lo stesso gesto di ritorno al
-// secondo click. `.hero-video` è l'aggancio: lo mette il PHP solo sui video
-// pensati per essere interattivi, mai sui loop puramente ambientali
-// (`hero_background_video`), che restano così per sempre.
+// L'hero parte come loop muto in autoplay, quindi `play` scatta da solo al
+// caricamento: non può essere quello a innescare l'allargamento. Il segnale
+// è `lucenti:hero-activate`, che custom.js emette quando l'utente clicca il
+// cerchio al centro. Solo da quel momento in poi play e pause governano
+// l'allargamento, come su un film qualsiasi.
+//
+// L'ascolto è sul <video>, che esiste da subito: Plyr lo avvolge ma non lo
+// sostituisce, quindi il listener sopravvive alla sua inizializzazione —
+// initPlugins() e initAnimations() girano in parallelo, senza garanzia di
+// ordine fra loro.
+//
+// `hero_background_video` resta per i loop puramente ambientali, senza Plyr
+// e senza cerchio: restano un loop muto per sempre.
 
-const HERO_PLAY_ICON =
-  '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
-  '<path d="M7 5.5v13a1 1 0 0 0 1.53.85l11-6.5a1 1 0 0 0 0-1.7l-11-6.5A1 1 0 0 0 7 5.5Z" ' +
-  'stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>';
-
-const HERO_SOUND_ICON =
-  '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
-  '<path d="M4 9v6h3.8l5 4V5l-5 4H4Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>' +
-  '<path d="M16.3 9.2a4.4 4.4 0 0 1 0 5.6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>' +
-  '<path d="M18.8 6.8a8 8 0 0 1 0 10.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>';
-
-function initHeroAudioToggle(reduced) {
+function initHeroExpand(reduced) {
   const heroSection = document.querySelector('#hero-section');
   const heroVideo = heroSection?.querySelector('.hero-video');
   const heroInner = heroSection?.querySelector(':scope > .container');
   if (!heroVideo || !heroInner) return;
 
-  // Con movimento ridotto il video resta fermo sul poster (freezeAutoplayVideos
-  // in custom.js): non c\'è niente da ascoltare, e l\'allargamento è la più
-  // ampia delle animazioni del sito. Niente tasto, non un tasto che non fa nulla.
+  // L'allargamento è la più ampia delle animazioni del sito: con movimento
+  // ridotto si toglie, non si tara più piano. Il video resta comunque
+  // guardabile con i controlli Plyr, semplicemente non si allarga più.
   if (reduced) return;
 
-  const wrapper = heroVideo.parentElement;
-  if (!wrapper || wrapper.querySelector('.hero-audio-toggle')) return;
-
-  const cs = getComputedStyle(heroInner);
-  const originalW = cs.width;
-  const originalML = cs.marginLeft;
-  const originalMR = cs.marginRight;
   const siteHeader = document.querySelector('header');
   const videoContainer = heroSection.querySelector('.video-container');
 
-  const button = document.createElement('button');
-  button.type = 'button';
-  button.className = 'hero-audio-toggle';
-  button.setAttribute('aria-pressed', 'false');
-  button.setAttribute('aria-label', 'Attiva audio');
-  button.innerHTML = HERO_PLAY_ICON;
-  wrapper.appendChild(button);
+  // Misurato all'attivazione e non qui: al primo load `.content` è ancora in
+  // dissolvenza e il layout può non essere assestato.
+  let originalW;
+  let originalML;
+  let originalMR;
 
-  let active = false;
-
-  function expand() {
+  const expand = () => {
+    if (originalW === undefined) {
+      const cs = getComputedStyle(heroInner);
+      originalW = cs.width;
+      originalML = cs.marginLeft;
+      originalMR = cs.marginRight;
+    }
     gsap.to(heroInner, {
       width: '100%',
       marginLeft: 0,
@@ -103,9 +93,10 @@ function initHeroAudioToggle(reduced) {
       ease: EASE.inOut,
     });
     scrollTo(videoContainer ?? heroSection, { duration: DUR.page, offset: 0 });
-  }
+  };
 
-  function collapse() {
+  const collapse = () => {
+    if (originalW === undefined) return;
     gsap.to(heroInner, {
       width: originalW,
       marginLeft: originalML,
@@ -121,23 +112,18 @@ function initHeroAudioToggle(reduced) {
       ease: EASE.inOut,
       onComplete: () => gsap.set(siteHeader, { clearProps: 'yPercent,opacity,visibility' }),
     });
-  }
+  };
 
-  button.addEventListener('click', () => {
-    active = !active;
-    heroVideo.muted = !active;
-    // può essere rifiutata se il browser non considera il click un gesto
-    // valido in quel momento: non è un errore, e non va lasciata come
-    // promise non gestita
-    if (active) heroVideo.play?.().catch(() => {});
-
-    button.innerHTML = active ? HERO_SOUND_ICON : HERO_PLAY_ICON;
-    button.setAttribute('aria-pressed', String(active));
-    button.setAttribute('aria-label', active ? 'Disattiva audio' : 'Attiva audio');
-
-    if (active) expand();
-    else collapse();
-  });
+  heroVideo.addEventListener(
+    'lucenti:hero-activate',
+    () => {
+      expand();
+      heroVideo.addEventListener('play', expand);
+      heroVideo.addEventListener('pause', collapse);
+      heroVideo.addEventListener('ended', collapse);
+    },
+    { once: true }
+  );
 }
 
 function initAnimations() {
@@ -169,7 +155,7 @@ function initAnimations() {
 
   // single page
   if (body.classList.contains('single')) {
-    initHeroAudioToggle(reduced);
+    initHeroExpand(reduced);
 
     // animate flex-row elements + text elements
     gsap.utils.toArray('.single .flex-row').forEach((row) => {

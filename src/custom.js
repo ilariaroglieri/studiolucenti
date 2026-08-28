@@ -126,30 +126,105 @@ function freezeAutoplayVideos() {
   });
 }
 
+// =============================
+// Hero — stato iniziale, poi film
+// =============================
+// L'hero nasce come un loop ambientale: muto, in automatico, e l'unica cosa
+// visibile è il cerchio al centro. Plyr c'è già sotto, ma la sua barra resta
+// nascosta dallo stato `.hero-idle`.
+//
+// Al primo click il video diventa un film: audio acceso, allargamento a piena
+// larghezza (lo fa scroll.js, in ascolto dell'evento) e barra dei controlli
+// che compare. Da lì in poi Plyr si comporta come su qualsiasi altro video.
+//
+// Il cerchio è un elemento nostro e non il `play-large` di Plyr: quello, al
+// click, chiamerebbe togglePlay() e metterebbe in **pausa** un video che sta
+// già andando — l'opposto di quello che serve qui.
+function initHeroIdleOverlay(videoEl, player) {
+  // Con movimento ridotto il video non parte affatto (freezeAutoplayVideos ha
+  // tolto `autoplay`): non c'è nessuno stato iniziale da cui uscire, e Plyr
+  // resta un player normale, fermo sul poster con la sua barra.
+  if (prefersReducedMotion()) return;
+
+  const section = videoEl.closest('#hero-section');
+  const wrapper = videoEl.closest('.plyr');
+  if (!section || !wrapper || wrapper.querySelector('.hero-play')) return;
+
+  section.classList.add('hero-idle');
+
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'hero-play';
+  button.setAttribute('aria-label', 'Riproduci con audio');
+  wrapper.appendChild(button);
+
+  button.addEventListener(
+    'click',
+    () => {
+      section.classList.remove('hero-idle');
+      button.remove();
+
+      // Via il setter di Plyr, non su videoEl.muted: Plyr tiene un proprio
+      // stato del volume e l'icona della barra resterebbe disallineata.
+      player.muted = false;
+      player.play();
+
+      // L'allargamento vive in scroll.js, insieme al resto delle animazioni.
+      // Un evento invece di una chiamata diretta: i due file non devono
+      // conoscersi, e nemmeno sapere chi dei due si inizializza per primo.
+      videoEl.dispatchEvent(new CustomEvent('lucenti:hero-activate', { bubbles: true }));
+    },
+    { once: true }
+  );
+}
+
 function initPlugins() {
   freezeAutoplayVideos();
   initLazyVideos();
 
-  // L'hero interattivo ha il tasto unico di scroll.js, non Plyr: qui restano
-  // solo i moduli in-pagina di video-row.php, che vogliono i controlli visibili.
-  const hlsVideos = document.querySelectorAll('.hls-video:not(.hero-video)');
-  if (hlsVideos.length) {
+  // Stessa skin ovunque: l'hero interattivo passa da Plyr come i moduli
+  // in-pagina di video-row.php, non ha più un tasto a sé. `.hero-video` senza
+  // `.hls-video` è il fallback self-hosted (nessun embed Vimeo sul progetto):
+  // ha già un <source src> vero, niente hls.js da agganciare.
+  const plyrVideos = document.querySelectorAll('.hls-video, .hero-video');
+  if (plyrVideos.length) {
     Promise.all([import('plyr'), import('hls.js')]).then(
       ([{ default: Plyr }, { default: Hls }]) => {
-        hlsVideos.forEach((videoEl) => {
+        plyrVideos.forEach((videoEl) => {
+          // Solo l'hero nasce con `autoplay` nel markup: i moduli in-pagina
+          // partono fermi sul poster, ed è giusto così. Con movimento ridotto
+          // l'attributo l'ha già tolto freezeAutoplayVideos() qui sopra.
+          const wantsAutoplay = videoEl.hasAttribute('autoplay');
+
           const player = new Plyr(videoEl, {
-            autoplay: !prefersReducedMotion(),
-            // niente sottotitoli né AirPlay: sono i moduli in-pagina, la
-            // striscia resta su una riga sola
+            autoplay: wantsAutoplay,
+            // `muted` è un'opzione di Plyr che di default vale false e
+            // sovrascrive l'attributo del markup: va ripassata esplicitamente.
+            muted: videoEl.hasAttribute('muted'),
+            // E non basta. Plyr ricorda volume e muted in localStorage fra le
+            // visite e li riapplica **sopra** l'opzione qui sopra: basta che
+            // il visitatore abbia acceso l'audio una volta su un qualsiasi
+            // video del sito perché l'hero si ritrovi non-muto, il browser gli
+            // blocchi l'autoplay e il loop non parta più. Su un video che deve
+            // partire da solo la memoria del volume è un difetto, non una
+            // gentilezza: resta accesa solo dove l'utente preme play a mano.
+            storage: { enabled: !wantsAutoplay },
+            // niente sottotitoli né AirPlay: la striscia resta su una riga sola
             controls: ['play-large', 'play', 'progress', 'current-time', 'duration', 'mute', 'fullscreen'],
           });
-          const src = videoEl.querySelector('source')?.getAttribute('src');
+          const src = videoEl.classList.contains('hls-video')
+            ? videoEl.querySelector('source')?.getAttribute('src')
+            : null;
 
           if (src && Hls.isSupported()) {
             const hls = new Hls();
             hlsInstances.push(hls);
             hls.loadSource(src);
             hls.attachMedia(player.media);
+          }
+
+          if (videoEl.classList.contains('hero-video')) {
+            initHeroIdleOverlay(videoEl, player);
           }
 
           players.push(player);
@@ -166,9 +241,9 @@ function initPlugins() {
     );
   }
 
-  // Stesso attach diretto di hls.js dei loop ambientali, esteso all'hero
-  // interattivo: nessuno dei due vuole l'interfaccia di Plyr sopra.
-  const bgVideos = document.querySelectorAll('.bg-video, .hls-video.hero-video');
+  // Solo i loop puramente ambientali (hero_background_video): restano muti,
+  // in loop, senza nessuna interfaccia sopra.
+  const bgVideos = document.querySelectorAll('.bg-video');
   if (bgVideos.length) {
     import('hls.js').then(({ default: Hls }) => {
       bgVideos.forEach((videoEl) => {
