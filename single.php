@@ -15,14 +15,15 @@
         $medium_id             = get_medium_id_from_acf($featured_medium);
         $is_vertical           = in_array($hero_aspect_ratio, ['4/5', '3/4', '1/1']);
 
-        // attributi dall'helper condiviso: `hero => true` significa
-        // preload="auto", perché questo è l'LCP della pagina
+        // Il film in hero parte sempre muto in loop, come un loop decorativo:
+        // il tasto leggero (scroll.js) attiva audio e allargamento al click.
+        // `hero_background_video` resta per i loop puramente ambientali — spesso
+        // senza audio — che non ricevono il tasto e restano così per sempre.
+        // Classe `hero-video`: l'aggancio con cui scroll.js li distingue.
         $hero_video_attrs = render_video_attrs([
-          'autoplay' => (bool) $hero_background_video,
-          'controls' => ! $hero_background_video,
-          'hero'     => true,
-          'poster'   => $video_poster,
-          'class'    => $hero_background_video ? 'bg-video' : 'hls-video',
+          'hero'   => true,
+          'poster' => $video_poster,
+          'class'  => $hero_background_video ? 'bg-video' : 'hls-video hero-video',
         ]);
 
         $ar_vars = '';

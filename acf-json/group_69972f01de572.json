@@ -24,7 +24,7 @@
             "label": "Featured Medium (Video or Image)",
             "name": "featured_medium",
             "aria-label": "",
-            "type": "gallery",
+            "type": "file",
             "instructions": "This medium will be used inside the Work page and the Home (if the project is among the featured).",
             "required": 0,
             "conditional_logic": 0,
@@ -35,17 +35,9 @@
             },
             "return_format": "array",
             "library": "all",
-            "min": "",
-            "max": 1,
-            "min_width": "",
-            "min_height": "",
-            "min_size": "",
-            "max_width": "",
-            "max_height": "",
-            "max_size": "",
-            "mime_types": "",
-            "insert": "append",
-            "preview_size": "thumbnail"
+            "min_size": 0,
+            "max_size": 0,
+            "mime_types": ""
         },
         {
             "key": "field_69973b8610b1d",
@@ -180,13 +172,13 @@
                 "id": ""
             },
             "choices": {
-                "16\/9": "16:9 (Default)",
-                "4\/5": "4:5",
-                "3\/4": "3:4",
-                "1\/1": "1:1",
-                "2\/1": "2:1"
+                "16/9": "16:9 (Default)",
+                "4/5": "4:5",
+                "3/4": "3:4",
+                "1/1": "1:1",
+                "2/1": "2:1"
             },
-            "default_value": "16\/9",
+            "default_value": "16/9",
             "return_format": "value",
             "multiple": 0,
             "allow_null": 0,
@@ -685,15 +677,15 @@
                                 "id": ""
                             },
                             "choices": {
-                                "16\/9": "16:9 (Default)",
-                                "4\/5": "4:5",
-                                "3\/4": "3:4",
-                                "1\/1": "1:1",
-                                "4\/3": "4:3",
-                                "2\/1": "2:1",
+                                "16/9": "16:9 (Default)",
+                                "4/5": "4:5",
+                                "3/4": "3:4",
+                                "1/1": "1:1",
+                                "4/3": "4:3",
+                                "2/1": "2:1",
                                 "auto": "auto"
                             },
-                            "default_value": "16\/9",
+                            "default_value": "16/9",
                             "return_format": "value",
                             "multiple": 0,
                             "allow_null": 0,
@@ -1070,5 +1062,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1780417232
+    "modified": 1787913283
 }

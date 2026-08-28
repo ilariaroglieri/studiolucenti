@@ -130,7 +130,9 @@ function initPlugins() {
   freezeAutoplayVideos();
   initLazyVideos();
 
-  const hlsVideos = document.querySelectorAll('.hls-video');
+  // L'hero interattivo ha il tasto unico di scroll.js, non Plyr: qui restano
+  // solo i moduli in-pagina di video-row.php, che vogliono i controlli visibili.
+  const hlsVideos = document.querySelectorAll('.hls-video:not(.hero-video)');
   if (hlsVideos.length) {
     Promise.all([import('plyr'), import('hls.js')]).then(
       ([{ default: Plyr }, { default: Hls }]) => {
@@ -162,7 +164,9 @@ function initPlugins() {
     );
   }
 
-  const bgVideos = document.querySelectorAll('.bg-video');
+  // Stesso attach diretto di hls.js dei loop ambientali, esteso all'hero
+  // interattivo: nessuno dei due vuole l'interfaccia di Plyr sopra.
+  const bgVideos = document.querySelectorAll('.bg-video, .hls-video.hero-video');
   if (bgVideos.length) {
     import('hls.js').then(({ default: Hls }) => {
       bgVideos.forEach((videoEl) => {

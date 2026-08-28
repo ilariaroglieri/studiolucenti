@@ -1,10 +1,64 @@
-<?php 
+<?php
   add_theme_support('post-thumbnails');
+
+  // Senza questo, l'allegato video non ha nessun pannello "Immagine in
+  // evidenza" in admin: add_theme_support('post-thumbnails') attiva il tema,
+  // ma il post type 'attachment' non ha 'thumbnail' tra i suoi supports di
+  // default. get_video_poster() legge get_post_thumbnail_id() sull'allegato:
+  // senza questa riga, quel campo non è compilabile da nessuna parte.
+  add_post_type_support('attachment', 'thumbnail');
 
   add_image_size('full-width', 2560, 0, false);
   add_image_size('full-width-mobile', 768, 0, false);
   add_image_size('grid-6', 1536, 0, false);
   add_image_size('grid-4', 900, 0, false);
+
+  /**
+   * I campi media del tema accettano anche video.
+   *
+   * ACF 6.8.7 ha reso il campo `gallery` image-only: acf_is_image_field()
+   * considera image-only ogni campo di tipo `image` o `gallery`, e l'allegato
+   * video viene marcato "Restricted — File must be a valid image" nel modale.
+   * Questi tre campi però nascono per accettare entrambi — lo dicono le loro
+   * stesse etichette — e render_media() fa il branch sul mime type.
+   *
+   * `acf/is_image_field/name=...` è il punto di estensione che ACF ha aggiunto
+   * nella stessa versione della restrizione, apposta per questi casi.
+   *
+   * `featured_medium` non è in lista: è stato convertito in campo `file`, che
+   * la restrizione non tocca. Restano questi due perché cambiarli costa di più:
+   * `hero_medium` è max=1 e si potrebbe convertire allo stesso modo, mentre
+   * `all_row_media` è multi-valore (max=3) e richiederebbe un repeater e 492
+   * righe da ristrutturare. Vedi [[Decisioni]] → D8.
+   */
+  const STUDIOLUCENTI_MEDIA_FIELDS = [ 'hero_medium', 'all_row_media' ];
+
+  foreach ( STUDIOLUCENTI_MEDIA_FIELDS as $field_name ) {
+    add_filter( "acf/is_image_field/name={$field_name}", '__return_false' );
+  }
+
+  /**
+   * La restrizione ha un secondo punto d'ingresso, non filtrabile.
+   *
+   * ACF_Field_Gallery::validate_value() chiama wp_attachment_is_image() a mano,
+   * senza passare da acf_is_image_field(): il filtro sopra copre il modale e
+   * l'upload, ma non il salvataggio. Qui si annulla *solo* quell'errore,
+   * confrontandolo con la stessa stringa tradotta che ACF produce, così le
+   * altre validazioni del campo (il minimo di selezioni) restano attive.
+   *
+   * L'ordine è garantito: acf_validate_value() applica i filtri `type=` prima
+   * dei `name=` (includes/validation.php:355-357).
+   */
+  function studiolucenti_allow_video_in_media_field( $valid ) {
+    if ( is_string( $valid ) && $valid === __( 'File must be a valid image.', 'acf' ) ) {
+      return true;
+    }
+    return $valid;
+  }
+
+  foreach ( STUDIOLUCENTI_MEDIA_FIELDS as $field_name ) {
+    add_filter( "acf/validate_value/name={$field_name}", 'studiolucenti_allow_video_in_media_field', 20 );
+  }
 
 
   // retrieve ID from ACF field (supports galleries or single images)
@@ -225,7 +279,9 @@
           'width'  => $video_w,
           'height' => $video_h,
           'style'  => ($video_w && $video_h) ? '' : 'aspect-ratio: 16 / 9',
-          'class'  => 'el bnd' . ($is_lazy ? ' js-lazy-video' : ''),
+          // hero-video: stesso aggancio del branch embed in single.php,
+          // per il tasto audio + allargamento di scroll.js
+          'class'  => 'el bnd' . ($is_hero ? ' hero-video' : '') . ($is_lazy ? ' js-lazy-video' : ''),
         ]);
         ?>
         <video <?= $video_attrs; ?>>

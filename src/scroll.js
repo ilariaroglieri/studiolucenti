@@ -35,6 +35,111 @@ function reveal(targets, vars) {
   return gsap.from(items, vars);
 }
 
+// =============================
+// Hero — tasto audio + allargamento
+// =============================
+// Il film in hero parte sempre come loop ambientale: muto, in automatico.
+// Un tasto leggero, solo in outline, è l'unica interfaccia — non ci sono
+// controlli nativi né Plyr su questo video. Al click: si attiva l'audio e
+// parte l'allargamento a piena larghezza, con lo stesso gesto di ritorno al
+// secondo click. `.hero-video` è l'aggancio: lo mette il PHP solo sui video
+// pensati per essere interattivi, mai sui loop puramente ambientali
+// (`hero_background_video`), che restano così per sempre.
+
+const HERO_PLAY_ICON =
+  '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+  '<path d="M7 5.5v13a1 1 0 0 0 1.53.85l11-6.5a1 1 0 0 0 0-1.7l-11-6.5A1 1 0 0 0 7 5.5Z" ' +
+  'stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>';
+
+const HERO_SOUND_ICON =
+  '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+  '<path d="M4 9v6h3.8l5 4V5l-5 4H4Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>' +
+  '<path d="M16.3 9.2a4.4 4.4 0 0 1 0 5.6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>' +
+  '<path d="M18.8 6.8a8 8 0 0 1 0 10.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>';
+
+function initHeroAudioToggle(reduced) {
+  const heroSection = document.querySelector('#hero-section');
+  const heroVideo = heroSection?.querySelector('.hero-video');
+  const heroInner = heroSection?.querySelector(':scope > .container');
+  if (!heroVideo || !heroInner) return;
+
+  // Con movimento ridotto il video resta fermo sul poster (freezeAutoplayVideos
+  // in custom.js): non c\'è niente da ascoltare, e l\'allargamento è la più
+  // ampia delle animazioni del sito. Niente tasto, non un tasto che non fa nulla.
+  if (reduced) return;
+
+  const wrapper = heroVideo.parentElement;
+  if (!wrapper || wrapper.querySelector('.hero-audio-toggle')) return;
+
+  const cs = getComputedStyle(heroInner);
+  const originalW = cs.width;
+  const originalML = cs.marginLeft;
+  const originalMR = cs.marginRight;
+  const siteHeader = document.querySelector('header');
+  const videoContainer = heroSection.querySelector('.video-container');
+
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'hero-audio-toggle';
+  button.setAttribute('aria-pressed', 'false');
+  button.setAttribute('aria-label', 'Attiva audio');
+  button.innerHTML = HERO_PLAY_ICON;
+  wrapper.appendChild(button);
+
+  let active = false;
+
+  function expand() {
+    gsap.to(heroInner, {
+      width: '100%',
+      marginLeft: 0,
+      marginRight: 0,
+      duration: DUR.base,
+      ease: EASE.inOut,
+    });
+    gsap.to(siteHeader, {
+      yPercent: -100,
+      autoAlpha: 0,
+      duration: DUR.base,
+      ease: EASE.inOut,
+    });
+    scrollTo(videoContainer ?? heroSection, { duration: DUR.page, offset: 0 });
+  }
+
+  function collapse() {
+    gsap.to(heroInner, {
+      width: originalW,
+      marginLeft: originalML,
+      marginRight: originalMR,
+      duration: DUR.base,
+      ease: EASE.inOut,
+      onComplete: () => gsap.set(heroInner, { clearProps: 'width,marginLeft,marginRight' }),
+    });
+    gsap.to(siteHeader, {
+      yPercent: 0,
+      autoAlpha: 1,
+      duration: DUR.base,
+      ease: EASE.inOut,
+      onComplete: () => gsap.set(siteHeader, { clearProps: 'yPercent,opacity,visibility' }),
+    });
+  }
+
+  button.addEventListener('click', () => {
+    active = !active;
+    heroVideo.muted = !active;
+    // può essere rifiutata se il browser non considera il click un gesto
+    // valido in quel momento: non è un errore, e non va lasciata come
+    // promise non gestita
+    if (active) heroVideo.play?.().catch(() => {});
+
+    button.innerHTML = active ? HERO_SOUND_ICON : HERO_PLAY_ICON;
+    button.setAttribute('aria-pressed', String(active));
+    button.setAttribute('aria-label', active ? 'Disattiva audio' : 'Attiva audio');
+
+    if (active) expand();
+    else collapse();
+  });
+}
+
 function initAnimations() {
   const body = document.body;
   const reduced = prefersReducedMotion();
@@ -64,59 +169,7 @@ function initAnimations() {
 
   // single page
   if (body.classList.contains('single')) {
-    // hero video: expand to full width on play, collapse on pause/end
-    const heroSection = document.querySelector('#hero-section');
-    const heroInner  = heroSection?.querySelector(':scope > .container');
-    const heroVideo  = heroSection?.querySelector('.hls-video');
-
-    // l'espansione dell'hero è la più ampia delle animazioni del sito:
-    // con movimento ridotto non si tara più piano, si toglie
-    if (heroVideo && heroInner && !reduced) {
-      const cs = getComputedStyle(heroInner);
-      const originalW  = cs.width;
-      const originalML = cs.marginLeft;
-      const originalMR = cs.marginRight;
-      const siteHeader = document.querySelector('header');
-      const videoContainer = heroSection.querySelector('.video-container');
-
-      heroVideo.addEventListener('play', () => {
-        gsap.to(heroInner, {
-          width: '100%',
-          marginLeft: 0,
-          marginRight: 0,
-          duration: DUR.base,
-          ease: EASE.inOut,
-        });
-        gsap.to(siteHeader, {
-          yPercent: -100,
-          autoAlpha: 0,
-          duration: DUR.base,
-          ease: EASE.inOut,
-        });
-        scrollTo(videoContainer ?? heroSection, { duration: DUR.page, offset: 0 });
-      });
-
-      const collapse = () => {
-        gsap.to(heroInner, {
-          width: originalW,
-          marginLeft: originalML,
-          marginRight: originalMR,
-          duration: DUR.base,
-          ease: EASE.inOut,
-          onComplete: () => gsap.set(heroInner, { clearProps: 'width,marginLeft,marginRight' }),
-        });
-        gsap.to(siteHeader, {
-          yPercent: 0,
-          autoAlpha: 1,
-          duration: DUR.base,
-          ease: EASE.inOut,
-          onComplete: () => gsap.set(siteHeader, { clearProps: 'yPercent,opacity,visibility' }),
-        });
-      };
-
-      heroVideo.addEventListener('pause', collapse);
-      heroVideo.addEventListener('ended', collapse);
-    }
+    initHeroAudioToggle(reduced);
 
     // animate flex-row elements + text elements
     gsap.utils.toArray('.single .flex-row').forEach((row) => {
