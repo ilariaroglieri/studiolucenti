@@ -81,7 +81,7 @@
 					<p class="mono s-xxsmall footer-colophon">
 						Set in PP Mori and DM Mono<br>
 						Built with WordPress, GSAP and Lenis<br>
-						Designed and coded in-house · Milan, 2026
+						Based on an original design by Ilaria Roglieri · Milan, 2026
 					</p>
 				</div>
 
