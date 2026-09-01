@@ -187,6 +187,36 @@ function initHeroIdleOverlay(videoEl, player) {
   );
 }
 
+// =============================
+// hls.js — quanto scaricare, e a che qualità
+// =============================
+// `new Hls()` nudo è la ragione per cui la home trasferiva **47,5 MB**: due
+// impostazioni di default, entrambe sbagliate per questo sito.
+//
+// 1. Senza `capLevelToPlayerSize` l'ABR sceglie il rung sulla banda e basta.
+//    Su una connessione veloce prende il più alto, cioè scarica il master 4K
+//    per mostrarlo in un riquadro largo 327px su telefono. Con l'opzione
+//    accesa il rung si sceglie sui **pixel che il video occupa davvero**, e si
+//    riadatta da solo quando l'hero si allarga al click.
+// 2. Il buffer di default arriva a 60 MB, che su un reel di ottanta secondi
+//    significa "scaricalo tutto" — misurato: 35 segmenti in 1,7 secondi.
+//
+// Due profili, perché sono due cose diverse. Il loop ambientale è decorazione:
+// chi passa oltre in tre secondi non deve aver pagato ottanta secondi di
+// video. Il player è un film che qualcuno ha deciso di guardare, e lì un
+// buffer corto si paga in stalli: si tiene il default, e resta solo il tetto
+// sulla qualità, che è guadagno secco.
+const HLS_LOOP = {
+  capLevelToPlayerSize: true,
+  maxBufferLength: 10,      // secondi avanti alla testina
+  maxMaxBufferLength: 20,   // il tetto a cui può salire se la rete è lenta
+  maxBufferSize: 6 * 1000 * 1000,
+};
+
+const HLS_PLAYER = {
+  capLevelToPlayerSize: true,
+};
+
 function initPlugins() {
   freezeAutoplayVideos();
   initLazyVideos();
@@ -226,7 +256,7 @@ function initPlugins() {
             : null;
 
           if (src && Hls.isSupported()) {
-            const hls = new Hls();
+            const hls = new Hls(HLS_PLAYER);
             hlsInstances.push(hls);
             hls.loadSource(src);
             hls.attachMedia(player.media);
@@ -263,7 +293,7 @@ function initPlugins() {
       bgVideos.forEach((videoEl) => {
         const src = videoEl.querySelector('source')?.getAttribute('src');
         if (src && Hls.isSupported()) {
-          const hls = new Hls();
+          const hls = new Hls(HLS_LOOP);
           hlsInstances.push(hls);
           hls.loadSource(src);
           hls.attachMedia(videoEl);

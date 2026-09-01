@@ -13,9 +13,22 @@
 
 		<meta charset="<?php bloginfo( 'charset' ); ?>"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta name="description" content="<?= esc_attr( get_the_excerpt() ); ?>">
+		<meta name="description" content="<?= esc_attr( studiolucenti_meta_description() ); ?>">
 		
 		<title><?php bloginfo( 'name' ); ?><?php wp_title( '—', true, 'left' ); ?></title>
+
+		<?php // Gli hero e il reel stanno su Vimeo, e il primo segmento HLS non
+		      // parte finché DNS, TCP e TLS verso due host nuovi non sono
+		      // conclusi. Aprire le connessioni mentre il documento è ancora in
+		      // parsing vale ~300ms misurati da Lighthouse. `skyfire` è il CDN
+		      // che serve i segmenti, `player` il manifest.
+		      //
+		      // Solo dove un video Vimeo c'è davvero: un preconnect inutile è
+		      // una connessione aperta e buttata. ?>
+		<?php if ( is_front_page() || is_singular( 'post' ) ) : ?>
+			<link rel="preconnect" href="https://player.vimeo.com" crossorigin>
+			<link rel="preconnect" href="https://skyfire.vimeocdn.com" crossorigin>
+		<?php endif; ?>
 
 		<?php // i font sono il cammino critico: senza preload document.fonts.ready
 		      // arrivava a 2,2s e teneva la pagina bianca fino ad allora ?>
@@ -41,11 +54,21 @@
 	<body <?php body_class(); ?>>
 		<header role="banner" class="p-fixed">
 			<div id="inner-header">
+				<?php // In homepage il wordmark è `<h1>`, altrove `<h2>`: era l'unica
+				      // pagina del sito senza nessun `<h1>`, e il wordmark è
+				      // l'unico elemento a grande scala dell'header, quindi è lui.
+				      // Sulle schede l'`<h1>` è già il titolo del progetto, e due
+				      // sulla stessa pagina sarebbero uno di troppo.
+				      //
+				      // Il cambio di tag non tocca niente altro: la scala la dà
+				      // `.s-big`, e lo specular sweep parte da `#site-name a`
+				      // apposta per non accorgersi del tag. ?>
 				<div id="logo">
-					<h2 id="site-name" class="s-big">
+					<?php $wordmark_tag = is_front_page() ? 'h1' : 'h2'; ?>
+					<<?= $wordmark_tag; ?> id="site-name" class="s-big">
 						<a href="<?php echo home_url( '/' ); ?>" title="<?php echo esc_attr( get_bloginfo( 'name', 'display' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?>
 						</a>
-					</h2>
+					</<?= $wordmark_tag; ?>>
 				</div>
 
 				<button aria-label="Main-Menu" class="menu-toggle d-none">
