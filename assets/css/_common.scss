@@ -26,6 +26,14 @@ $mobile: 640px;
   font-display: swap;
 }
 
+@font-face {
+  font-family: 'DM Mono';
+  src: url('../fonts/DMMono-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 .s-large { 
   font-size: 60px;
 }
@@ -58,6 +66,19 @@ $mobile: 640px;
 
 .uppercase {
   text-transform: uppercase;
+}
+
+// La lingua dei metadati: orologio, disponibilità, colophon, numerazione dei
+// progetti. Non porta una dimensione — si combina con `.s-xxsmall` (11px) o
+// `.s-xsmall` (14px), che è la forbice di [[Design system]].
+// `tabular-nums` serve all'orologio: senza, i secondi che cambiano fanno
+// ballare la larghezza della riga a ogni tick.
+.mono {
+  font-family: var(--font-mono);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-mono);
+  font-variant-numeric: tabular-nums;
 }
 
 

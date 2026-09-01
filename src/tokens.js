@@ -43,6 +43,17 @@ export const STAGGER = {
   words: 0.04,  // reveal tipografico per parole
 };
 
+// ── Grana ─────────────────────────────────────────────────
+// Il gemello di `--grain-*` in `_tokens.scss`: il tile compare in tutti e due
+// i file perché il CSS deve dimensionare lo sfondo e il JS deve disegnare la
+// tessera alla stessa misura. Se cambia di là, cambia qui.
+// `fps` non ha un gemello CSS: il loop è tutto in JS.
+export const GRAIN = {
+  tile: 128,    // = --grain-tile
+  frames: 8,    // quante tessere si alternano
+  fps: 12,      // mai 60: a 60 il rumore diventa sfarfallio digitale
+};
+
 // ── prefers-reduced-motion ────────────────────────────────
 // Si interroga a ogni chiamata, non una volta sola all'avvio: l'utente può
 // cambiare l'impostazione di sistema con il sito già aperto, e con Swup la

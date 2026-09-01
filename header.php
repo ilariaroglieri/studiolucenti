@@ -21,6 +21,7 @@
 		      // arrivava a 2,2s e teneva la pagina bianca fino ad allora ?>
 		<link rel="preload" as="font" type="font/woff2" crossorigin href="<?= esc_url( get_template_directory_uri() . '/assets/fonts/PPMori-Regular.woff2' ); ?>">
 		<link rel="preload" as="font" type="font/woff2" crossorigin href="<?= esc_url( get_template_directory_uri() . '/assets/fonts/PPMori-Semibold.woff2' ); ?>">
+		<link rel="preload" as="font" type="font/woff2" crossorigin href="<?= esc_url( get_template_directory_uri() . '/assets/fonts/DMMono-Regular.woff2' ); ?>">
 
 		<?php // gate del primo paint: la classe la toglie il bundle, il watchdog copre
 		      // il caso in cui il bundle non arrivi. Senza JS non viene mai messa. ?>

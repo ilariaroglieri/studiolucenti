@@ -3,6 +3,45 @@
     "title": "Footer CF",
     "fields": [
         {
+            "key": "field_699c90c914037",
+            "label": "Footer intro",
+            "name": "footer_intro",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "La frase in alto nel footer: cosa fa lo studio, in forma discorsiva. Una o due frasi, non di piu'. E' anche l'unico punto del sito dove i termini di settore (3D animation, CGI, jewellery, Milan) stanno in prosa indicizzabile.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "We work in light, surface and movement: art direction, 3D animation and CGI for jewellery and fashion houses. Based in Milan, from first look development to last delivered frame.",
+            "maxlength": 260,
+            "rows": 3,
+            "placeholder": "",
+            "new_lines": ""
+        },
+        {
+            "key": "field_699c90c914035",
+            "label": "Contact email",
+            "name": "contact_email",
+            "aria-label": "",
+            "type": "email",
+            "instructions": "L'elemento a grande scala del footer: e' l'unica cosa che il footer deve far fare. Se resta vuoto la riga grande non viene stampata.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
             "key": "field_699c90c914032",
             "label": "Contact details",
             "name": "contact_details",
@@ -62,6 +101,26 @@
                     "parent_repeater": "field_699c910e14033"
                 }
             ]
+        },
+        {
+            "key": "field_699c90c914036",
+            "label": "Availability",
+            "name": "availability_status",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Rail di metadati, accanto all'orologio. Una riga breve, in inglese: viene stampata in maiuscolo. Se resta vuoto, sparisce il pallino insieme al testo.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "Available for projects — Q1 2027",
+            "maxlength": 60,
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
         }
     ],
     "location": [
@@ -82,5 +141,8 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1780219847
+    "display_title": "",
+    "allow_ai_access": false,
+    "ai_description": "",
+    "modified": 1787932060
 }

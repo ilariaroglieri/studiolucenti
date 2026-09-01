@@ -137,7 +137,7 @@ html {
 }
 
 body {
-  font-family: 'PP Mori', sans-serif;
+  font-family: var(--font-sans);
   color: $primaryColor;
   overflow-x: hidden;
   line-height: 1.3;
@@ -277,7 +277,7 @@ header {
 }
 
 .content {
-  margin-bottom: 100vh;
+  margin-bottom: var(--footer-height);
   position: relative;
   z-index: 2;
   background-color: $secColor;
@@ -604,14 +604,31 @@ header {
   }
 }
 
+// =============================
+// FOOTER
+// =============================
+// Sta `fixed` dietro `.content`, che ha `margin-bottom: 100vh`: scrollando, il
+// bordo inferiore del contenuto sale e lo scopre **dal basso verso l'alto**.
+// Da qui le due regole che governano tutto il blocco:
+//
+// 1. il contenuto è ancorato in basso (`.flex-end` sul markup), perché la prima
+//    cosa che si scopre deve essere l'ultima riga, non uno spazio vuoto;
+// 2. quello che eccede i 100vh esce dal bordo alto della viewport e non torna
+//    più: il footer non può diventare più alto di una schermata. È il vincolo
+//    che tiene le media query in fondo a questo file.
 footer {
-  height: 100vh;
+  height: var(--footer-height);
   width: 100vw;
   position: fixed;
   bottom: 0;
   background-color: $primaryColor;
   color: $secColor;
   z-index: 1;
+
+  // La riga scoperta per prima taglia in alto se il contenuto sfora: meglio
+  // perderne il vertice che vederlo galleggiare sopra l'header.
+  overflow: hidden;
+
   a {
     color: $secColor;
     opacity: 1;
@@ -621,9 +638,86 @@ footer {
       opacity: .6;
     }
   }
+
+  // Il tono dei metadati: presenti, non in evidenza. Sul fondo scuro
+  // `--fg-muted` non basta — è tarato sull'off-white — quindi il grigio lo fa
+  // l'opacità del testo chiaro, che resta leggibile.
+  .mono {
+    color: $secColor;
+    opacity: .55;
+  }
+}
+
+// La sola prosa del footer. Il limite è in `em`, non in pixel: a 30px la riga
+// su tutta la colonna arriverebbe a settanta battute e si perderebbe il
+// ritorno; a 24em ne fa una quarantina e il blocco chiude in quattro righe.
+.footer-intro {
+  p {
+    max-width: 24em;
+  }
+}
+
+// L'email prende il posto che era del wordmark.
+.footer-email {
+  a {
+    // La scala dell'email si governa dal `<p>`, a ogni breakpoint: senza
+    // questo il link resta alla dimensione di desktop e su mobile va a capo
+    // in mezzo all'indirizzo.
+    font-size: inherit;
+    // Un indirizzo lungo su viewport stretta va spezzato, o esce dalla colonna.
+    overflow-wrap: anywhere;
+  }
+}
+
+// I social erano impilati in colonna e senza allineamento. Una riga sola,
+// distanziata e allineata al bordo destro della colonna: sono due link, non
+// un menu, e a destra chiudono la riga dei contatti invece di lasciarla aperta.
+.footer-socials {
+  align-items: flex-start;
+  justify-content: flex-end;
+  text-align: right;
+  gap: $half-spacing;
+  height: fit-content;
+}
+
+// Le tre colonne del rail poggiano sulla stessa linea di base ottica, non sul
+// loro bordo alto: il colophon è di tre righe, gli altri due di una e due.
+.footer-rail {
+  align-items: flex-end;
+}
+
+.footer-copyright {
+  text-align: right;
+}
+
+.footer-colophon {
+  // Il colophon è l'unico blocco di più righe in mono: l'interlinea di sistema
+  // a 11px maiuscoli lo chiuderebbe in un blocco compatto.
+  line-height: 1.7;
+}
+
+// Il pallino della disponibilità. Statico: l'unica cosa che si muove nel
+// footer è l'orologio, e una schermata ha diritto a un movimento solo.
+.footer-availability {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6em;
+
+  &::before {
+    content: '';
+    flex: 0 0 auto;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: currentColor;
+    // `baseline` allinea il pallino al fondo della riga: va risollevato
+    // all'altezza ottica della maiuscola.
+    transform: translateY(-0.15em);
+  }
 }
 
 @import 'custom-video';
+@import 'grain';
 @import 'media-queries';
 @import 'view-transitions';
 

@@ -16,6 +16,35 @@
   --fg-muted: #8a8a85;
   --hairline: rgba(50, 50, 50, 0.12);
 
+  // ── Tipografia ────────────────────────────────────────
+  // PP Mori per il testo, un monospace per la lingua dei metadati:
+  // orologio, numerazione, colophon, label del cursore. DM Mono 400,
+  // unico peso perché è un font di servizio (Decisioni → D5).
+  --font-sans: 'PP Mori', sans-serif;
+  --font-mono: 'DM Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  // ── Grana ─────────────────────────────────────────────
+  // Parametri di [[Decisioni]] → D3, tarati sul riferimento vivo.
+  // L'ampiezza è decisa guardando il fondo **scuro** del sito — footer e
+  // moduli `.dark` — non l'off-white: su un campo scuro la grana si legge
+  // circa al doppio, quindi è lì che si sceglie il numero. Il riferimento
+  // stava a 3,5% su off-white; qui si parte più bassi per quel motivo.
+  --grain-opacity: 0.025;
+  // In pixel CSS, non fisici: su uno schermo 2× un tile da 128px diventerebbe
+  // 64px e il grano sparirebbe.
+  --grain-tile:    128px;
+
+  // ── Footer ────────────────────────────────────────────
+  // Il footer è `fixed` dietro `.content`, che lo scopre con il proprio
+  // `margin-bottom`: i due valori devono essere lo stesso, o si scopre più
+  // footer di quanto ce n'è (banda vuota) o meno (contenuto tagliato).
+  // Erano due `100vh` scollegati in due punti diversi del foglio.
+  --footer-height: 100vh;
+
+  // Tracking dei metadati. Uppercase a 11–13px senza spaziatura si impasta:
+  // è l'unico valore tipografico che vale la pena avere come token.
+  --tracking-mono: 0.08em;
+
   // ── Motion ────────────────────────────────────────────
   // Pesante, decelerazione lunga. Mai bounce, mai overshoot.
   --ease-out:   cubic-bezier(0.16, 1, 0.3, 1);    // entrate, reveal

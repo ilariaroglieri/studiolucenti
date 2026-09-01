@@ -1,0 +1,27 @@
+// =============================
+// GRANA ANIMATA
+// =============================
+// Qui c'è solo il layer. Le tessere le genera e le scambia `src/grain.js`:
+// sono otto immagini di rumore create una volta sola, non un filtro che il
+// browser ricalcola. I parametri stanno in `_tokens.scss` → [[Decisioni]] → D3.
+//
+// Su off-white è il dettaglio che rende il minimalismo caldo invece che vuoto.
+// Sul footer, che è un campo scuro alto una schermata, è il punto del sito
+// dove il motif si vede meglio — e non costa un byte in più.
+
+.grain {
+  position: fixed;
+  inset: 0;
+  // Sopra tutto, menu aperto e lightbox compresi: è un layer di superficie,
+  // non un elemento della pagina. Il massimo che il tema usa oggi è 1001.
+  z-index: 9999;
+  pointer-events: none;
+
+  opacity: var(--grain-opacity);
+  // `overlay` è l'unico blend giusto su off-white: `multiply` scurisce e
+  // basta, `normal` stende un velo grigio che abbassa il contrasto del testo.
+  mix-blend-mode: overlay;
+
+  background-repeat: repeat;
+  background-size: var(--grain-tile) var(--grain-tile);
+}

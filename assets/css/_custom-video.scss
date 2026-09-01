@@ -47,10 +47,10 @@
 }
 
 // Tempo: unico elemento in monospace del player, la stessa lingua
-// dell'orologio e della numerazione dei progetti. DM Mono non è ancora
-// caricato nel tema (Decisioni → D5): fallback di sistema nel frattempo.
+// dell'orologio del footer e della numerazione dei progetti. Lo stack sta in
+// `--font-mono` e oggi risolve su DM Mono (Decisioni → D5).
 .plyr__time {
-  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   letter-spacing: 0.04em;
   font-variant-numeric: tabular-nums;

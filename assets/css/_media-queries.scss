@@ -55,6 +55,33 @@
       padding: 0 $half-spacing;
     }
   }
+
+  // Il footer non aveva nessuna regola responsive: con `height: 100vh` fisso e
+  // le righe che diventano colonne, il contenuto sfora dal bordo alto e la
+  // parte che si scopre per prima resta tagliata. Qui si stringe la scala e si
+  // riducono gli stacchi, non si tocca l'ancoraggio in basso.
+  footer {
+    .footer-intro p {
+      font-size: 24px;
+      max-width: none;
+    }
+    .footer-email p {
+      font-size: 40px;
+    }
+  }
+
+  // Tre colonne da un terzo a 768px lasciano al colophon meno larghezza di una
+  // sua riga: il rail si impila (`t-column` nel markup). In colonna
+  // `align-items` governa l'asse orizzontale, quindi il `flex-end` di desktop
+  // spingerebbe tutto a destra: va rimesso a sinistra.
+  .footer-rail {
+    align-items: flex-start;
+    gap: $half-spacing;
+  }
+
+  .footer-copyright {
+    text-align: left;
+  }
 }
 
 @media screen and (max-width: $mobile) {
@@ -148,6 +175,37 @@
     .content-module.dark + .content-module.dark {
       margin-top: 0;
     }
+  }
+
+  // A 640px il budget verticale è tutto: il footer resta alto una schermata e
+  // quello che sfora esce dal bordo alto e non torna. Scala più stretta e
+  // stacchi dimezzati rispetto a desktop — misurato, non stimato.
+  footer {
+    .footer-intro p {
+      font-size: 18px;
+      max-width: none;
+    }
+    .footer-email p {
+      font-size: 24px;
+    }
+  }
+
+  .footer-intro,
+  .footer-email,
+  .footer-contacts {
+    margin-bottom: $half-spacing;
+  }
+
+  .footer-contacts,
+  .footer-socials {
+    gap: $half-spacing;
+  }
+
+  // Impilati sotto l'indirizzo, i social non hanno più una colonna destra da
+  // chiudere: a destra resterebbero appesi nel vuoto.
+  .footer-socials {
+    justify-content: flex-start;
+    text-align: left;
   }
 
   .sl-wrapper {

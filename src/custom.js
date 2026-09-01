@@ -302,16 +302,34 @@ function initPlugins() {
   }
 }
 
+// Un solo punto per chiudere il menu. Le strade che lo chiudono sono tre —
+// il toggle, un link, una navigazione di Swup — e devono lasciare lo stesso
+// stato: il gestore del footer si dimenticava `blocked` sul body.
+function closeMenu() {
+  document.querySelector('.menu-toggle')?.classList.remove('open');
+  document.querySelector('header')?.classList.remove('active');
+  document.body.classList.remove('blocked');
+}
+
+// Due URL sono la stessa pagina se coincidono a meno dell'ancora: `#contact`
+// non è una destinazione diversa da quella in cui si è già.
+function isSameDocument(href) {
+  try {
+    const target = new URL(href, window.location.href);
+    return target.origin === window.location.origin
+      && target.pathname === window.location.pathname
+      && target.search === window.location.search;
+  } catch (_) {
+    return false;
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   initPlugins();
 
   // Swup hooks: cleanup before leave, re-init after content swap
   if (window.swup) {
-    window.swup.hooks.on('visit:start', () => {
-      document.querySelector('.menu-toggle')?.classList.remove('open');
-      document.querySelector('header')?.classList.remove('active');
-      document.body.classList.remove('blocked');
-    });
+    window.swup.hooks.on('visit:start', closeMenu);
     window.swup.hooks.on('animation:out:start', cleanupPlugins);
     window.swup.hooks.on('content:replace', initPlugins);
     // Swiper with loop:true needs a recalc after the content is visible
@@ -329,11 +347,19 @@ document.addEventListener('DOMContentLoaded', () => {
       $('body').toggleClass('blocked');
     });
 
+    // Un link del menu che punta alla pagina in cui si è già non fa partire
+    // nessuna navigazione: Swup scarta i click sull'URL corrente, quindi
+    // `visit:start` non arriva mai e il menu resta aperto sopra la pagina che
+    // copre. Chiuderlo qui è la sola cosa che manca — la pagina, giustamente,
+    // non deve ricaricarsi.
+    $('header').on('click', 'a[href]', function () {
+      if (isSameDocument(this.getAttribute('href'))) closeMenu();
+    });
+
     // Footer contact button scrolls to bottom
     $('.contact a').on('click', function (e) {
       e.preventDefault();
-      $('.menu-toggle').removeClass('open');
-      $('header').removeClass('active');
+      closeMenu();
       window.scrollTo(0, document.body.scrollHeight);
     });
 
