@@ -51,8 +51,25 @@
 	
 
 	// enqueue theme CSS (depends on bundle CSS so it loads after and can override)
+	//
+	// La versione è `filemtime`, non un numero a mano e non l'hash di un commit.
+	// Senza il quarto argomento WordPress ci scrive la **propria** versione —
+	// `?ver=7.1` — che cambia solo quando si aggiorna il core: il foglio di stile
+	// del tema restava nella cache dei visitatori da un rilascio all'altro.
+	//
+	// `filemtime` e non l'hash del commit per tre motivi: cambia solo quando
+	// cambia *questo* file, mentre un hash di commit invalida ogni asset a ogni
+	// rilascio e butta via cache ancora buona; funziona anche in locale, dove le
+	// modifiche non sono ancora committate; e non richiede `.git` sul server, che
+	// un deploy per rsync o FTP non porta con sé.
+	//
+	// Il bundle non ne ha bisogno: `build/index.asset.php` gli dà già l'hash del
+	// contenuto, che è la stessa cosa fatta meglio da webpack.
 	function register_theme_styles() {
-		wp_register_style( 'style', get_template_directory_uri() . '/assets/css/style.css', [ 'theme-bundle-style' ] );
+		$style_path = get_template_directory() . '/assets/css/style.css';
+		$style_ver  = file_exists( $style_path ) ? filemtime( $style_path ) : null;
+
+		wp_register_style( 'style', get_template_directory_uri() . '/assets/css/style.css', [ 'theme-bundle-style' ], $style_ver );
 		wp_enqueue_style( 'style' );
 	}
 	add_action( 'wp_enqueue_scripts', 'register_theme_styles' );
