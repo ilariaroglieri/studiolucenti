@@ -45,9 +45,15 @@
     // corte in mezzo a un campo vuoto. Restano solo le distanze — e restano
     // padding, non margini, per lo stesso motivo del desktop: `#content-home`
     // non ha padding in alto e l'header è `fixed`.
+    // Stessa correzione del desktop, e qui pesa di più: senza centratura
+    // flex da distribuire, i 24px di padding dell'header finiscono tutti
+    // sopra il testo. Sopra e sotto lo stesso numero, quindi.
+    // Lo stacco è 72px e non 96: su 667px di altezza il testo va a otto righe,
+    // e con 96 per lato del reel restavano 78px sopra la piega — troppo poco
+    // per capire che si muove. Così ne restano 126.
     min-height: 0;
-    padding-top: calc(var(--header-height, 100px) + #{$spacing});
-    padding-bottom: $double-spacing;
+    padding-top: calc(var(--header-height, 100px) - #{$half-spacing} + #{$spacing + $half-spacing});
+    padding-bottom: $spacing + $half-spacing;
   }
 
   // Un 16/7 a 327px di larghezza è alto 143px: una fessura. Qui la finestra

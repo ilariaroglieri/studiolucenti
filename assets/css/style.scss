@@ -296,9 +296,16 @@ header {
 // Il padding in alto, non un margine: `#content-home` è l'unico `.content`
 // senza `padding-top` e l'header è `fixed`, quindi la distanza dal wordmark la
 // deve dare questo blocco. Un margine per giunta collasserebbe col genitore.
+//
+// Il `- $half-spacing` non è una limatura a occhio: è **esattamente il padding
+// inferiore dell'header**, che è già spazio vuoto sotto il wordmark. Contarlo
+// una seconda volta qui dentro sposta il testo in basso di quei 24px, e il
+// blocco si legge più attaccato al reel che al titolo — misurato: 181px sopra
+// contro 162 sotto, mentre rispetto al *box* dell'header erano 157 e 157.
+// Se cambia `header { padding }`, cambia anche questo.
 .home #intro-text {
   min-height: 62vh;
-  padding-top: calc(var(--header-height, 100px) + #{$spacing});
+  padding-top: calc(var(--header-height, 100px) - #{$half-spacing} + #{$spacing});
   padding-bottom: $spacing;
 }
 
