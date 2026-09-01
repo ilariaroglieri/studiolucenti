@@ -4,7 +4,7 @@
   <div class="container">
     <?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
 
-      <section id="intro-text" class="d-flex center full-height">
+      <section id="intro-text" class="d-flex center">
         <div class="d-flex flex-row">
           <div class="d-10-twelfth m-whole">
             <div class="text-element-lines wysiwyg s-medium">
@@ -17,18 +17,31 @@
       
 
       <?php
-        $hasReel = get_field('show_video_reel');
-        $reel = get_field('video_reel');
+        $hasReel   = get_field('show_video_reel');
+        $reel      = get_field('video_reel');
+        $reel_post = get_field('video_reel_poster');
 
-        if ($hasReel == 1): ?>
+        // Il flag da solo non basta: con l'interruttore acceso e il campo URL
+        // vuoto usciva un <video> senza sorgente, cioè un buco alto mezzo schermo.
+        if ($hasReel == 1 && $reel):
+
+          // Vimeo il primo frame non lo espone: `get_video_poster()` legge
+          // l'immagine in evidenza di un allegato, e qui di allegato non ce n'è
+          // nessuno — il reel è un URL HLS. Da qui il campo ACF a fianco.
+          $reel_poster = $reel_post ? wp_get_attachment_image_url($reel_post, 'full-width') : '';
+        ?>
 
         <section id="video-reel">
           <div class="d-flex flex-row">
             <div class="d-whole">
               <div class="video-container">
-                <?php // quarto e ultimo punto che stampava attributi a mano: passa
-                      // dallo stesso helper degli altri tre ?>
-                <video <?= render_video_attrs(['class' => 'hls-video']); ?>>
+                <?php // `bg-video`, non `hls-video`: il reel è un loop ambientale,
+                      // non un film. La barra di Plyr era già spenta da CSS su
+                      // .home, quindi la libreria non ci faceva niente — se non
+                      // metterci sopra il cerchio di play, che resta in campo
+                      // finché lo stream non parte e si legge come un video fermo.
+                      // Senza Plyr resta il percorso di hls.js e basta. ?>
+                <video <?= render_video_attrs(['class' => 'bg-video', 'poster' => $reel_poster]); ?>>
                   <source src="<?= esc_url($reel); ?>">
                 </video>
               </div>

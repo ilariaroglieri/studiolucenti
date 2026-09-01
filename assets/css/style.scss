@@ -288,15 +288,24 @@ header {
 
 
 
+// L'intro della home era `full-height`: 100vh di testo centrato, e sotto la
+// piega non restava niente da vedere. Uno studio di motion la cui prima
+// schermata è ferma. Ora il blocco si chiude prima e il reel entra in campo
+// per circa un terzo.
+//
+// Il padding in alto, non un margine: `#content-home` è l'unico `.content`
+// senza `padding-top` e l'header è `fixed`, quindi la distanza dal wordmark la
+// deve dare questo blocco. Un margine per giunta collasserebbe col genitore.
+.home #intro-text {
+  min-height: 62vh;
+  padding-top: calc(var(--header-height, 100px) + #{$spacing});
+  padding-bottom: $spacing;
+}
+
 .home, .blog {
   .text-element-lines {
     &.hidden {
       opacity: 0;
-    }
-  }
-  #video-reel {
-    .plyr__controls {
-      display: none;
     }
   }
   project {
@@ -354,6 +363,47 @@ header {
 .media-container {
   transform-origin: center center;
   transform: skewY(calc(var(--skew, 0) * 1deg));
+}
+
+// ── Reel della home ──────────────────────────────────────────────────────
+// Finestra larga, non 16:9. A piena larghezza un 16:9 è alto quanto il
+// viewport meno poco: su 1440×900 misura 756px e con l'header fissa (108px)
+// ne restano 36 — su un portatile un po' più basso non ci sta proprio.
+// 16/7 è la stessa finestra dell'hero di progetto (`.hero-container` qui
+// sotto): una proporzione in meno da ricordare, non una terza inventata.
+//
+// Dentro, il materiale è più alto della finestra di `--reel-overscan`, ed è
+// quell'eccedenza a dare al parallasse di `scroll.js` lo spazio in cui
+// scorrere. Va tenuta **simmetrica**: a riposo l'inquadratura è centrata e la
+// corsa è uguale nei due sensi, quindi il bordo non si scopre mai.
+// Se cambi l'eccedenza qui, guarda `REEL_SHIFT` in `src/scroll.js`.
+#video-reel {
+  --reel-ratio:    16 / 7;
+  --reel-overscan: 16%;
+
+  .video-container {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: var(--reel-ratio);
+    // La proporzione da sola non basta su uno schermo basso: da qui in giù il
+    // reel smette di crescere e comincia a ritagliarsi, invece di spingere
+    // tutto il resto sotto la piega. `svh` e non `vh`: su mobile la barra
+    // degli indirizzi che si ritrae non deve cambiare l'altezza del riquadro.
+    max-height: calc(100svh - var(--header-height, 100px) - #{$double-spacing});
+  }
+
+  // Centratura con `top`, non con una transform: la transform resta libera,
+  // ed è tutta di GSAP. Due meccanismi sulla stessa proprietà si sovrascrivono
+  // a vicenda, e chi scrive per ultimo vince — qui scrive GSAP, ogni frame.
+  video {
+    position: absolute;
+    left: 0;
+    top: calc(var(--reel-overscan) / -2);
+    width: 100%;
+    height: calc(100% + var(--reel-overscan));
+    object-fit: cover;
+    object-position: center;
+  }
 }
 
 // single page
@@ -673,11 +723,18 @@ footer {
 // distanziata e allineata al bordo destro della colonna: sono due link, non
 // un menu, e a destra chiudono la riga dei contatti invece di lasciarla aperta.
 .footer-socials {
-  align-items: flex-start;
+  // In basso, non in alto: il box si ferma all'altezza del suo contenuto e
+  // poggia sul fondo della riga, così l'ultima riga dei social cade sulla
+  // stessa linea dell'ultima riga dell'indirizzo. `align-self` basta da solo a
+  // togliere lo stretch, quindi non serve più fissare l'altezza a mano.
+  align-self: flex-end;
+  // E i link, tra loro, sullo stesso fondo: se uno andasse a capo resterebbero
+  // allineati sull'ultima riga invece che sulla prima.
+  align-items: flex-end;
+
   justify-content: flex-end;
   text-align: right;
   gap: $half-spacing;
-  height: fit-content;
 }
 
 // Le tre colonne del rail poggiano sulla stessa linea di base ottica, non sul

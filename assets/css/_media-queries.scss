@@ -41,9 +41,20 @@
   }
 
   .home #intro-text {
-    height: unset;
-    margin-top: 10vh;
-    margin-bottom: 10vh;
+    // Su schermo stretto il testo detta la sua altezza: 62vh sarebbero righe
+    // corte in mezzo a un campo vuoto. Restano solo le distanze — e restano
+    // padding, non margini, per lo stesso motivo del desktop: `#content-home`
+    // non ha padding in alto e l'header è `fixed`.
+    min-height: 0;
+    padding-top: calc(var(--header-height, 100px) + #{$spacing});
+    padding-bottom: $double-spacing;
+  }
+
+  // Un 16/7 a 327px di larghezza è alto 143px: una fessura. Qui la finestra
+  // non è in concorrenza con l'header — un 16:9 verticalmente non dà fastidio
+  // a nessuno — quindi si riapre, senza arrivare al formato pieno.
+  #video-reel {
+    --reel-ratio: 16 / 10;
   }
 
   header {
@@ -196,16 +207,20 @@
     margin-bottom: $half-spacing;
   }
 
-  .footer-contacts,
-  .footer-socials {
+  // In colonna lo stacco tra indirizzo e social lo fa il gap, non il margine.
+  .footer-contacts {
     gap: $half-spacing;
   }
 
   // Impilati sotto l'indirizzo, i social non hanno più una colonna destra da
-  // chiudere: a destra resterebbero appesi nel vuoto.
+  // chiudere: a destra resterebbero appesi nel vuoto. E in colonna `align-self`
+  // governa l'asse **orizzontale**, quindi il `flex-end` di desktop li
+  // spingerebbe a destra invece che in basso.
   .footer-socials {
+    align-self: flex-start;
     justify-content: flex-start;
     text-align: left;
+    gap: $half-spacing;
   }
 
   .sl-wrapper {

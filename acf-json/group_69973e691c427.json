@@ -40,6 +40,39 @@
             "placeholder": ""
         },
         {
+            "key": "field_6a1d7f2b04e19",
+            "label": "Video Reel Poster",
+            "name": "video_reel_poster",
+            "aria-label": "",
+            "type": "image",
+            "instructions": "Primo frame del reel. Vimeo non lo espone al player, quindi senza questo campo il riquadro resta vuoto finche' lo stream non parte.",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_69c2aaa848bb5",
+                        "operator": "==",
+                        "value": "1"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "id",
+            "library": "all",
+            "min_width": "",
+            "min_height": "",
+            "min_size": "",
+            "max_width": "",
+            "max_height": "",
+            "max_size": "",
+            "mime_types": "",
+            "preview_size": "medium"
+        },
+        {
             "key": "field_69973e694506e",
             "label": "Featured Projects",
             "name": "featured_projects",
@@ -162,5 +195,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1780417428
+    "modified": 1788242346
 }

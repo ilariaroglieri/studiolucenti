@@ -49,10 +49,13 @@ function cleanupPlugins() {
 
 function loadLazyVideo(video) {
   if (video.dataset.lazyLoaded) return;
-  video.dataset.lazyLoaded = '1';
 
   const sources = video.querySelectorAll('source[data-src]');
+  // Il flag si mette solo a chi ha davvero qualcosa da caricare: nell'observer
+  // entrano anche i `.bg-video`, che la sorgente ce l'hanno già nel markup.
   if (!sources.length) return;
+
+  video.dataset.lazyLoaded = '1';
 
   sources.forEach((source) => {
     source.src = source.dataset.src;
@@ -68,7 +71,13 @@ function initLazyVideos() {
   // e il video non viene nemmeno scaricato.
   if (prefersReducedMotion()) return;
 
-  const videos = document.querySelectorAll('video.js-lazy-video');
+  // Due famiglie, un solo observer. `.js-lazy-video` ha le sorgenti su
+  // `data-src` e va caricato al primo avvicinamento. `.bg-video` — il reel
+  // della home — la sorgente ce l'ha già, e sta qui solo per la pausa fuori
+  // campo: è uno stream di ottanta secondi, e tenerlo in riproduzione per
+  // tutta l'altezza della pagina è banda e batteria spese per un video che
+  // nessuno sta guardando. Rientrando riparte da dov'era.
+  const videos = document.querySelectorAll('video.js-lazy-video, video.bg-video');
   if (!videos.length) return;
 
   if (!('IntersectionObserver' in window)) {
@@ -84,7 +93,7 @@ function initLazyVideos() {
           // può essere rifiutata (scheda in background, risparmio energetico):
           // non è un errore e non va lasciata come promise non gestita
           target.play?.().catch(() => {});
-        } else if (target.dataset.lazyLoaded) {
+        } else if (target.dataset.lazyLoaded || target.classList.contains('bg-video')) {
           // pausa all'uscita, senza toccare la sorgente: rientrando riparte
           // dal frame dov'era, senza un secondo download
           target.pause();
@@ -241,9 +250,14 @@ function initPlugins() {
     );
   }
 
-  // Solo i loop puramente ambientali (hero_background_video): restano muti,
-  // in loop, senza nessuna interfaccia sopra.
-  const bgVideos = document.querySelectorAll('.bg-video');
+  // Solo i loop puramente ambientali (hero_background_video, e il reel della
+  // home): restano muti, in loop, senza nessuna interfaccia sopra.
+  //
+  // Con movimento ridotto non si aggancia niente, ed è la stessa regola dei
+  // loop di griglia qui sopra: il video resterebbe comunque fermo sul poster
+  // (`freezeAutoplayVideos`), quindi scaricare lo stream — per il reel sono
+  // ottanta secondi — sarebbe banda spesa per qualcosa che non si muoverà.
+  const bgVideos = prefersReducedMotion() ? [] : document.querySelectorAll('.bg-video');
   if (bgVideos.length) {
     import('hls.js').then(({ default: Hls }) => {
       bgVideos.forEach((videoEl) => {

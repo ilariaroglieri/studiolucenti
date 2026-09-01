@@ -126,9 +126,55 @@ function initHeroExpand(reduced) {
   );
 }
 
+// =============================
+// Reel della home — parallasse
+// =============================
+// Il video è più alto della finestra che lo ritaglia (`--reel-overscan` in
+// `style.scss`): qui si sposta dentro quel margine mentre la pagina scorre.
+// La corsa è meno di metà dell'eccedenza per lato, quindi il bordo del
+// riquadro non si scopre mai — nemmeno con un rimbalzo di Lenis a fine pagina.
+//
+// `yPercent` e non `y`: è una frazione dell'altezza del *video*, quindi il
+// valore resta giusto a qualsiasi larghezza e non va ricalcolato al resize.
+// La centratura a riposo la fa il CSS con `top`, apposta perché la transform
+// resti tutta di GSAP.
+//
+// L'eccedenza è 16% dell'altezza del riquadro, cioè 8% per lato, che sul video
+// (alto 116%) vale 6,9%: sotto quel numero si sta dentro con margine.
+const REEL_SHIFT = 5; // % dell'altezza del video, per lato
+
+function initReelParallax(reduced) {
+  if (reduced) return;
+
+  const container = document.querySelector('#video-reel .video-container');
+  const video = container?.querySelector('video');
+  if (!video) return;
+
+  gsap.fromTo(
+    video,
+    { yPercent: REEL_SHIFT },
+    {
+      yPercent: -REEL_SHIFT,
+      // Nessun easing dei token qui, ed è voluto: con `scrub` la curva la
+      // disegna lo scroll: una seconda curva sopra farebbe accelerare
+      // l'inquadratura a scroll costante, che è esattamente l'effetto
+      // scollegato dal dito che si vuole evitare.
+      ease: 'none',
+      scrollTrigger: {
+        trigger: container,
+        start: 'top bottom',
+        end: 'bottom top',
+        scrub: true,
+      },
+    }
+  );
+}
+
 function initAnimations() {
   const body = document.body;
   const reduced = prefersReducedMotion();
+
+  initReelParallax(reduced);
 
   // home + archive: animate project rows
   if (body.classList.contains('home') || body.classList.contains('blog')) {
