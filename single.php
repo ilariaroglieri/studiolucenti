@@ -103,14 +103,14 @@
             
             <?php if ($year): ?>
               <div class="text-element project-info">
-                <p class="s-xxsmall uppercase">Year</p>
+                <p class="mono s-xxsmall">Year</p>
                 <h3 class="s-small"><?= $year; ?></h3>
               </div>
             <?php endif; ?>
 
             <?php if ($client): ?>
               <div class="text-element project-info">
-                <p class="s-xxsmall uppercase">Client</p>
+                <p class="mono s-xxsmall">Client</p>
                 <h3 class="s-small"><?= $client; ?></h3>
               </div>
             <?php endif; ?>
@@ -118,7 +118,7 @@
             <?php if( have_rows('credits') ): while ( have_rows('credits') ) : the_row(); ?>
 
               <div class="text-element project-info">
-                <p class="s-xxsmall uppercase"><?php the_sub_field('role'); ?></p>
+                <p class="mono s-xxsmall"><?php the_sub_field('role'); ?></p>
                 <h3 class="s-small"><?php the_sub_field('name'); ?></h3>
               </div>
 
@@ -179,7 +179,7 @@
         ?>
         <project id="post-<?= (int) $next->ID; ?>" class="project d-half m-whole p-relative spacing-b-3 spacing-t-3 spacing-m-t-2 spacing-m-b-2">
           <a class="p-absolute overall" href="<?= esc_url($permalink); ?>" aria-label="<?= esc_attr($title); ?>"></a>
-          <h3 class="s-xxsmall uppercase spacing-b-tiny">Previous</h3>
+          <h3 class="mono s-xxsmall spacing-b-tiny">Previous</h3>
           <h2 class="project-title s-regular spacing-b-half"><?= esc_html($title); ?></h2>
           <?php render_media($medium_id, 6, false); ?>
         </project>
@@ -194,7 +194,7 @@
         ?>
         <project id="post-<?= (int) $prev->ID; ?>" class="project d-half m-whole p-relative spacing-b-3 spacing-t-3 spacing-m-t-2 spacing-m-b-2">
           <a class="p-absolute overall" href="<?= esc_url($permalink); ?>" aria-label="<?= esc_attr($title); ?>"></a>
-          <h3 class="s-xxsmall uppercase spacing-b-tiny">Next</h3>
+          <h3 class="mono s-xxsmall spacing-b-tiny">Next</h3>
           <h2 class="project-title s-regular spacing-b-half"><?= esc_html($title); ?></h2>
           <?php render_media($medium_id, 6, false); ?>
         </project>

@@ -27,7 +27,7 @@
           <div id="info-list" class="d-two-thirds t-half m-whole">
             <?php if ($maintitle): ?>
               <div id="info-main-title" class="text-element spacing-b-1">
-                <h2 class="s-xxsmall uppercase"><?= $maintitle; ?></h2>
+                <h2 class="mono s-xxsmall"><?= $maintitle; ?></h2>
               </div>
             <?php endif; ?>
 
@@ -37,7 +37,7 @@
             ?>
               <div class="text-element info spacing-b-2">
                 <?php if ($title): ?>
-                  <h3 class="s-xxsmall uppercase spacing-b-tiny"><?= $title; ?></h3>
+                  <h3 class="mono s-xxsmall spacing-b-tiny"><?= $title; ?></h3>
                 <?php endif; ?>
 
                 <?php if ($text): ?>
@@ -55,7 +55,7 @@
 
           <div id="clients-list" class="d-one-third t-half m-whole">
             <div id="clients-main-title" class="text-element spacing-b-1">
-              <h2 class="s-xxsmall uppercase">Selected clients</h2>
+              <h2 class="mono s-xxsmall">Selected clients</h2>
             </div>
             <?php foreach( $terms as $term ): ?>
               <p class="s-regular text-element"><?php echo esc_html( $term->name ); ?></p>

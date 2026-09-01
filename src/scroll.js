@@ -176,10 +176,12 @@ function initSpecularSweep() {
   const wordmark = document.querySelector('#site-name a');
   if (!wordmark) return;
 
-  // Al load parte **dopo** il fade del contenuto, non insieme: una schermata
-  // alla volta ha una cosa che si muove, e la dissolvenza di entrata è già
-  // occupata a farlo.
-  playSpecularSweep(DUR.base);
+  // Al load parte **per ultimo**, non insieme al resto: prima il contenuto
+  // entra in dissolvenza, poi il reveal per parole lo compone, e solo allora
+  // passa la luce. Sono tre cose in fila, non tre cose addosso — che è il modo
+  // in cui la regola "una animazione protagonista per schermata" si rispetta
+  // anche quando una schermata ne contiene più di una.
+  playSpecularSweep(DUR.page);
 
   wordmark.addEventListener('mouseenter', () => {
     // Un passaggio per volta. Senza questa riga, entrare e uscire in fretta
@@ -294,17 +296,16 @@ function initAnimations() {
     });
   }
 
-  // Reveal tipografico — un solo elemento per pagina
+  // Reveal tipografico
   //
-  // SplitText girava su **ogni** `.text-element-lines` di ogni pagina, per
-  // righe: era la seconda animazione protagonista della homepage, insieme alle
-  // righe di progetti, e le due partivano insieme. Ora è ristretto al titolo
-  // del progetto, l'unico posto dove il gesto ha qualcosa da dire.
+  // Due usi dello stesso gesto: il **titolo** del progetto, che è l'elemento
+  // singolo della sua schermata, e il **corpo del testo**, dove prima girava
+  // uno split per righe. Per **parole** in entrambi i casi, mai per lettera:
+  // un testo che si sbriciola è nella lista delle cose da non fare mai.
   //
-  // Per **parole**, mai per lettera: un titolo che si sbriciola è nella lista
-  // delle cose da non fare mai. E con movimento ridotto non si splitta
-  // nemmeno — SplitText riscrive il markup in <div> annidati, e se la tween
-  // non parte il testo resta dentro una maschera a opacità 0.
+  // Con movimento ridotto non si splitta nemmeno — SplitText riscrive il
+  // markup in <div> annidati, e se la tween non parte il testo resterebbe
+  // dentro una maschera a opacità 0.
   if (!reduced) {
     const title = document.querySelector('.single .project-title-words');
 
@@ -341,6 +342,34 @@ function initAnimations() {
         split.revert();
       }
     }
+
+    // Il corpo del testo — intro della home, About, descrizione del progetto,
+    // moduli di testo. Stesso gesto del titolo, stessa ampiezza: cambia solo
+    // come si distribuisce lo stagger.
+    gsap.utils.toArray('.text-element-lines').forEach((el) => {
+      const split = SplitText.create(el, { type: 'words', mask: 'words' });
+
+      if (!split.words.length) {
+        split.revert();
+        return;
+      }
+
+      gsap.from(split.words, {
+        y: '0.6em',
+        autoAlpha: 0,
+        duration: DUR.base,
+        ease: EASE.out,
+        // `amount` e non `each`, ed è la differenza fra un titolo e un
+        // paragrafo: l'intro della home è una quarantina di parole, e a 40ms
+        // l'una lo stagger da solo durerebbe un secondo e sei — il testo
+        // starebbe ancora arrivando mentre lo si è già scrollato via. Con
+        // `amount` il blocco si rivela sempre nella stessa finestra, che sia
+        // di dieci parole o di cinquanta.
+        stagger: { amount: DUR.base },
+        scrollTrigger: { trigger: el, start: 'top 85%', once: true },
+        onComplete: () => { split.revert(); },
+      });
+    });
   }
 
   // about page
