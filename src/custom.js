@@ -47,7 +47,25 @@ function cleanupPlugins() {
 // su `data-src`: senza questo codice mostrano il poster e basta. È il modo in
 // cui una homepage piena di loop resta sotto i 2 MB al primo caricamento.
 
+// Il poster è un'operazione a sé, e viene prima della sorgente.
+//
+// `poster` non ha un equivalente di `loading="lazy"`: lasciato nel markup, il
+// browser lo scarica al parsing insieme a tutti gli altri. Su /work/ erano
+// ventitré richieste allo stesso millisecondo, ~700 KB, per mostrarne due.
+// Le prime due thumbnail lo tengono comunque nel markup (sono l'elemento LCP):
+// qui arrivano solo quelle che il PHP ha marcato con `data-poster`.
+function loadLazyPoster(video) {
+  const poster = video.dataset.poster;
+  if (!poster) return;
+
+  video.poster = poster;
+  delete video.dataset.poster;
+}
+
 function loadLazyVideo(video) {
+  // prima il poster: pesa una frazione del loop e riempie il riquadro subito
+  loadLazyPoster(video);
+
   if (video.dataset.lazyLoaded) return;
 
   const sources = video.querySelectorAll('source[data-src]');
@@ -67,9 +85,13 @@ function loadLazyVideo(video) {
 }
 
 function initLazyVideos() {
-  // Con movimento ridotto non si assegna nessuna sorgente: resta il poster,
-  // e il video non viene nemmeno scaricato.
-  if (prefersReducedMotion()) return;
+  // Con movimento ridotto non si assegna nessuna sorgente e il video non viene
+  // scaricato — ma il poster **sì**, e subito: è l'unica cosa che si vedrà, e
+  // senza questa riga la griglia resterebbe una fila di riquadri vuoti.
+  if (prefersReducedMotion()) {
+    document.querySelectorAll('video[data-poster]').forEach(loadLazyPoster);
+    return;
+  }
 
   // Due famiglie, un solo observer. `.js-lazy-video` ha le sorgenti su
   // `data-src` e va caricato al primo avvicinamento. `.bg-video` — il reel

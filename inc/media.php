@@ -214,7 +214,13 @@
   }
 
   // img attachment defaults
-  function render_media($medium_id, $cols, $is_hero = false, $isLightbox = false) {
+  /**
+   * @param bool $eager_poster Stampa il poster nel markup invece di lasciarlo
+   *                           all'IntersectionObserver. Vale per le prime
+   *                           thumbnail della griglia: sono l'elemento LCP e
+   *                           non possono aspettare che parta il JS.
+   */
+  function render_media($medium_id, $cols, $is_hero = false, $isLightbox = false, $eager_poster = false) {
     if (!$medium_id) {
       return '';
     }
@@ -257,6 +263,19 @@
         // Con movimento ridotto non la mette mai e resta il poster.
         $is_lazy  = ! $is_hero;
         $src_attr = $is_lazy ? 'data-src' : 'src';
+
+        // Anche il **poster** va in lazy, e non è un dettaglio: `poster` non ha
+        // un equivalente di `loading="lazy"`, quindi il browser li scarica
+        // tutti insieme al parsing. Su /work/, ventitré progetti, sono ~700 KB
+        // presi al caricamento per mostrarne due. Misurato: tutte e 23 le
+        // richieste partono allo stesso millisecondo.
+        //
+        // Le prime thumbnail restano `poster` nel markup: sono l'elemento più
+        // grande sopra la piega, cioè il candidato LCP, e farle dipendere dal
+        // JS sposterebbe l'LCP dopo il bundle. Il risparmio sta nelle altre
+        // venti, non in queste.
+        $lazy_poster = $is_lazy && ! $eager_poster;
+        $poster_attr = $lazy_poster ? 'data-poster' : 'poster';
         $sources  = get_video_sources($medium_id);
         $poster   = get_video_poster($medium_id, $size);
 
@@ -282,14 +301,16 @@
           'autoplay' => true,
           'controls' => $is_hero,
           'hero'     => $is_hero,
-          'poster'   => $poster['url'],
+          // il box resta riservato lo stesso: width/height e il fallback
+          // `aspect-ratio` non dipendono da dove sta l'URL del poster
+          'poster'   => $lazy_poster ? '' : $poster['url'],
           'width'    => $video_w,
           'height'   => $video_h,
           'style'    => ($video_w && $video_h) ? '' : 'aspect-ratio: 16 / 9',
           'class'    => 'el bnd' . ($is_hero ? ' hero-video' : '') . ($is_lazy ? ' js-lazy-video' : ''),
         ]);
         ?>
-        <video <?= $video_attrs; ?>>
+        <video <?= $video_attrs; ?><?= $lazy_poster && $poster['url'] ? ' data-poster="' . esc_url($poster['url']) . '"' : ''; ?>>
           <?php foreach ($sources as $source): ?>
             <source <?= $src_attr; ?>="<?= esc_url($source['url']); ?>" type="<?= esc_attr($source['type']); ?>">
           <?php endforeach; ?>
@@ -308,7 +329,16 @@
     </div>
 <?php }
 
+  // Quante thumbnail tengono il poster nel markup prima che subentri il lazy.
+  // Due: una riga di `d-half` a piena larghezza, che su 1440×900 occupa da sola
+  // tutta la piega. Sotto ci sono già venti richieste risparmiate.
+  const STUDIOLUCENTI_EAGER_POSTERS = 2;
+
   function displayGridProject($home_size) {
+    // per richiesta, non per pagina: `static` si azzera a ogni caricamento
+    static $rendered = 0;
+    $eager_poster = $rendered++ < STUDIOLUCENTI_EAGER_POSTERS;
+
     $featured_medium = get_field('featured_medium');
     $featured_medium_size = get_field('featured_medium_size');
 
@@ -331,6 +361,6 @@
   <project id="post-<?php the_ID(); ?>" class="<?= esc_attr($curr_size); ?> project m-whole p-relative spacing-b-3 spacing-t-3 spacing-m-b-2 spacing-m-t-2">
     <a class="p-absolute overall" aria-label="<?php the_title(); ?>" href="<?php the_permalink(); ?>"></a>
     <h2 class="project-title s-regular spacing-b-half"><?php the_title(); ?></h2>
-    <?php render_media($medium_id, $width, false); ?>
+    <?php render_media($medium_id, $width, false, false, $eager_poster); ?>
   </project>
 <?php }
