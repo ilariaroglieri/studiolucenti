@@ -99,6 +99,68 @@ input[type='range']:active::-moz-range-thumb {
   opacity: 1;
 }
 
+// =============================
+// La barra entra a sfioramento
+// =============================
+// A riposo un video non ancora partito mostra **una sola** cosa: il cerchio al
+// centro. La barra in basso non c'è, e non perché sia nascosta a metà — sta
+// fuori dal bordo inferiore e rientra quando il mouse arriva sul video.
+//
+// Due meccanismi di Plyr riusati invece di combattuti:
+//
+// - lo scivolamento **esiste già** nel CSS della libreria
+//   (`.plyr--hide-controls .plyr__controls { transform: translateY(100%) }`):
+//   qui si cambia solo *quando* si applica, non come;
+// - `.plyr--stopped` è la classe che Plyr mette quando `paused && currentTime
+//   === 0`, cioè esattamente "non è ancora partito". Non serve inventarne una.
+//
+// `--dur-micro` e `--ease-quick` perché è feedback di sfioramento, non una
+// transizione di stato: la coppia è quella che i token destinano a questo.
+
+// ── Prima del primo play, ovunque ────────────────────────────────────────
+// Fuori dalla media query di proposito: vale anche su touch. Un video che non
+// è ancora partito mostra **una** cosa sola, e la barra porterebbe un secondo
+// tasto play accanto al cerchio — lo stesso doppione già tolto dall'hero.
+// Si tocca il cerchio, e da lì in poi i controlli ci sono.
+.plyr--video.plyr--stopped .plyr__controls {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(100%);
+  transition:
+    opacity   var(--dur-micro) var(--ease-quick),
+    transform var(--dur-micro) var(--ease-quick);
+}
+
+// ── Dopo, e solo dove c'è un mouse ───────────────────────────────────────
+@media (hover: hover) and (pointer: fine) {
+  .plyr--video:not(.plyr--is-touch) {
+    .plyr__controls {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(100%);
+      // sostituisce i 400ms lineari di Plyr, che non appartengono al sistema
+      transition:
+        opacity   var(--dur-micro) var(--ease-quick),
+        transform var(--dur-micro) var(--ease-quick);
+    }
+
+    // `focus-within` non è un di più: senza, chi naviga da tastiera arriva su
+    // un controllo che non può vedere.
+    &:not(.plyr--stopped):hover .plyr__controls,
+    &:not(.plyr--stopped):focus-within .plyr__controls {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+  }
+}
+
+// Su touch non esiste sfioramento, e dopo il primo play la barra torna al
+// comportamento di Plyr: visibile a video fermo, nascosta durante la
+// riproduzione, richiamata al tocco. La media query sopra esclude quel caso
+// apposta — senza, i controlli sarebbero irraggiungibili su telefono.
+// Verificato: con `plyr--is-touch` e video in pausa la barra è a opacità 1.
+
 // Bottone grande al centro: resta lì finché il video è in pausa, come nel
 // comportamento nativo di Plyr — sparisce da solo all'avvio. Il cerchio è
 // un bordo CSS, non un'immagine: un solo triangolo in outline dentro.
