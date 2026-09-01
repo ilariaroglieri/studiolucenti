@@ -127,6 +127,70 @@ function initHeroExpand(reduced) {
 }
 
 // =============================
+// Specular sweep sul wordmark
+// =============================
+// Il motif identitario del sito: una banda di luce che attraversa le lettere
+// da sinistra a destra, **una volta**. Al primo load e a ogni hover, mai in
+// ciclo — un riflesso che si ripete non è un riflesso, è uno shimmer.
+//
+// Il gradiente e il suo stato di riposo stanno in `style.scss`: qui si muove
+// solo `--sweep`, da 100% a 0%. La direzione non è ovvia e vale scriverla: con
+// lo sfondo largo il triplo dell'elemento, la finestra visibile scorre nella
+// direzione **opposta** al numero, quindi 100 → 0 porta la luce da sinistra a
+// destra, non il contrario.
+//
+// Easing: `--ease-inout`, non `--ease-out`. Un riflesso che decelera in fondo
+// si legge come qualcosa che si ferma sulla parola; qui deve passare.
+// La durata è `--dur-page` (1000ms): la nota dice "~1200ms", ma i token sono
+// tre e non se ne inventano altri — mille millisecondi stanno dentro il "circa".
+//
+// Vive fuori da `initAnimations()` di proposito: l'header **non** è nel
+// container di Swup, sopravvive alle navigazioni, e reinizializzarlo a ogni
+// visita accumulerebbe un listener di hover per pagina visitata.
+let sweepTween = null;
+
+function playSpecularSweep(delay = 0) {
+  // Interrogata qui e non all'avvio: con Swup la pagina non si ricarica mai, e
+  // l'impostazione di sistema può cambiare a sito aperto.
+  if (prefersReducedMotion()) return;
+
+  const wordmark = document.querySelector('#site-name a');
+  if (!wordmark) return;
+
+  sweepTween = gsap.fromTo(
+    wordmark,
+    { '--sweep': '100%' },
+    {
+      '--sweep': '0%',
+      duration: DUR.page,
+      ease: EASE.inOut,
+      delay,
+      // Rimessa a riposo alla fine, o il passaggio successivo partirebbe con
+      // la luce già dall'altra parte e attraverserebbe all'indietro.
+      onComplete: () => { gsap.set(wordmark, { '--sweep': '100%' }); },
+    }
+  );
+}
+
+function initSpecularSweep() {
+  const wordmark = document.querySelector('#site-name a');
+  if (!wordmark) return;
+
+  // Al load parte **dopo** il fade del contenuto, non insieme: una schermata
+  // alla volta ha una cosa che si muove, e la dissolvenza di entrata è già
+  // occupata a farlo.
+  playSpecularSweep(DUR.base);
+
+  wordmark.addEventListener('mouseenter', () => {
+    // Un passaggio per volta. Senza questa riga, entrare e uscire in fretta
+    // dal wordmark fa ripartire la tween da capo a ogni ingresso e la luce
+    // sfarfalla invece di attraversare.
+    if (sweepTween?.isActive()) return;
+    playSpecularSweep();
+  });
+}
+
+// =============================
 // Reel della home — parallasse
 // =============================
 // Il video è più alto della finestra che lo ritaglia (`--reel-overscan` in
@@ -230,29 +294,53 @@ function initAnimations() {
     });
   }
 
-  // split + animate text lines (any page)
-  // Con movimento ridotto non si splitta nemmeno: SplitText riscrive il markup
-  // in <div> annidati e le maschere restano, con il testo dentro a opacità 0.
+  // Reveal tipografico — un solo elemento per pagina
+  //
+  // SplitText girava su **ogni** `.text-element-lines` di ogni pagina, per
+  // righe: era la seconda animazione protagonista della homepage, insieme alle
+  // righe di progetti, e le due partivano insieme. Ora è ristretto al titolo
+  // del progetto, l'unico posto dove il gesto ha qualcosa da dire.
+  //
+  // Per **parole**, mai per lettera: un titolo che si sbriciola è nella lista
+  // delle cose da non fare mai. E con movimento ridotto non si splitta
+  // nemmeno — SplitText riscrive il markup in <div> annidati, e se la tween
+  // non parte il testo resta dentro una maschera a opacità 0.
   if (!reduced) {
-    gsap.utils.toArray('.text-element-lines').forEach((el) => {
-      const split = SplitText.create(el, {
-        type: 'lines',
-        linesClass: 'line++',
-        mask: 'lines',
+    const title = document.querySelector('.single .project-title-words');
+
+    if (title) {
+      const split = SplitText.create(title, {
+        type: 'words',
+        // Una maschera per parola, non una sul contenitore: se il titolo va a
+        // capo, un unico `overflow: hidden` taglierebbe la riga sopra mentre
+        // quella sotto sale. Così ogni parola esce dalla propria.
+        mask: 'words',
       });
 
-      if (!split.lines.length) return;
+      if (split.words.length) {
+        // Stessa logica dei blocchi qui sopra: se il titolo nasce sotto la
+        // piega — su un portatile basso l'hero da solo se la mangia — il
+        // reveal aspetta di essere guardato invece di consumarsi da solo.
+        const inViewport = title.getBoundingClientRect().top < window.innerHeight;
+        const scrollOpts = inViewport
+          ? {}
+          : { scrollTrigger: { trigger: title, start: 'top bottom', once: true } };
 
-      gsap.from(split.lines, {
-        yPercent: 100,
-        autoAlpha: 0,
-        duration: DUR.base,
-        ease: EASE.out,
-        stagger: STAGGER.base,
-        scrollTrigger: { trigger: el, start: 'top 85%', once: true },
-        onComplete: () => { split.revert(); },
-      });
-    });
+        gsap.from(split.words, {
+          // 0.6em, non il 100% dell'altezza: la parola affiora, non si
+          // ribalta. È la differenza fra un reveal e un effetto da tutorial.
+          y: '0.6em',
+          autoAlpha: 0,
+          duration: DUR.base,
+          ease: EASE.out,
+          stagger: STAGGER.words,
+          ...scrollOpts,
+          onComplete: () => { split.revert(); },
+        });
+      } else {
+        split.revert();
+      }
+    }
   }
 
   // about page
@@ -494,6 +582,9 @@ document.addEventListener('DOMContentLoaded', () => {
   fontsSettled().then(() => {
     initAnimations();
     revealContent();
+    // Una volta sola: l'header non è nel container di Swup e non viene
+    // rimontato, quindi non passa da `initAnimations()`.
+    initSpecularSweep();
   });
 
   // Solo la thumbnail cliccata prende il nome. `a.overall` è il link che copre

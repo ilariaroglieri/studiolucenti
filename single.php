@@ -66,8 +66,15 @@
       <div class="container">
         <div class="d-flex flex-row">
           <div class="d-whole">
-            <h1 class="text-element s-medium spacing-b-half">
-              <?php the_title(); ?>
+            <?php // Niente `text-element` qui: quella classe lo faceva entrare nel
+                  // reveal a blocco di `.single .flex-row`, e il titolo ha il suo
+                  // — parola per parola, in scroll.js. Due animazioni sullo stesso
+                  // elemento si sovrappongono e vince l'ultima che scrive. ?>
+            <h1 class="s-medium spacing-b-half">
+              <?php // Il testo va isolato dal link di modifica: SplitText divide
+                    // tutto quello che trova dentro l'elemento, e l'icona
+                    // dell'admin finirebbe fra le parole del titolo. ?>
+              <span class="project-title-words"><?php the_title(); ?></span>
               <?php if ( current_user_can( 'edit_post', get_the_ID() ) ): ?>
                 <a href="<?= esc_url( get_edit_post_link() ); ?>" class="edit-post-link" title="Edit project">
                   <span class="dashicons dashicons-edit"></span>

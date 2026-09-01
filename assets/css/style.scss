@@ -276,6 +276,52 @@ header {
   }
 }
 
+// ── Specular sweep sul wordmark ──────────────────────────────────────────
+// Un **singolo** passaggio di luce riflessa su superficie metallica, non uno
+// shimmer da e-commerce: la banda chiara sta ferma fuori campo e attraversa le
+// lettere una volta sola, al primo load e a ogni hover. Il resto lo fa
+// `initSpecularSweep()` in `src/scroll.js`, che anima `--sweep`.
+//
+// **La luce non è un colore nuovo** — il sistema non ne ha e non è questo il
+// posto dove introdurne uno: è `--fg` schiarito verso `--bg`, cioè verso la
+// luce che la pagina ha già. Al 30% resta chiaramente più scuro del fondo: se
+// arrivasse a `--bg` le lettere sparirebbero al passaggio, che è un buco, non
+// un riflesso.
+//
+// A riposo `--sweep` vale 100%: la finestra visibile cade sull'ultimo terzo
+// del gradiente, che è `--fg` pieno. Ed è lo stato che si vede **senza JS e
+// con movimento ridotto** — per questo il valore di riposo deve cadere su un
+// colore pieno, non a metà sfumatura.
+//
+// Il selettore è sull'`<a>` e non sul tag: il wordmark diventerà `<h1>` in
+// homepage (Fase 1), e l'effetto non deve accorgersene.
+#site-name a {
+  --sweep: 100%;
+
+  // 300% di larghezza, quindi la finestra visibile è un terzo del gradiente e
+  // la banda chiara ci sta dentro per intero durante il passaggio. 100deg e
+  // non 90: la luce su una superficie non arriva mai perfettamente verticale.
+  background-image: linear-gradient(
+    100deg,
+    var(--fg) 0%,
+    var(--fg) 42%,
+    color-mix(in srgb, var(--fg) 30%, var(--bg)) 50%,
+    var(--fg) 58%,
+    var(--fg) 100%
+  );
+  background-size: 300% 100%;
+  background-repeat: no-repeat;
+  background-position: var(--sweep) 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+
+  // A menu aperto il wordmark torna un colore pieno: `header.active #inner-header
+  // #logo a` vince di specificità su questa riga e ridipinge il testo in
+  // off-white sopra il gradiente, che resta ritagliato sotto e non si vede.
+  // Non c'è niente da spegnere a mano.
+}
+
 .content {
   margin-bottom: var(--footer-height);
   position: relative;
@@ -310,11 +356,9 @@ header {
 }
 
 .home, .blog {
-  .text-element-lines {
-    &.hidden {
-      opacity: 0;
-    }
-  }
+  // Qui c'era `.text-element-lines.hidden { opacity: 0 }`. Era già morta prima
+  // di questo giro — nessun PHP e nessun JS aggiungeva quella classe — e con
+  // lo split-lines globale tolto non ha più nemmeno un motivo per tornare.
   project {
     // Niente `overflow: hidden` qui: verificato che non serve. Il titolo a
     // riposo resta dentro il box (lo nasconde `opacity: 0`, non un clip) e il
