@@ -370,6 +370,12 @@ function initAnimations() {
     // moduli di testo. Stesso gesto del titolo, stessa ampiezza: cambia solo
     // come si distribuisce lo stagger.
     gsap.utils.toArray('.text-element-lines').forEach((el) => {
+      // Il blocco può rinunciare al reveal, e la decisione la prende il CSS:
+      // su mobile il paragrafo di apertura è l'elemento LCP, e tenerlo
+      // invisibile in attesa del JS costava 7,6s di LCP misurati. Il
+      // breakpoint resta scritto una volta sola, in `_media-queries.scss`.
+      if (getComputedStyle(el).getPropertyValue('--reveal').trim() === '0') return;
+
       const split = SplitText.create(el, { type: 'words', mask: 'words' });
 
       if (!split.words.length) {

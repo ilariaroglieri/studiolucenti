@@ -56,6 +56,29 @@
     padding-bottom: $spacing + $half-spacing;
   }
 
+  // ── Il reveal per parole si spegne sui blocchi sopra la piega ────────────
+  //
+  // Su mobile il paragrafo di apertura è **l'elemento LCP** — è la cosa più
+  // grande della prima schermata — e il reveal lo tiene a `autoAlpha: 0`
+  // finché non gira il JS. Misurato con Lighthouse: 7,6s di LCP, di cui il 92%
+  // è attesa di pittura, con zero tempo di rete. Un elemento invisibile non è
+  // candidato LCP, quindi il cronometro non parte finché l'animazione non
+  // comincia.
+  //
+  // Su desktop il problema non esiste: lì l'elemento LCP è il `<video>` del
+  // reel, a 0,7s, e il reveal sull'intro non costa niente. La ragione per
+  // spegnerlo è viewport-dipendente, quindi lo è anche la condizione.
+  //
+  // **La decisione sta qui e non in JS**, apposta: il breakpoint è già scritto
+  // in Sass, e duplicarlo in un secondo file vuol dire che prima o poi i due
+  // numeri divergono — è già il prezzo che si paga per `tokens.js`, e non vale
+  // la pena pagarlo una seconda volta. `scroll.js` legge questa variabile e
+  // non sa niente di larghezze.
+  .home #intro-text .text-element-lines,
+  .page #text-section > .flex-row .text-element-lines {
+    --reveal: 0;
+  }
+
   // Un 16/7 a 327px di larghezza è alto 143px: una fessura. Qui la finestra
   // non è in concorrenza con l'header — un 16:9 verticalmente non dà fastidio
   // a nessuno — quindi si riapre, senza arrivare al formato pieno.
