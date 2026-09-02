@@ -295,7 +295,10 @@ header {
 //
 // Il selettore è sull'`<a>` e non sul tag: il wordmark diventerà `<h1>` in
 // homepage (Fase 1), e l'effetto non deve accorgersene.
-#site-name a {
+// Il motif vive a **due scale**: il wordmark nell'header, e il `404` — che è
+// l'unica altra schermata del sito senza niente altro in movimento, quindi
+// l'unica che ha uno slot libero per prenderselo (§6.1).
+%specular-text {
   --sweep: 100%;
 
   // 300% di larghezza, quindi la finestra visibile è un terzo del gradiente e
@@ -316,10 +319,39 @@ header {
   background-clip: text;
   color: transparent;
 
-  // A menu aperto il wordmark torna un colore pieno: `header.active #inner-header
-  // #logo a` vince di specificità su questa riga e ridipinge il testo in
-  // off-white sopra il gradiente, che resta ritagliato sotto e non si vede.
-  // Non c'è niente da spegnere a mano.
+}
+
+// A menu aperto il wordmark torna un colore pieno: `header.active #inner-header
+// #logo a` vince di specificità e ridipinge il testo in off-white sopra il
+// gradiente, che resta ritagliato sotto e non si vede. Niente da spegnere.
+#site-name a {
+  @extend %specular-text;
+}
+
+// ── 404 ────────────────────────────────────────────────────────────────────
+// L'unico punto del sito dove è concesso un guizzo (§8), e l'unica schermata
+// che può prendersi la seconda scala dello specular sweep: non c'è nient'altro
+// che si muove qui dentro.
+#error-404 {
+  // Una schermata esatta: `#content-404` ha già i 100px di padding di
+  // `.content`, e sommarli a 100svh spingerebbe il footer di altrettanto più
+  // in basso di dove deve cominciare a scoprirsi.
+  min-height: calc(100svh - 100px);
+}
+
+#error-code {
+  @extend %specular-text;
+  // La luce attraversa i glifi, non il rettangolo della riga: senza questo
+  // l'area dipinta include l'interlinea e il passaggio si legge più largo
+  // del numero.
+  display: inline-block;
+}
+
+// Il punto mediano fra le due vie d'uscita non è un link e non deve pesarne
+// quanto uno.
+.error-sep {
+  color: var(--fg-muted);
+  padding: 0 0.4em;
 }
 
 .content {

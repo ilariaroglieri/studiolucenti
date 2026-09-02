@@ -147,49 +147,64 @@ function initHeroExpand(reduced) {
 // Vive fuori da `initAnimations()` di proposito: l'header **non** è nel
 // container di Swup, sopravvive alle navigazioni, e reinizializzarlo a ogni
 // visita accumulerebbe un listener di hover per pagina visitata.
-let sweepTween = null;
+// Un tween per elemento, non uno globale: il motif vive a due scale — il
+// wordmark e il `404` — e il guardiano "un passaggio per volta" deve valere
+// per ciascuno, non fra i due.
+const sweepTweens = new WeakMap();
 
-function playSpecularSweep(delay = 0) {
+function playSpecularSweep(el, delay = 0) {
   // Interrogata qui e non all'avvio: con Swup la pagina non si ricarica mai, e
   // l'impostazione di sistema può cambiare a sito aperto.
-  if (prefersReducedMotion()) return;
+  if (!el || prefersReducedMotion()) return;
 
-  const wordmark = document.querySelector('#site-name a');
-  if (!wordmark) return;
-
-  sweepTween = gsap.fromTo(
-    wordmark,
-    { '--sweep': '100%' },
-    {
-      '--sweep': '0%',
-      duration: DUR.page,
-      ease: EASE.inOut,
-      delay,
-      // Rimessa a riposo alla fine, o il passaggio successivo partirebbe con
-      // la luce già dall'altra parte e attraverserebbe all'indietro.
-      onComplete: () => { gsap.set(wordmark, { '--sweep': '100%' }); },
-    }
+  sweepTweens.set(
+    el,
+    gsap.fromTo(
+      el,
+      { '--sweep': '100%' },
+      {
+        '--sweep': '0%',
+        duration: DUR.page,
+        ease: EASE.inOut,
+        delay,
+        // Rimessa a riposo alla fine, o il passaggio successivo partirebbe con
+        // la luce già dall'altra parte e attraverserebbe all'indietro.
+        onComplete: () => { gsap.set(el, { '--sweep': '100%' }); },
+      }
+    )
   );
 }
 
-function initSpecularSweep() {
-  const wordmark = document.querySelector('#site-name a');
-  if (!wordmark) return;
+/**
+ * @param {Element|null} el
+ * @param {number|null} loadDelay `null` = nessun passaggio al load, solo hover.
+ */
+function armSpecularSweep(el, loadDelay = 0) {
+  if (!el) return;
 
+  if (loadDelay !== null) playSpecularSweep(el, loadDelay);
+
+  el.addEventListener('mouseenter', () => {
+    // Un passaggio per volta. Senza questa riga, entrare e uscire in fretta
+    // dall'elemento fa ripartire la tween da capo a ogni ingresso e la luce
+    // sfarfalla invece di attraversare.
+    if (sweepTweens.get(el)?.isActive()) return;
+    playSpecularSweep(el);
+  });
+}
+
+function initSpecularSweep() {
   // Al load parte **per ultimo**, non insieme al resto: prima il contenuto
   // entra in dissolvenza, poi il reveal per parole lo compone, e solo allora
   // passa la luce. Sono tre cose in fila, non tre cose addosso — che è il modo
   // in cui la regola "una animazione protagonista per schermata" si rispetta
   // anche quando una schermata ne contiene più di una.
-  playSpecularSweep(DUR.page);
+  //
+  // Sul 404 il wordmark **non** fa il passaggio al load: lì la luce è del
+  // numero, che è l'elemento della schermata. L'hover resta disponibile.
+  const soloHover = document.body.classList.contains('error404');
 
-  wordmark.addEventListener('mouseenter', () => {
-    // Un passaggio per volta. Senza questa riga, entrare e uscire in fretta
-    // dal wordmark fa ripartire la tween da capo a ogni ingresso e la luce
-    // sfarfalla invece di attraversare.
-    if (sweepTween?.isActive()) return;
-    playSpecularSweep();
-  });
+  armSpecularSweep(document.querySelector('#site-name a'), soloHover ? null : DUR.page);
 }
 
 // =============================
@@ -241,6 +256,14 @@ function initAnimations() {
   const reduced = prefersReducedMotion();
 
   initReelParallax(reduced);
+
+  // La seconda scala del motif. Il 404 è l'unica schermata del sito senza
+  // nient'altro in movimento, quindi l'unica che ha uno slot libero da darle.
+  //
+  // Qui dentro e non in `initSpecularSweep()` perché `#error-code` **è** nel
+  // container di Swup: va riarmato a ogni visita, al contrario del wordmark
+  // che sopravvive alle navigazioni e va armato una volta sola.
+  armSpecularSweep(document.querySelector('#error-code'), DUR.base);
 
   // home + archive: animate project rows
   if (body.classList.contains('home') || body.classList.contains('blog')) {
