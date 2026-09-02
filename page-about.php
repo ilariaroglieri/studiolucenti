@@ -20,14 +20,44 @@
         </div>
       </section>
 
-      <div id="infos" class="spacing-t-6 d-flex flex-row wrap">
+      <?php // Respiro in fondo alla pagina: senza, l'ultima riga cadeva sul
+            //  bordo di `.content` e il footer cominciava a scoprirsi attaccato
+            //  al testo. Tre cose da sapere:
+            //
+            //  - **padding, non margine.** Un margine qui collassa attraverso
+            //    `.container` e `.content` e finisce per confondersi con il
+            //    `margin-bottom: var(--footer-height)` di `.content`, che è più
+            //    grande: si scrive e non succede niente. Stesso inciampo già
+            //    annotato per l'intro della home.
+            //  - **24px su desktop, 48 su mobile**, e non è un capriccio: a
+            //    chiudere la pagina sono due elementi diversi. Su desktop è la
+            //    colonna Career, la più alta, e la sua ultima voce porta già
+            //    48px suoi — 24 in più fanno i 72 che hanno /work/ e le schede.
+            //    Sotto i 640px le colonne si impilano e a chiudere è la lista
+            //    dei clienti, che di margine suo non ne ha: lì i 48 servono
+            //    tutti.
+            //  - le due misure di partenza, prese sul sito: 48px sotto Career a
+            //    1440, **zero** sotto l'ultimo cliente a 375. ?>
+      <div id="infos" class="spacing-t-6 spacing-p-b-1 spacing-m-p-b-2 d-flex flex-row wrap">
         <?php $maintitle = get_field('info_main_title'); ?>
         <?php if ( have_rows( 'infos' ) ) : ?>
           
           <div id="info-list" class="d-two-thirds t-half m-whole">
             <?php if ($maintitle): ?>
+              <?php // "Career" da solo non dice di chi: la lista sono i passi
+                    //  precedenti del fondatore, non dello studio, che esiste
+                    //  dal 2024. Il nome è il valore, quindi resta in PP Mori:
+                    //  la mono è la scala di servizio, e qui fa la label sopra.
+                    //  Stesso rapporto — 6px — che c'è fra l'anno e il testo di
+                    //  ogni voce qui sotto.
+                    //
+                    //  Non è un campo ACF di proposito: un campo nuovo chiede un
+                    //  Sync, e senza Sync `get_field()` torna null in silenzio e
+                    //  il sottotitolo sparirebbe senza dirlo. Stesso criterio del
+                    //  colophon nel footer. ?>
               <div id="info-main-title" class="text-element spacing-b-1">
-                <h2 class="mono s-xxsmall"><?= $maintitle; ?></h2>
+                <h2 class="mono s-xxsmall spacing-b-tiny"><?= $maintitle; ?></h2>
+                <p class="s-regular">Ignazio Lucenti</p>
               </div>
             <?php endif; ?>
 
