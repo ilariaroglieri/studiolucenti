@@ -1,3 +1,11 @@
+// I due paragrafi di apertura, home e About. Sono gli unici blocchi di testo
+// che su un telefono stanno sopra la piega, e per questo ricorrono due volte
+// qui sotto — a **due breakpoint diversi, per due ragioni diverse**: il reveal
+// si spegne a 768 perché lì il paragrafo diventa l'elemento LCP, la scala
+// scende a 640 perché lì la colonna si stringe. Il selettore sta in un posto
+// solo o le due regole divergono alla prima modifica del markup.
+$intro-blocks: '.home #intro-text .text-element-lines, .page #text-section > .flex-row .text-element-lines';
+
 @media screen and (max-width: $desktop) {
 
 
@@ -74,8 +82,7 @@
   // numeri divergono — è già il prezzo che si paga per `tokens.js`, e non vale
   // la pena pagarlo una seconda volta. `scroll.js` legge questa variabile e
   // non sa niente di larghezze.
-  .home #intro-text .text-element-lines,
-  .page #text-section > .flex-row .text-element-lines {
+  #{$intro-blocks} {
     --reveal: 0;
   }
 
@@ -125,6 +132,29 @@
 }
 
 @media screen and (max-width: $mobile) {
+  // ── La scala dell'intro scende di quattro punti ──────────────────────────
+  //
+  // Non su `.s-medium`, che è usata anche dall'`<h1>` del titolo di progetto,
+  // dal footer, dalla 404 e da `page.php`: qui si tocca solo il paragrafo di
+  // apertura.
+  //
+  // 20px è una soglia misurata, non un gusto. Su 375×667 — il telefono più
+  // piccolo che conta — è il punto esatto in cui il reel entra **tutto** sopra
+  // la piega: da 126px visibili su 204 si passa a 204 su 204. Sotto i 20px non
+  // si guadagna più niente, si perde solo scala; a 22px il testo resta a undici
+  // righe e il reel sale di appena 28px, cioè è uno scalino sprecato.
+  //
+  // E c'è una seconda ragione, indipendente dal reel: a 24px la riga su una
+  // colonna di 327px porta **22 battute**, che è molto sotto la misura
+  // leggibile. A 20px arriva a 27. Quel paragrafo era semplicemente impostato
+  // troppo grande per lo spazio che ha.
+  //
+  // Sopra i 640px non si tocca niente: a 768×1024 l'intro è a 30px su sette
+  // righe e il reel si vede già per intero.
+  #{$intro-blocks} {
+    font-size: 20px;
+  }
+
   .s-large { 
     font-size: 40px;
   }
