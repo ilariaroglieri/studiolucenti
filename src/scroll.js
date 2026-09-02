@@ -6,6 +6,7 @@ import Swup from 'swup';
 import SwupHeadPlugin from '@swup/head-plugin';
 import SwupBodyClassPlugin from '@swup/body-class-plugin';
 import { groupByRows } from './helpers';
+import { initEmails } from './footer';
 import { DUR, EASE, STAGGER, prefersReducedMotion } from './tokens';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
@@ -256,6 +257,12 @@ function initAnimations() {
   const reduced = prefersReducedMotion();
 
   initReelParallax(reduced);
+
+  // Non è un'animazione, ma questo è il punto di re-init dopo ogni visita, e
+  // lo shortcode [email] può stare in una pagina dentro il container di Swup.
+  // Quella del footer la fa `footer.js` una volta sola: il footer è fuori dal
+  // container e non viene rimontato.
+  initEmails();
 
   // La seconda scala del motif. Il 404 è l'unica schermata del sito senza
   // nient'altro in movimento, quindi l'unica che ha uno slot libero da darle.

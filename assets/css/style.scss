@@ -790,6 +790,18 @@ footer {
   }
 }
 
+// L'indirizzo nel markup è spezzato in due, e la chiocciola non c'è: è così
+// che offusca_email() evita di lasciarne una copia raccoglibile nel sorgente.
+// Qui viene rimessa, e serve **solo senza JS** — appena il bundle parte
+// sostituisce tutto con il testo vero, che si può anche copiare. È il motivo
+// per cui non c'è nessuno spazio intorno: deve leggersi come un indirizzo, non
+// come una formula.
+.js-email {
+  .email-domain::before {
+    content: '@';
+  }
+}
+
 // L'email prende il posto che era del wordmark.
 .footer-email {
   a {

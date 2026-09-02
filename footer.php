@@ -36,7 +36,10 @@
 			<?php if ( $contact_email ) : ?>
 				<div class="d-flex flex-row spacing-b-4 footer-email">
 					<div class="d-whole">
-						<p class="s-large"><a href="mailto:<?= antispambot( $contact_email ); ?>"><?= antispambot( $contact_email ); ?></a></p>
+						<?php // Stesso markup dello shortcode [email], perché è la stessa
+						      // funzione: l'indirizzo non compare mai per intero nel
+						      // sorgente. Vedi offusca_email() in inc/helpers.php. ?>
+						<p class="s-large"><?= offusca_email( $contact_email ); ?></p>
 					</div>
 				</div>
 			<?php endif; ?>

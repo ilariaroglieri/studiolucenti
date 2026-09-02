@@ -64,7 +64,35 @@ function stop() {
   timer = null;
 }
 
+// =============================
+// Email ricomposta
+// =============================
+// Nel markup l'indirizzo non c'è per intero: PHP lo spezza in due span e la
+// chiocciola la mette il CSS, così non resta niente da raccogliere nel
+// sorgente — che è l'unica cosa che `antispambot()` non riusciva a garantire,
+// perché l'export statico ridecodifica le entità HTML.
+//
+// Qui si ricompone il testo vero, che si può copiare al contrario di un
+// `content` CSS, e si aggiunge l'`href`, che nel markup non c'è affatto.
+//
+// Gira prima dell'orologio e fuori dalla sua guardia: il footer può esistere
+// senza email, e lo shortcode [email] può stare in una pagina qualsiasi.
+export function initEmails(root = document) {
+  root.querySelectorAll('a.js-email').forEach((el) => {
+    const user = el.querySelector('.email-user');
+    const domain = el.querySelector('.email-domain');
+    if (!user || !domain) return;
+
+    const address = `${user.textContent.trim()}@${domain.textContent.trim()}`;
+
+    el.textContent = address;
+    el.href = `mailto:${address}`;
+  });
+}
+
 function start() {
+  initEmails();
+
   clock = document.getElementById('footer-clock');
   // Senza campo email il footer stampa comunque il rail: se manca l'elemento,
   // manca il footer, e non c'è niente da aggiornare.

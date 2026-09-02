@@ -76,10 +76,49 @@
     return null;
   }
 
-  function offusca_email_shortcode( $atts, $content = null ) {
-    if ( ! is_email( $content ) ) {
-        return $content;
+  /**
+   * Email in markup che l'indirizzo per intero non ce l'ha.
+   *
+   * `antispambot()` codificava metà dei caratteri in entità HTML, e non
+   * sopravvive: l'export statico riparsa l'HTML e le entità tornano caratteri,
+   * quindi in produzione l'indirizzo finiva in chiaro — `mailto:` compreso.
+   * Misurato sulla home esportata: zero entità numeriche in tutta la pagina, e
+   * i caratteri che WordPress emette come `&#8217;` arrivano letterali.
+   *
+   * Qui l'indirizzo è spezzato in due elementi e la chiocciola nel markup non
+   * c'è affatto: non resta nessuna sottostringa che somigli a un'email. La
+   * rimette il CSS (`.js-email .email-domain::before`) per chi non ha JS, e il
+   * JS sostituisce il tutto con il testo vero — che si può copiare, al
+   * contrario di un `content` CSS — e aggiunge l'`href`.
+   *
+   * Senza JS il link non è cliccabile, ma l'indirizzo si legge: è il
+   * compromesso, ed è dalla parte giusta. Un `href` in chiaro nel markup
+   * vanificherebbe tutto il resto.
+   */
+  function offusca_email( $email, $class = '' ) {
+    $email = sanitize_email( (string) $email );
+
+    if ( ! is_email( $email ) ) {
+      return '';
     }
-    return '<a href="mailto:' . antispambot( $content ) . '">' . antispambot( $content ) . '</a>';
-}
-add_shortcode( 'email', 'offusca_email_shortcode' );
+
+    list( $user, $domain ) = explode( '@', $email, 2 );
+
+    return sprintf(
+      '<a class="js-email%s"><span class="email-user">%s</span><span class="email-domain">%s</span></a>',
+      $class ? ' ' . esc_attr( $class ) : '',
+      esc_html( $user ),
+      esc_html( $domain )
+    );
+  }
+
+  // `[email class="..."]indirizzo@dominio[/email]` nei WYSIWYG. Se il contenuto
+  // non è un'email torna com'era: meglio un indirizzo sbagliato visibile che un
+  // buco silenzioso.
+  function offusca_email_shortcode( $atts, $content = null ) {
+    $atts   = shortcode_atts( [ 'class' => '' ], $atts, 'email' );
+    $markup = offusca_email( $content, $atts['class'] );
+
+    return $markup ?: $content;
+  }
+  add_shortcode( 'email', 'offusca_email_shortcode' );
