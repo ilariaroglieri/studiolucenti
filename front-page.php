@@ -19,7 +19,6 @@
       <?php
         $hasReel   = get_field('show_video_reel');
         $reel      = get_field('video_reel');
-        $reel_post = get_field('video_reel_poster');
 
         // Il flag da solo non basta: con l'interruttore acceso e il campo URL
         // vuoto usciva un <video> senza sorgente, cioè un buco alto mezzo schermo.
@@ -28,7 +27,11 @@
           // Vimeo il primo frame non lo espone: `get_video_poster()` legge
           // l'immagine in evidenza di un allegato, e qui di allegato non ce n'è
           // nessuno — il reel è un URL HLS. Da qui il campo ACF a fianco.
-          $reel_poster = $reel_post ? wp_get_attachment_image_url($reel_post, 'full-width') : '';
+          //
+          // L'URL viene dalla stessa funzione che header.php usa per il
+          // `<link rel="preload">`: se le due divergono il preload non viene
+          // riscattato e il poster si scarica due volte.
+          $reel_poster = studiolucenti_reel_poster_url();
         ?>
 
         <section id="video-reel">

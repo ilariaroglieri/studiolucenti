@@ -36,6 +36,27 @@
 		<link rel="preload" as="font" type="font/woff2" crossorigin href="<?= esc_url( get_template_directory_uri() . '/assets/fonts/PPMori-Semibold.woff2' ); ?>">
 		<link rel="preload" as="font" type="font/woff2" crossorigin href="<?= esc_url( get_template_directory_uri() . '/assets/fonts/DMMono-Regular.woff2' ); ?>">
 
+		<?php // Il poster del reel è l'elemento LCP della homepage su mobile, e il
+		      // problema è la priorità, non la scoperta: il `poster` di un <video>
+		      // Chrome lo trova già in fase di parsing (misurato: richiesta a 10ms,
+		      // initiator "video"), ma lo mette in coda dietro CSS, font e bundle.
+		      // Su rete throttlata erano 732ms di load delay su 3,0s di LCP.
+		      //
+		      // La parte che lavora quindi è `fetchpriority`: senza, il preload
+		      // anticipa una scoperta che era già abbastanza presto e la coda
+		      // resta quella di prima. Sta dopo i font perché sono loro a
+		      // sbloccare il gate del primo paint, e il poster è un WebP da ~20KB:
+		      // non si contendono banda.
+		      //
+		      // Verificato che il preload venga riscattato: una sola richiesta per
+		      // il poster, con initiator "link". Se l'URL divergesse da quello
+		      // dell'attributo `poster` l'immagine si scaricherebbe due volte —
+		      // per questo vengono entrambi dalla stessa funzione. ?>
+		<?php $reel_poster = is_front_page() ? studiolucenti_reel_poster_url() : ''; ?>
+		<?php if ( $reel_poster ) : ?>
+			<link rel="preload" as="image" fetchpriority="high" href="<?= esc_url( $reel_poster ); ?>">
+		<?php endif; ?>
+
 		<?php // gate del primo paint: la classe la toglie il bundle, il watchdog copre
 		      // il caso in cui il bundle non arrivi. Senza JS non viene mai messa. ?>
 		<script>

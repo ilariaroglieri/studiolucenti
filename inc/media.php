@@ -179,6 +179,40 @@
     return [ 'url' => '', 'width' => 0, 'height' => 0 ];
   }
 
+
+  /**
+   * URL del poster del reel di homepage, vuoto se il reel non viene stampato.
+   *
+   * Serve in due posti che devono restare d'accordo: l'attributo `poster` del
+   * <video> in front-page.php e il <link rel="preload"> in header.php. Se le
+   * due URL divergono il preload non viene mai riscattato e l'immagine si
+   * scarica due volte — quindi la sorgente dev'essere una sola, e la
+   * dimensione ('full-width') si cambia qui per entrambi.
+   *
+   * Le condizioni sono le stesse del reel: interruttore acceso, URL HLS
+   * presente, poster caricato. In header.php non c'è nessun loop aperto,
+   * quindi l'ID della pagina va passato a mano.
+   */
+  function studiolucenti_reel_poster_url() {
+    $page_id = (int) get_queried_object_id();
+
+    if ( ! $page_id || ! function_exists( 'get_field' ) ) {
+      return '';
+    }
+
+    if ( ! get_field( 'show_video_reel', $page_id ) || ! get_field( 'video_reel', $page_id ) ) {
+      return '';
+    }
+
+    // Il campo torna un ID, ma passa da get_medium_id_from_acf() come tutti
+    // gli altri campi media del tema: se il return_format cambiasse in admin
+    // arriverebbe un array, e wp_get_attachment_image_url() non se ne
+    // accorgerebbe — restituirebbe false e il poster sparirebbe in silenzio.
+    $poster_id = get_medium_id_from_acf( get_field( 'video_reel_poster', $page_id ) );
+
+    return $poster_id ? (string) wp_get_attachment_image_url( $poster_id, 'full-width' ) : '';
+  }
+
   /**
    * Sorgenti di un allegato video, WebM per primo.
    *
